@@ -15,6 +15,7 @@ public class InvertedIndexTables {
     public InvertedIndexTables(Objeto[] listaObjetos) {
         criaIndiceInvertido(listaObjetos);
     }
+
     public InvertedIndexTables(int[][] listaInts) {
         criaIndiceInvertidoFromInts(listaInts);
     }
@@ -258,7 +259,7 @@ public class InvertedIndexTables {
         //d1
 
         //subcube queries
-        if (d1.compareTo("*") != 0) {
+        if (d1.compareTo("*") != 0 && d1.compareTo("?") != 0) {
             int index = getIndexOfValue(this.d1, Integer.parseInt(d1));                 //obtem posição com o valor pedido
             if (index < 0)                                                              //testa se valor existir
                 return new int[0];                                                      //se não existe, retorna uma listav vazia
@@ -266,14 +267,14 @@ public class InvertedIndexTables {
 
             if (listaFinal.length == 0)                                                 //caso tamanho seja 0, não vale a pena continuar
                 return listaFinal;
-        } else if (d1.compareTo("*") == 0)
+        } else
             allFlag = true;
 
 
         //d2
 
         //subcube queries
-        if (d2.compareTo("*") != 0) {
+        if (d2.compareTo("*") != 0 && d2.compareTo("?") != 0 ) {
             int index = getIndexOfValue(this.d2, Integer.parseInt(d2));                 //obtem posição com o valor pedido
             if (index < 0)                                                              //testa se valor existir
                 return new int[0];                                                      //se não existe, retorna uma lista vazia
@@ -291,14 +292,14 @@ public class InvertedIndexTables {
 
         //d3
         //subcube queries
-        if (d3.compareTo("*") != 0) {
+        if (d3.compareTo("*") != 0 && d3.compareTo("?") != 0) {
             int index = getIndexOfValue(this.d3, Integer.parseInt(d3));                 //obtem posição com o valor pedido
             if (index < 0)                                                              //testa se valor existir
                 return new int[0];                                                      //se não existe, retorna uma listav vazia
 
             if (allFlag) {                                                              //todas as dimensões anteriores tiveram valor '*', sendo que esta é a primeira dimensão com valor definido
                 listaFinal = td3[index].clone();                                        //obtem todos os resultados
-            allFlag = false;                                                            //coloca flag a falso
+                allFlag = false;                                                            //coloca flag a falso
 
             } else {
                 int[] listaSecundaria = this.td3[index].clone();                        //lista que guarda valores resuiltados da pesqiisa
@@ -312,7 +313,7 @@ public class InvertedIndexTables {
         //d4
 
         //subcube queries
-        if (d4.compareTo("*") != 0) {
+        if (d4.compareTo("*") != 0 && d4.compareTo("?") != 0) {
             int index = getIndexOfValue(this.d4, Integer.parseInt(d4));                 //obtem posição com o valor pedido
             if (index < 0)                                                              //testa se valor existir
                 return new int[0];                                                      //se não existe, retorna uma listav vazia
@@ -363,10 +364,10 @@ public class InvertedIndexTables {
     }
 
     /**
-     * @param td Dimension matrix beig searched
+     * @param td    Dimension matrix beig searched
      * @param index TID/index of the tuple/object to be found
      * @return Column where the TID was found or -1 if index not found
-     *
+     * <p>
      * This method is used in the filtrarion process
      */
     private int getIndexOfTID(int[][] td, int index) {
@@ -488,8 +489,8 @@ public class InvertedIndexTables {
 
     /**
      * @param listaObjetos Objeto's array
-     *
-     * This method is used to alloc memory and index the different Dimensional values in the values array.
+     *                     <p>
+     *                     This method is used to alloc memory and index the different Dimensional values in the values array.
      */
     private void alocateMemory(Objeto[] listaObjetos) {
 
@@ -570,10 +571,10 @@ public class InvertedIndexTables {
     }
 
     /**
-     * @param listaFinal int array number one
-     * @param listaSecundaria  int array number two
+     * @param listaFinal      int array number one
+     * @param listaSecundaria int array number two
      * @return Logic intersection result of both arrays.
-     *
+     * <p>
      * This method is used, during a search, to filtrate the arrays for each dimension
      */
     private int[] doIntersection(int[] listaFinal, int[] listaSecundaria) {
@@ -594,14 +595,14 @@ public class InvertedIndexTables {
 
 
     public InvertedIndexTables subcubeQuery(String d1, String d2, String d3, String d4) {
-        int [] result = searchInstanciatedValues(d1,d2, d3,d4);
+        int[] result = searchInstanciatedValues(d1, d2, d3, d4);            //obtem IDs dos tuples que respeitam o pedido feito
 
-        int[][] resultTuples = new int[result.length][];
+        int[][] resultTuples = new int[result.length][];                    //aloca memoria para array com representções de objetos
 
-        for(int i = 0; i< result.length; i++){
-            resultTuples[i] = getDimensions(i);
+        for (int i = 0; i < result.length; i++) {                           //para cada um dos IDs de tuples que respeita o pedido
+            resultTuples[i] = getDimensions(result[i]);                     //obtem-se os seus valores e coloca-se no array de representação de objetos
         }
 
-        return new InvertedIndexTables(resultTuples);
+        return new InvertedIndexTables(resultTuples);                       //devolve uma nova tabela criada
     }
 }

@@ -67,10 +67,11 @@ public class Main {
         int opt = 0;
 
         do{
-            System.out.println("1 - Fazer pesquisa de point querie");
-            System.out.println("2 - Fazer pesquisa de subcube querie");
-            System.out.println("3 - Mostrar cubo de dados");
-            System.out.println("9 - Sair do programa");
+            System.out.println("\n\nPESQUISA NO SUBCUBO:\n");
+            System.out.println("1 - Fazer pesquisa de point querie no subcubo");
+            System.out.println("2 - Fazer pesquisa de subcube querie no subcubo");
+            System.out.println("3 - Mostrar subcubo de dados");
+            System.out.println("9 - Sair do subcubo");
 
             opt = sc.nextInt();
             switch (opt) {
