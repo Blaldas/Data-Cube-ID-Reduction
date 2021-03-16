@@ -18,10 +18,10 @@ public class Objeto {
     public Objeto() {
 
         Random r = new Random();
-        D1 = r.nextInt(4) + 1;
-        D2 = r.nextInt(4) + 11;
-        D3 = r.nextInt(4) + 21;
-        D4 = r.nextInt(4) + 31;
+        D1 = r.nextInt(3) + 1;
+        D2 = r.nextInt(3) + 11;
+        D3 = r.nextInt(3) + 21;
+        D4 = r.nextInt(3) + 31;
     }
 
     @Override

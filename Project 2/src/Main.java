@@ -12,7 +12,7 @@ public class Main {
         String path = "Objectos.txt";
         int number = 25000;
 
-        //createAndWriteRandomObjetosList(path, number);
+        createAndWriteRandomObjetosList(path, number);
         int[][] array = readFromDisk(path);
         if (array == null)
             return;
