@@ -164,4 +164,21 @@ public class DataCube {
     public int getNumberShellFragments() {
         return shellFragmentsList.length;
     }
+
+    public StringBuilder showIndividualTuples() {
+        StringBuilder str = new StringBuilder();
+        str.append("id:\t");
+        for(int i = 0; i<shellFragmentsList.length; i++)
+            str.append("D").append((i+1)).append("\t");
+        str.append("\n");
+
+        for(int id : shellFragmentsList[0].getAllTIDS()){
+            str.append(id).append(":\t");
+            for (ShellFragment shellFragment : shellFragmentsList) {
+                str.append(shellFragment.getValueFromID(id)).append("\t");
+            }
+            str.append("\n");
+        }
+        return str;
+    }
 }

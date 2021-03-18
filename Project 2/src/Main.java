@@ -44,6 +44,8 @@ public class Main {
             System.out.println("1 - Fazer pesquisa de point querie");
             System.out.println("2 - Fazer pesquisa de subcube querie");
             System.out.println("3 - Mostrar cubo de dados");
+            System.out.println("4 - Mostrar Tuples individualmente");
+            System.out.println("5 - Obter tuple por ID");
             System.out.println("9 - Sair do programa");
 
             opt = sc.nextInt();
@@ -56,10 +58,28 @@ public class Main {
                     break;
                 case 3:
                     System.out.println(dataCube.showDimensions());
+                    break;
+                case 4:
+                    System.out.println(dataCube.showIndividualTuples());
+                    break;
+                case 5:
+                    mostrarTuplePorID(sc, dataCube);
             }
 
         } while (opt != 9);
 
+    }
+
+    private static void mostrarTuplePorID(Scanner sc, DataCube dataCube) {
+        System.out.println("Indique index:");
+        int index = sc.nextInt();
+        int[] values = dataCube.getDimensions(index);
+        if(values == null)
+            System.out.println("Não foi encontrado nenhum tuple com esse id");
+        System.out.println("ID: " + (index+1));
+        for (int i = 0; i< values.length; i++){
+            System.out.println("D" + i + "\t" + values[i]);
+        }
     }
 
     private static int[] getSizes(String filePath) {
@@ -138,6 +158,7 @@ public class Main {
             System.out.println("1 - Fazer pesquisa de point querie no subcubo");
             System.out.println("2 - Fazer pesquisa de subcube querie no subcubo");
             System.out.println("3 - Mostrar subcubo de dados");
+            System.out.println("4 - Mostrar Tuples individualmente");
             System.out.println("9 - Sair do subcubo");
 
             opt = sc.nextInt();
@@ -149,6 +170,9 @@ public class Main {
                     fazPesquisaSubCube(sc, subCube);
                 case 3:
                     System.out.println(subCube.showDimensions());
+                    break;
+                case 4:
+                    System.out.println(subCube.showIndividualTuples());
             }
 
 
