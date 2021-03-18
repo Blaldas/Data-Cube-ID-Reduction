@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,6 +40,22 @@ public class Main {
         printIntArray(dataCube.shellFragmentsList[0].values);
         System.out.println("num: " + dataCube.shellFragmentsList[0].values.length);
 
+        String input;
+
+        do {
+            System.out.println("Input");
+            input = sc.next();
+            input += sc.nextLine();
+
+            if (input.charAt(0) == 'q') {
+                query(input, dataCube);
+            }
+
+
+        } while (!input.toLowerCase().equals("sair") && !input.toLowerCase().equals("exit") && !input.toLowerCase().equals("x") && !input.toLowerCase().equals("q"));
+
+
+        /*
         int opt = 0;
         do {
             System.out.println("1 - Fazer pesquisa de point querie");
@@ -67,6 +84,46 @@ public class Main {
             }
 
         } while (opt != 9);
+*/
+    }
+
+    private static void query(String input, DataCube dataCube) {
+
+        String[] stringValues = input.split(" ");
+        int[] values = new int[stringValues.length - 1];
+        DataCube subCube;
+
+        boolean subCubeFlag = false;
+
+        for (int i = 1; i < stringValues.length; i++) {
+            try {
+                values[i - 1] = Integer.parseInt(stringValues[i]);
+            } catch (Exception e) {
+                if (stringValues[i].equals("?")) {
+                    values[i - 1] = '?';
+                    subCubeFlag = true;
+                } else if (stringValues[i].equals("*"))
+                    values[i - 1] = '*';
+                else {
+                    System.out.println("Invalid value in query");
+                    return;
+                }
+            }
+        }
+
+        if (subCubeFlag) {
+            subCube = dataCube.getSubCube(values);
+            if(subCube == null)
+            {
+                System.out.println("There were no tuples that had such values");
+                return;
+            }
+            System.out.println(subCube.showIndividualTuples());
+        } else {
+            int[] searchResult = dataCube.searchMultipleDimensionsAtOnce(values); //returns array of ids
+            System.out.println("Query answers:\t" + searchResult.length);
+        }
+
 
     }
 
@@ -74,10 +131,10 @@ public class Main {
         System.out.println("Indique index:");
         int index = sc.nextInt();
         int[] values = dataCube.getDimensions(index);
-        if(values == null)
+        if (values == null)
             System.out.println("Não foi encontrado nenhum tuple com esse id");
-        System.out.println("ID: " + (index+1));
-        for (int i = 0; i< values.length; i++){
+        System.out.println("ID: " + (index + 1));
+        for (int i = 0; i < values.length; i++) {
             System.out.println("D" + i + "\t" + values[i]);
         }
     }

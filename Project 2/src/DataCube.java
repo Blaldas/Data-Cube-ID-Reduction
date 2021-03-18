@@ -134,8 +134,15 @@ public class DataCube {
     }
 
 
+    /**
+     *
+     * @param arrayOfValues array with the query values
+     * @return An datacube with the tuples that respect the query values, or null, if there is tuples that have suck values
+     */
     public DataCube getSubCube(int[] arrayOfValues) {
         int[] tidArrat = this.searchMultipleDimensionsAtOnce(arrayOfValues);            //obtem TIDs resultante
+        if(tidArrat == null)
+            return null;
 
         int[][] subCubeValues = new int[tidArrat.length][];                             //aloca memoria array de valores
 
