@@ -49,18 +49,17 @@ public class ShellFragment {
         }
     }
 
-    //Eu queria, mas não há espaço na heap
+    //poupa 50% do tempo, mas gasta memoria à parva
     private void fillIDList(int[] rawData, int size) {
 
         idsList = new int[values.length][0];               //alocamemoria para os ids, para cada um dos vlroes diferentes
 
         int[] counter = new int[rawData.length];
-        for(int count : counter)
+        for (int count : counter)
             count = 0;
 
         //System.out.println(rawData.length);
-        int[][] idsListSecundario = new int[values.length][size/2];
-
+        int[][] idsListSecundario = new int[values.length][size / 2];
 
 
         for (int i = 0; i < rawData.length; i++) {             //para cada um dos valores dos dados originais
@@ -68,10 +67,10 @@ public class ShellFragment {
             for (int n = 0; n < values.length; n++) {          //para cada um dos valores da dimensão
                 if (rawData[i] == values[n])                 //se o valor da dimensão for igual ao valor dos dados
                 {
-                    if(counter[n] < idsListSecundario[n].length) {
+                    if (counter[n] < idsListSecundario[n].length) {
                         idsListSecundario[n][counter[n]] = i;
                         counter[n]++;
-                    }else{
+                    } else {
                         int[] idsListTerciario = new int[idsListSecundario[n].length + 1];
                         System.arraycopy(idsListSecundario[n], 0, idsListTerciario, 0, idsListSecundario[n].length);
                         idsListTerciario[idsListTerciario.length - 1] = i;
@@ -84,7 +83,7 @@ public class ShellFragment {
 
         }
 
-        for(int i = 0; i <idsListSecundario.length; i++){
+        for (int i = 0; i < idsListSecundario.length; i++) {
             idsList[i] = new int[counter[i]];
             System.arraycopy(idsListSecundario[i], 0, idsList[i], 0, idsList[i].length);
         }
@@ -182,5 +181,18 @@ public class ShellFragment {
         }
 
         return retornable;
+    }
+
+    /**
+     *
+     * @return  Biggest value in this shell fragment
+     */
+    public int getBiggestValue() {
+        int max = values[0];
+
+        for (int val : values)
+            if (val > max)
+                max = val;
+        return max;
     }
 }
