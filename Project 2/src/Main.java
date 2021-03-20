@@ -16,10 +16,12 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        String path = "Objectos";
+        String path = "obj";
         load(path);
 
         String input;
+       //showAllRows();
+
 
         do {
             System.out.println(">");
@@ -44,6 +46,8 @@ public class Main {
                 createAndWriteNew(input);
             else if (input.charAt(0) == 'l' && input.charAt(1) == 'o' && input.charAt(2) == 'a' && input.charAt(3) == 'd')
                 loadUI(input);
+            else if(input.equals("all"))
+                showAllRows();
             else
                 System.out.println("Unknown Command");
 
@@ -82,6 +86,13 @@ public class Main {
 */
     }
 
+    private static void showAllRows() {
+        if(useMainCube)
+            dataCube.showAllQueryPossibilities();
+        else
+           subCube.showAllQueryPossibilities();
+    }
+
     private static void loadUI(String input){
         String[] str = input.split(" ");
         if (str.length != 2) {
@@ -92,9 +103,11 @@ public class Main {
         subCube = null;
     }
 
+
     private static void load(String filename) {
 
         Date startDate = new Date(), endDate;
+
         int[] sizes = getSizes(filename); // guarda valores dos tamanhos-> size[0] -> numero de tuples, size[1...lenght] cardinalidade de cada tuple
         if (sizes == null) {
             System.out.println("It was not possible to load the file <" + filename + ">");
@@ -166,7 +179,7 @@ public class Main {
             try {
                 dimValues = mostrarTuplePorID(Integer.parseInt(query[i]));
             } catch (Exception e) {
-                System.out.println("Valor não reconhecido: " + query[i]);
+                System.out.println("Value not recognized: " + query[i]);
             }
             if (dimValues == null)
                 System.out.println("Dimension id <" + query[i] + "> was not found");
@@ -332,140 +345,10 @@ public class Main {
     }
 
 
-    private static void printIntArray(int[] array) {
-        if (array.length == 0)
-            System.out.println("Não foram encontrados resultados");
-        else {
-            StringBuilder str = new StringBuilder();
-            for (int i : array)
-                str.append(i).append(" ");
-            System.out.println("TIDs\t" + str);
-        }
-    }
-
-/*  This functions are not used anymore, they are kept here just in case.
-
-    private static void fazPesquisaSubCube(Scanner sc, DataCube dataCube) {
-        int[] arrayOfValues = new int[0];
-        String dValue;
-        int dimCounter = 1;
-
-        do {
-            System.out.println("Indique valor para dimensão número " + dimCounter + " : valor númerico, '*' ou '?', ou favor não númerico para sair");
-            dValue = sc.next();
-            //dValue += sc.nextLine();
-
-            int[] secundaryArray = new int[arrayOfValues.length + 1];
-            System.arraycopy(arrayOfValues, 0, secundaryArray, 0, arrayOfValues.length);
-            try {
-                secundaryArray[secundaryArray.length - 1] = Integer.parseInt(dValue);
-            } catch (Exception e) {
-                if (dValue.equals("?") || dValue.equals("*")) {
-                    secundaryArray[secundaryArray.length - 1] = dValue.charAt(0);
-                } else
-                    break;
-            }
-            arrayOfValues = secundaryArray;
-            dimCounter++;
-        } while (!dValue.toLowerCase().equals("sair") && !dValue.toLowerCase().equals("exit"));
-
-
-        DataCube subCube = dataCube.getSubCube(arrayOfValues);
-
-        int opt = 0;
-
-        do {
-            System.out.println("\n\nPESQUISA NO SUBCUBO:\n");
-            System.out.println("1 - Fazer pesquisa de point querie no subcubo");
-            System.out.println("2 - Fazer pesquisa de subcube querie no subcubo");
-            System.out.println("3 - Mostrar subcubo de dados");
-            System.out.println("4 - Mostrar Tuples individualmente");
-            System.out.println("9 - Sair do subcubo");
-
-            opt = sc.nextInt();
-            switch (opt) {
-                case 1:
-                    fazPesquisaPointQuery(sc, subCube);
-                    break;
-                case 2:
-                    fazPesquisaSubCube(sc, subCube);
-                case 3:
-                    System.out.println(subCube.showDimensions());
-                    break;
-                case 4:
-                    System.out.println(subCube.showIndividualTuples());
-            }
-
-
-        } while (opt != 9);
-
-
-    }
-
-    private static void fazPesquisaPointQuery(Scanner sc, DataCube dataCube) {
-        int[] arrayOfValues = new int[0];
-        String dValue;
-        int M;
-        int dimCounter = 1;
-
-        do {
-            System.out.println("Indique valor para dimensão número " + dimCounter + " : valor númerico, '*' ou '?', ou favor não númerico para sair");
-            dValue = sc.next();
-            //dValue += sc.nextLine();
-
-            int[] secundaryArray = new int[arrayOfValues.length + 1];
-            System.arraycopy(arrayOfValues, 0, secundaryArray, 0, arrayOfValues.length);
-            try {
-                secundaryArray[secundaryArray.length - 1] = Integer.parseInt(dValue);
-            } catch (Exception e) {
-                if (dValue.equals("?") || dValue.equals("*")) {
-                    secundaryArray[secundaryArray.length - 1] = dValue.charAt(0);
-                } else
-                    break;
-            }
-            arrayOfValues = secundaryArray;
-            dimCounter++;
-        } while (!dValue.toLowerCase().equals("sair") && !dValue.toLowerCase().equals("exit"));
-
-
-        System.out.println("Indique valor para obter:\n1 - Lista de Tids dos objetos resultantes\n2- Listar numero de IDs correspondentes");
-        M = sc.nextInt();
-
-        int[] searchResult = dataCube.searchMultipleDimensionsAtOnce(arrayOfValues); //returns array of ids
-        if (M == 1) {
-
-            if (searchResult == null)
-                System.out.println("Número de dimensões colocadas acima das existentes");
-            else
-                printIntArray(searchResult);
-        } else if (M == 2)
-            System.out.println("Tamanho:\t" + searchResult.length);
-
-    }
-
-
-    /**
-     * @param array int[n][4] array
-     * @return Objeto[n] array based on the int array
-
-    private static Objeto[] createObjetoFromIntArray(int[][] array) {
-        Objeto[] objList = new Objeto[array.length];
-
-        for (int i = 0; i < array.length; i++) {
-            objList[i] = new Objeto(array[i][0], array[i][1], array[i][2], array[i][3]);
-        }
-        return objList;
-    }
-
-*/
-
     /**
      * @param filePath path of the database file
-     * @return int[][4] matrix of 4 collumns; Null if any error was found, such as File Not Found Exception
+     * @return int[][] matrix. Null if any exception was found, such as File Not Found Exception
      * Reads a given file name
-     * File specifications:
-     * 1st line: 1 int with the number of objects that will be read -> used to allocate space to the objects arr
-     * other lines: 4 ints separeted with a space (" ") from each other
      */
     public static int[][] readFromDisk(String filePath) {
 

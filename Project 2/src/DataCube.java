@@ -1,8 +1,6 @@
 public class DataCube {
     ShellFragment[] shellFragmentsList;
 
-    public DataCube() {
-    }
 
     /**
      * @param arrayOfValues d1 d1 d1 d1     //as diensões estao ao longo de linhas
@@ -20,7 +18,7 @@ public class DataCube {
                 arr[n] = arrayOfValues[n][i];
             }
 
-            shellFragmentsList[i] = new ShellFragment(arr, sizes[0], sizes[i + 1]);              //cria shell fragment
+            shellFragmentsList[i] = new ShellFragment(arr, sizes[0]);              //cria shell fragment
             System.out.println("Dimension number " + count + " created");
             count++;
             System.gc();
@@ -44,14 +42,6 @@ public class DataCube {
 
     }
 
-
-    public void addShellFragment(ShellFragment newCube) {
-        ShellFragment[] secondaryCubesList = new ShellFragment[this.shellFragmentsList.length + 1];
-        System.arraycopy(this.shellFragmentsList, 0, secondaryCubesList, 0, this.shellFragmentsList.length);
-        secondaryCubesList[secondaryCubesList.length - 1] = newCube;
-        this.shellFragmentsList = secondaryCubesList;
-    }
-
     public StringBuilder showDimensions() {
         StringBuilder str = new StringBuilder();
         int dimension = 1;
@@ -69,9 +59,8 @@ public class DataCube {
         return str;
     }
 
-
     /**
-     * @param instanciations array of instanciated dimensions. the array must not have a bigger lenght than the number of dimensions
+     * @param instanciations array of instanciated dimensions. the array must not have a greater lenght than the number of dimensions
      * @return int array with the IDs of the tuples that have the instantiated characteristics or NULL if the instanciated array has a bigger
      * lenght than the number of dimensions.
      */
@@ -160,7 +149,6 @@ public class DataCube {
     }
 
     /**
-     *
      * @return number of shellfragments/ dimensions
      */
     public int getNumberShellFragments() {
@@ -184,21 +172,48 @@ public class DataCube {
         return str;
     }
 
-    /**
-     *
-     * @return number of tuples
-     */
-    public int getNumberOfTuples(){
-        return shellFragmentsList[0].getAllTIDS().length;
+    public void showAllQueryPossibilities() {
+        StringBuilder str = new StringBuilder();
+        System.out.println(getShellFreagmentSize());
+
+        for (int i = 0; i < shellFragmentsList.length; i++)
+            str.append("D").append(i + 1).append("\t");
+        str.append(":\tN\n");
+
+        System.out.println(str);
+
+        int[] indexList = new int[shellFragmentsList.length];
+        for (int i : indexList)
+            i = 0;
+
+        do {
+            str = new StringBuilder();
+            int[] tuple = searchMultipleDimensionsAtOnce(indexList);
+
+            for (int i : indexList)
+                str.append(i).append("\t");
+            str.append(":\t").append(tuple.length).append("\n");
+
+            for (int i = indexList.length - 1; i >= 0; i--) {
+                if (indexList[i] < getShellFreagmentSize()-1)
+                {
+                    indexList[i]++;
+                    break;
+                }
+                else if(indexList[i] == getShellFreagmentSize())
+                {
+                    indexList[i] = '*';
+                    break;
+                }else
+                    indexList[i] = 0;
+            }
+            System.out.println(str);
+
+        } while (indexList[0] != '*');
+
     }
 
-    /**
-     *
-     * @param   index index of the shell fragment to search on
-     * @return  Biggest value in the scpecified shell fragment
-     *
-     */
-    public int getBiggestValueOfDimension(int index){
-        return shellFragmentsList[index].getBiggestValue();
+    public int getShellFreagmentSize(){
+        return shellFragmentsList[0].values.length;
     }
 }

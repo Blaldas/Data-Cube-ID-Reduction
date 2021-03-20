@@ -9,7 +9,8 @@ public class ShellFragment {
         fillIDList(rawData);                    //completa a matrix 2d idsList
     }
 
-    public ShellFragment(int[] rawData, int size, int cardinality) {
+    public ShellFragment(int[] rawData, int size) {
+
         allocValues(rawData);                   //completa o arrau values
 
         fillIDList(rawData, size);                    //completa a matrix 2d idsList
@@ -18,17 +19,6 @@ public class ShellFragment {
     /**
      * @param rawData array of ints with the raw data of some dimension.
      *                This method puts the IDs of the tuples into the id array,
-     *                the values of the tuple in each collumn are the value as the one stored in the values list with the same index
-     *                Iv1 Iv2 Iv3 Iv4
-     *                Iv1 Iv2 IV3 IV4
-     *                Iv1 Iv2 IV3 IV4
-     *                <p>
-     *                Iv1
-     *                Iv2
-     *                Iv1
-     *                Iv3
-     *                Iv3
-     *                Iv2
      */
     private void fillIDList(int[] rawData) {
 
@@ -118,31 +108,6 @@ public class ShellFragment {
 
 
     /**
-     * @param rawData int array with the raw data of some dimension.
-     * @param size    cardinality of the dimension -> size of the values array
-     */
-    private void allocValues(int[] rawData, int size) {
-        values = new int[size];
-        int count = 0;
-        for (int value : rawData) {                 //para cada um dos valores recibidos
-            boolean existe = false;                   //cria flag de existencia
-            for (int v : values) {              //para cada um dos valores que ja estao guardados
-                if (v == value)                //se ja existir
-                {
-                    existe = true;                    //flag colocada a true
-                    break;                            //para a pesquisa
-                }
-            }
-            if (!existe) {                              //caso nao exista
-                values[count] = value;   //coloca valor na última posição do array
-                count++;
-            }
-
-        }
-    }
-
-
-    /**
      * @param value value of the dimension
      * @return ID list of the tuples with that value, if the value is not found, return null
      */
@@ -167,10 +132,10 @@ public class ShellFragment {
     }
 
     public int[] getValues() {
-        return values;
+        return values.clone();
     }
 
-    public int[] getAllTIDS() {
+    public int[] getAllTIDs() {
         int[] retornable = new int[0];
 
         for (int[] arr : idsList) {
@@ -183,16 +148,5 @@ public class ShellFragment {
         return retornable;
     }
 
-    /**
-     *
-     * @return  Biggest value in this shell fragment
-     */
-    public int getBiggestValue() {
-        int max = values[0];
 
-        for (int val : values)
-            if (val > max)
-                max = val;
-        return max;
-    }
 }

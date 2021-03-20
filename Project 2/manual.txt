@@ -1,0 +1,8 @@
+q <d1> <d2>... 	-> query
+sub	-> realiza as operações sobre o subcubo (se existir)
+main	-> realiza as operações sobre o cubo de dados principal
+show 	-> mostra o cubo de dados por dimensão
+id <id1> <id2>... -> mostra o valor dos tuples nas varias dimensões.
+wrt <path> <numero de elementos> <{valor min de cada dimensão, d2, d3}> <cardinalidade da dimensão> -> cria e escreve num ficheiro esses arrays
+load <path> -> faz load do ficheiro indicado para memoria
+all 	-> mostra todas as combinações de valores no cubo de dados e a sua repetição
