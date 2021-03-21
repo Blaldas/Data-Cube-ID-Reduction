@@ -88,7 +88,7 @@ public class DataCube {
             }
         }
         if (!instanciated) //caso nenhuma dimensão tenha sido instanciada
-            return shellFragmentsList[0].getAllTIDS();
+            return shellFragmentsList[0].getAllTIDs();
 
         return finalList;
 
@@ -162,7 +162,7 @@ public class DataCube {
             str.append("D").append((i + 1)).append("\t");
         str.append("\n");
 
-        for (int id : shellFragmentsList[0].getAllTIDS()) {
+        for (int id : shellFragmentsList[0].getAllTIDs()) {
             str.append(id).append(":\t");
             for (ShellFragment shellFragment : shellFragmentsList) {
                 str.append(shellFragment.getValueFromID(id)).append("\t");
