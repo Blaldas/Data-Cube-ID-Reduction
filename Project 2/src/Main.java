@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Main {
 
     static boolean useMainCube = true;
-    static DataCube dataCube = null, subCube = null;
+    static DataCube mainCube = null, subCube = null;
 
     public static void main(String[] args) {
 
@@ -20,7 +20,7 @@ public class Main {
         load(path);
 
         String input;
-       //showAllRows();
+        //showAllRows();
 
 
         do {
@@ -36,8 +36,6 @@ public class Main {
                 setUseMainCube();
             else if (input.equals("help"))
                 System.out.println("\n\nCommands:\nq <params>\nsub\nmain\nsair/ exit/ x\n\n\n");
-            else if (input.equals("cls") || input.equals("clc") || input.equals("clear"))
-                clearScreen();
             else if (input.equals("show"))
                 showDataCube();
             else if (input.charAt(0) == 'i' && input.charAt(1) == 'd')
@@ -46,12 +44,13 @@ public class Main {
                 createAndWriteNew(input);
             else if (input.charAt(0) == 'l' && input.charAt(1) == 'o' && input.charAt(2) == 'a' && input.charAt(3) == 'd')
                 loadUI(input);
-            else if(input.equals("all"))
+            else if (input.equals("all"))
                 showAllRows();
             else
                 System.out.println("Unknown Command");
 
         } while (!input.toLowerCase().equals("sair") && !input.toLowerCase().equals("exit") && !input.toLowerCase().equals("x") && !input.toLowerCase().equals("quit"));
+
 
 
         /*
@@ -87,13 +86,13 @@ public class Main {
     }
 
     private static void showAllRows() {
-        if(useMainCube)
-            dataCube.showAllQueryPossibilities();
+        if (useMainCube)
+            mainCube.showAllQueryPossibilities();
         else
-           subCube.showAllQueryPossibilities();
+            subCube.showAllQueryPossibilities();
     }
 
-    private static void loadUI(String input){
+    private static void loadUI(String input) {
         String[] str = input.split(" ");
         if (str.length != 2) {
             System.out.println("bad code");
@@ -104,7 +103,7 @@ public class Main {
     }
 
 
-    private static void load(String filename) {
+    private static void load(String filename)   {
 
         Date startDate = new Date(), endDate;
 
@@ -119,14 +118,14 @@ public class Main {
             System.out.println("Error reading the file <" + filename + ">");
             return;
         }
-        dataCube = new DataCube(array, sizes);
+        mainCube = new DataCube(array, sizes);
         endDate = new Date();
         int numSeconds = (int) ((endDate.getTime() - startDate.getTime()) / 1000);
         System.out.println(numSeconds + " Seconds were Used to Load the data");
         System.out.println(sizes[0] + " Tuples Read");
         System.out.println(sizes.length - 1 + " Dimensions loaded");
-        System.out.println(dataCube.getNumberShellFragments() + " Shell Fragments constructed");
-        System.out.println("Number of Dimensions: " + dataCube.shellFragmentsList[0].values.length);
+        System.out.println(mainCube.getNumberShellFragments() + " Shell Fragments constructed");
+        System.out.println("Number of Dimensions: " + mainCube.shellFragmentsList[0].values.length);
     }
 
     /**
@@ -163,7 +162,7 @@ public class Main {
         int numdim;
 
         if (useMainCube)
-            numdim = dataCube.getNumberShellFragments();
+            numdim = mainCube.getNumberShellFragments();
         else
             numdim = subCube.getNumberShellFragments();
 
@@ -201,11 +200,9 @@ public class Main {
      */
     private static void showDataCube() {
         if (useMainCube)
-            System.out.println(dataCube.showDimensions());
-        else if (subCube != null)
-            System.out.println(subCube.showDimensions());
+            System.out.println(mainCube.showDimensions());
         else
-            System.out.println("Não existe subcubo");
+            System.out.println(subCube.showDimensions());
     }
 
     /**
@@ -239,7 +236,7 @@ public class Main {
      */
     public static void newQuery(String input) {
         if (useMainCube)
-            query(input, dataCube);
+            query(input, mainCube);
         else
             query(input, subCube);
     }
@@ -282,11 +279,20 @@ public class Main {
             }
             System.out.println(subCube.showIndividualTuples());
         } else {
-            int[] searchResult = dataCube.searchMultipleDimensionsAtOnce(values); //returns array of ids
-            if (searchResult == null)
-                System.out.println("Bad Query formation");
-            else
-                System.out.println("Query answers:\t" + searchResult.length);
+            if(useMainCube) {
+                int[] searchResult = dataCube.searchMultipleDimensionsAtOnce(values); //returns array of ids
+                if (searchResult == null)
+                    System.out.println("Bad Query formation");
+                else
+                    System.out.println("Query answers:\t" + searchResult.length);
+            }else
+            {
+                int[] searchResult = subCube.searchMultipleDimensionsAtOnce(values); //returns array of ids
+                if (searchResult == null)
+                    System.out.println("Bad Query formation");
+                else
+                    System.out.println("Query answers:\t" + searchResult.length);
+            }
         }
 
 
@@ -298,7 +304,7 @@ public class Main {
      */
     private static int[] mostrarTuplePorID(int index) {
         if (useMainCube)
-            return dataCube.getDimensions(index);
+            return mainCube.getDimensions(index);
         return subCube.getDimensions(index);
 
     }
@@ -353,7 +359,6 @@ public class Main {
     public static int[][] readFromDisk(String filePath) {
 
         int[][] listaObjetos;
-
 
         Path path = Path.of(filePath);
         try {
@@ -465,7 +470,7 @@ public class Main {
         for (int i = 0; i < numberOfElements; i++) {
             StringBuilder str = new StringBuilder();
             for (int n = 0; n < numberOfDimensions.length; n++) {
-                listObjets[i][n] = r.nextInt(cardinality);
+                listObjets[i][n] = r.nextInt(cardinality) + numberOfDimensions[n];
                 str.append(numberOfDimensions[n]).append(" ").append(listObjets[i][n]).append(" ").append(listObjets[i][n] + numberOfDimensions[n]);
                 listObjets[i][n] += numberOfDimensions[n];
                 str.append("\t||\t");
@@ -475,10 +480,7 @@ public class Main {
         writeOnDisk(path, listObjets);
     }
 
-    public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
+
 
 
 }
