@@ -176,6 +176,7 @@ public class DataCube {
         StringBuilder str = new StringBuilder();
         System.out.println(getShellFreagmentSize());
 
+        //mostrar as dimensões
         for (int i = 0; i < shellFragmentsList.length; i++)
             str.append("D").append(i + 1).append("\t");
         str.append(":\tN\n");
@@ -186,34 +187,67 @@ public class DataCube {
         for (int i : indexList)
             i = 0;
 
+
+        int[][] valuesList = new int[shellFragmentsList.length][];
+        //valuesList stores all the shellfragments values by line
+        for (int i = 0; i < shellFragmentsList.length; i++) {
+            valuesList[i] = shellFragmentsList[i].getValues();
+        }
+
+        //stores the values of the dimensions useing indexList as the index for the valuesList
+        int[] beigUsed = new int[shellFragmentsList.length];
+
+        boolean end;
         do {
             str = new StringBuilder();
-            int[] tuple = searchMultipleDimensionsAtOnce(indexList);
 
-            for (int i : indexList)
-                str.append(i).append("\t");
-            str.append(":\t").append(tuple.length).append("\n");
+            //gives to beignUsed the value of the valuesList for the index stated in the indexList, for each dimension
+            for (int i = 0; i < beigUsed.length; i++) {
+                if (indexList[i] != '*')
+                    beigUsed[i] = valuesList[i][indexList[i]];
+                else
+                    beigUsed[i] = indexList[i];
+            }
 
-            for (int i = indexList.length - 1; i >= 0; i--) {
-                if (indexList[i] < getShellFreagmentSize()-1)
+            //seaches the values
+            int[] tuple = searchMultipleDimensionsAtOnce(beigUsed);
+
+            //adds the 'query' values to the string that is going to be shown
+            for (int i : beigUsed)
+                str.append(i).append("\t");                         //adds the values of the tuples
+            str.append(":\t").append(tuple.length).append("\n");    //adds the number of tuples with those values
+            System.out.println(str);
+
+            //cicle to verify if all the indexes is on the last position
+            end = true;
+            for (int i = 0; i < beigUsed.length; i++)
+                if (indexList[i] != (valuesList[i].length - 1)) {
+                    end = false;
+                    break;
+                }
+            if (end)            //if end is true then it should leave the do..while loop.
+                break;
+
+            //the "complicated" loop
+            for (int i = indexList.length - 1; i >= 0; i--) {           //starts from the right to the left
+                if (indexList[i] < valuesList[i].length - 1)            //caso ainda estaja no loop, até chegar à penultima posição (na penultima posição, aumenta para a ultima, onde depois passa para o else seguinte)
                 {
                     indexList[i]++;
                     break;
-                }
-                else if(indexList[i] == getShellFreagmentSize())
-                {
-                    indexList[i] = '*';
-                    break;
-                }else
+                } else if (indexList[i] == valuesList[i].length - 1) {
                     indexList[i] = 0;
+                } else {
+                    System.out.println("Eroo");
+                    System.exit(-999);
+                }
             }
-            System.out.println(str);
 
-        } while (indexList[0] != '*');
+
+        } while (true);     //yhe break condition is inside the loop,m  no need to have it here
 
     }
 
-    public int getShellFreagmentSize(){
+    public int getShellFreagmentSize() {
         return shellFragmentsList[0].values.length;
     }
 }

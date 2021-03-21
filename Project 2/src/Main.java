@@ -174,15 +174,17 @@ public class Main {
 
         for (int i = 1; i < query.length; i++) {
             int[] dimValues = null;
+            boolean exceptionFlag = false;
             str.setLength(0);
             try {
                 dimValues = mostrarTuplePorID(Integer.parseInt(query[i]));
             } catch (Exception e) {
                 System.out.println("Value not recognized: " + query[i]);
+                exceptionFlag = true;
             }
-            if (dimValues == null)
+            if (dimValues == null && !exceptionFlag)
                 System.out.println("Dimension id <" + query[i] + "> was not found");
-            else {
+            else if(!exceptionFlag){
 
                 str.append(query[i]).append("\t|\t");
                 for (int d : dimValues)
