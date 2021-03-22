@@ -214,15 +214,19 @@ public class DataCube {
             int[] tuple = searchMultipleDimensionsAtOnce(beigUsed);
 
             //adds the 'query' values to the string that is going to be shown
-            for (int i : beigUsed)
-                str.append(i).append("\t");                         //adds the values of the tuples
+            for (int i : beigUsed) {
+                if (i != '*')
+                    str.append(i).append("\t");                         //adds the values of the tuples
+                else
+                    str.append('*').append("\t");                         //adds the values of the tuples
+            }
             str.append(":\t").append(tuple.length).append("\n");    //adds the number of tuples with those values
             System.out.println(str);
 
-            //cicle to verify if all the indexes is on the last position
+            //cicle to verify if all the indexes are on the last position
             end = true;
             for (int i = 0; i < beigUsed.length; i++)
-                if (indexList[i] != (valuesList[i].length - 1)) {
+                if (indexList[i] != ('*')) {
                     end = false;
                     break;
                 }
@@ -236,16 +240,18 @@ public class DataCube {
                     indexList[i]++;
                     break;
                 } else if (indexList[i] == valuesList[i].length - 1) {
+                    indexList[i] = '*';
+                    break;
+                } else if (indexList[i] == '*') {
                     indexList[i] = 0;
                 } else {
-                    System.out.println("Eroo");
+                    System.out.println("Erro");
                     System.exit(-999);
                 }
             }
 
 
         } while (true);     //yhe break condition is inside the loop,m  no need to have it here
-
     }
 
     public int getShellFreagmentSize() {
