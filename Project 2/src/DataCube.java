@@ -21,7 +21,7 @@ public class DataCube {
             shellFragmentsList[i] = new ShellFragment(arr, sizes[0]);              //cria shell fragment
             System.out.println("Dimension number " + count + " created");
             count++;
-            System.gc();
+            System.gc();            //calls the garbage collector as an attempt to reduce memory usage
 
         }
 
@@ -110,6 +110,7 @@ public class DataCube {
                     System.arraycopy(retornable, 0, secundary, 0, retornable.length);
                     secundary[secundary.length - 1] = a;
                     retornable = secundary;
+                    break;                                      //acredito ser um melhoramento, se nao for tira-se
                 }
         return retornable;
     }
@@ -134,14 +135,14 @@ public class DataCube {
     }
 
     /**
-     * @param index index value (used as ID) of the tuple/object
+     * @param id index value (used as ID) of the tuple/object
      * @return int[] array with the values of each dimension, if the index is not fdound, returns NULL
      */
-    public int[] getDimensions(int index) {
+    public int[] getDimensions(int id) {
         int[] result = new int[shellFragmentsList.length];                                  //aloca memoria para cada uma das diemns~ºoes
 
         for (int i = 0; i < shellFragmentsList.length; i++) {                                 //para cada uma das dimensões
-            result[i] = shellFragmentsList[i].getValueFromID(index);                        //obtem valor da dimensão tendo em conta o index
+            result[i] = shellFragmentsList[i].getValueFromID(id);                        //obtem valor da dimensão tendo em conta o index
             if (result[i] == -1)
                 return null;
         }
@@ -179,7 +180,7 @@ public class DataCube {
         //mostrar as dimensões
         for (int i = 0; i < shellFragmentsList.length; i++)
             str.append("D").append(i + 1).append("\t");
-        str.append(":\tN\n");
+        str.append(":\t#TUPLES\n");
 
         System.out.println(str);
 

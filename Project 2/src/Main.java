@@ -51,38 +51,6 @@ public class Main {
 
         } while (!input.toLowerCase().equals("sair") && !input.toLowerCase().equals("exit") && !input.toLowerCase().equals("x") && !input.toLowerCase().equals("quit"));
 
-
-
-        /*
-        int opt = 0;
-        do {
-            System.out.println("1 - Fazer pesquisa de point querie");
-            System.out.println("2 - Fazer pesquisa de subcube querie");
-            System.out.println("3 - Mostrar cubo de dados");
-            System.out.println("4 - Mostrar Tuples individualmente");
-            System.out.println("5 - Obter tuple por ID");
-            System.out.println("9 - Sair do programa");
-
-            opt = sc.nextInt();
-            switch (opt) {
-                case 1:
-                    fazPesquisaPointQuery(sc, dataCube);
-                    break;
-                case 2:
-                    fazPesquisaSubCube(sc, dataCube);
-                    break;
-                case 3:
-                    System.out.println(dataCube.showDimensions());
-                    break;
-                case 4:
-                    System.out.println(dataCube.showIndividualTuples());
-                    break;
-                case 5:
-                    mostrarTuplePorID(sc, dataCube);
-            }
-
-        } while (opt != 9);
-*/
     }
 
     private static void showAllRows() {
@@ -481,9 +449,6 @@ public class Main {
         }
         writeOnDisk(path, listObjets);
     }
-
-
-
 
 }
 

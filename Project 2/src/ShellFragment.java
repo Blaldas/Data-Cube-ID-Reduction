@@ -33,7 +33,7 @@ public class ShellFragment {
                     System.arraycopy(idsList[n], 0, idsListSecundario, 0, idsList[n].length);
                     idsListSecundario[idsListSecundario.length - 1] = i;
                     idsList[n] = idsListSecundario;
-
+                    break;
                 }
             }
         }
@@ -44,7 +44,7 @@ public class ShellFragment {
 
         idsList = new int[values.length][0];               //alocamemoria para os ids, para cada um dos vlroes diferentes
 
-        int[] counter = new int[rawData.length];
+        int[] counter = new int[values.length];
         for (int count : counter)
             count = 0;
 
@@ -60,13 +60,14 @@ public class ShellFragment {
                     if (counter[n] < idsListSecundario[n].length) {
                         idsListSecundario[n][counter[n]] = i;
                         counter[n]++;
+                        break;
                     } else {
                         int[] idsListTerciario = new int[idsListSecundario[n].length + 1];
                         System.arraycopy(idsListSecundario[n], 0, idsListTerciario, 0, idsListSecundario[n].length);
                         idsListTerciario[idsListTerciario.length - 1] = i;
                         idsListSecundario[n] = idsListTerciario;
                         counter[n]++;
-
+                        break;
                     }
                 }
             }
@@ -102,7 +103,6 @@ public class ShellFragment {
                 values = val;                        //indica que valores d1 passa a ser novo array
                 values[values.length - 1] = value;   //coloca valor na última posição do array
             }
-
         }
     }
 
