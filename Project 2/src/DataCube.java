@@ -1,5 +1,6 @@
 public class DataCube {
-    ShellFragment[] shellFragmentsList;
+    //ShellFragment[] shellFragmentsList;
+    ShellFragmentsWithIDReduction[] shellFragmentsList;
 
 
     /**
@@ -8,9 +9,15 @@ public class DataCube {
      *                      d3 d3 d3 d3
      */
     public DataCube(int[][] arrayOfValues, int[] sizes) {
-        shellFragmentsList = new ShellFragment[arrayOfValues[0].length];    //aloca memória para todas a dimensões
+        if(arrayOfValues.length == 0)           //dont even tag me on this, i know it should not be here, and i also know I should have made the constructor private for this...
+        {
+            System.out.println("dataCube has no values");
+            return;
+        }
+        //shellFragmentsList = new ShellFragment[arrayOfValues[0].length];    //aloca memória para todas a dimensões
+        shellFragmentsList = new ShellFragmentsWithIDReduction[arrayOfValues[0].length];    //aloca memória para todas a dimensões
         int count = 1;
-        for (int i = 0; i < arrayOfValues[i].length; i++) {       //para cada uma das linas (dimensões)
+        for (int i = 0; i < arrayOfValues[0].length; i++) {       //para cada uma das linas (dimensões)
 
             int[] arr = new int[arrayOfValues.length];          //cria um array com tamanho das linhas
             for (int n = 0; n < arrayOfValues.length; n++)        //copia o vaor de cada linha para novo array
@@ -18,25 +25,39 @@ public class DataCube {
                 arr[n] = arrayOfValues[n][i];
             }
 
-            shellFragmentsList[i] = new ShellFragment(arr, sizes[0]);              //cria shell fragment
+            //shellFragmentsList[i] = new ShellFragment(arr, sizes[0]);              //cria shell fragment
+            shellFragmentsList[i] = new ShellFragmentsWithIDReduction(arr/*, sizes[0]*/);              //cria shell fragment
             System.out.println("Dimension number " + count + " created");
             count++;
-            System.gc();            //calls the garbage collector as an attempt to reduce memory usage
+            //System.gc();            //calls the garbage collector as an attempt to reduce memory usage
 
         }
 
     }
 
     public DataCube(int[][] arrayOfValues) {
-        shellFragmentsList = new ShellFragment[arrayOfValues[0].length];    //aloca memória para todas a dimensões
+        if(arrayOfValues.length == 0)           //dont even tag me on this, i know it should not be here, and i also know I should have made the constructor private for this...
+        {
+            System.out.println("dataCube has no values");
+            return;
+        }
+        //shellFragmentsList = new ShellFragment[arrayOfValues[0].length];    //aloca memória para todas a dimensões
+        shellFragmentsList = new ShellFragmentsWithIDReduction[arrayOfValues[0].length];    //aloca memória para todas a dimensões
 
-        for (int i = 0; i < arrayOfValues[i].length; i++) {       //para cada uma das linas (dimensões)
+        int count = 1;
+        for (int i = 0; i < arrayOfValues[0].length; i++) {       //para cada uma das linas (dimensões)
+
             int[] arr = new int[arrayOfValues.length];          //cria um array com tamanho das linhas
             for (int n = 0; n < arrayOfValues.length; n++)        //copia o vaor de cada linha para novo array
             {
                 arr[n] = arrayOfValues[n][i];
             }
-            shellFragmentsList[i] = new ShellFragment(arr);              //cria shell fragment
+
+            //shellFragmentsList[i] = new ShellFragment(arr);              //cria shell fragment
+            shellFragmentsList[i] = new ShellFragmentsWithIDReduction(arr);              //cria shell fragment
+            System.out.println("Dimension number " + count + " created");
+            count++;
+            //System.gc();            //calls the garbage collector as an attempt to reduce memory usage
 
         }
 
@@ -45,7 +66,8 @@ public class DataCube {
     public StringBuilder showDimensions() {
         StringBuilder str = new StringBuilder();
         int dimension = 1;
-        for (ShellFragment shellFragment : shellFragmentsList) {
+        //for (ShellFragment shellFragment : shellFragmentsList) {
+        for (ShellFragmentsWithIDReduction shellFragment : shellFragmentsList) {
             str.append("Dimension number ").append(dimension).append("\n");
             for (int value : shellFragment.getValues()) {
                 str.append("\nvalue ").append(value).append("\n");
@@ -122,7 +144,7 @@ public class DataCube {
      */
     public DataCube getSubCube(int[] arrayOfValues) {
         int[] tidArrat = this.searchMultipleDimensionsAtOnce(arrayOfValues);            //obtem TIDs resultante
-        if (tidArrat == null)
+        if (tidArrat == null || tidArrat.length == 0)
             return null;
 
         int[][] subCubeValues = new int[tidArrat.length][];                             //aloca memoria array de valores
@@ -165,7 +187,8 @@ public class DataCube {
 
         for (int id : shellFragmentsList[0].getAllTIDs()) {
             str.append(id).append(":\t");
-            for (ShellFragment shellFragment : shellFragmentsList) {
+            //for (ShellFragment shellFragment : shellFragmentsList) {
+            for (ShellFragmentsWithIDReduction shellFragment : shellFragmentsList) {
                 str.append(shellFragment.getValueFromID(id)).append("\t");
             }
             str.append("\n");

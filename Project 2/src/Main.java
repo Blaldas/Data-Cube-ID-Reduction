@@ -17,11 +17,15 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         String path = "obj";
-        load(path);
+        //System.out.println("<path> <faster (T/F)>");        //true usa o 2 args, false usa o 1 args
+        //path = sc.next();
+        //path += sc.nextLine();
+
+        load("path 2");
 
         String input;
         //showAllRows();
-
+        System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
 
         do {
             System.out.println(">");
@@ -46,10 +50,12 @@ public class Main {
                 loadUI(input);
             else if (input.equals("all"))
                 showAllRows();
+            else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
+                break;
             else
                 System.out.println("Unknown Command");
 
-        } while (!input.toLowerCase().equals("sair") && !input.toLowerCase().equals("exit") && !input.toLowerCase().equals("x") && !input.toLowerCase().equals("quit"));
+        } while (true);
 
     }
 
@@ -62,38 +68,60 @@ public class Main {
 
     private static void loadUI(String input) {
         String[] str = input.split(" ");
-        if (str.length != 2) {
+        if (str.length != 3) {
             System.out.println("bad code");
             return;
         }
-        load(str[1]);
+        String toSend = new String();
+        toSend= str[1];
+        toSend += " ";
+        toSend += str[2];
+        load(toSend);
         subCube = null;
     }
 
 
-    private static void load(String filename)   {
+    private static void load(String filename) {
+
+        String[] input = filename.split(" ");
+        if (input.length != 2) {
+            System.out.println("unknow input <" + filename + ">");
+            return;
+        }
 
         Date startDate = new Date(), endDate;
 
-        int[] sizes = getSizes(filename); // guarda valores dos tamanhos-> size[0] -> numero de tuples, size[1...lenght] cardinalidade de cada tuple
-        if (sizes == null) {
-            System.out.println("It was not possible to load the file <" + filename + ">");
-            return;
-        }
+        //true usa o 2 args, false usa o 1 args
+        if (input[1].toLowerCase().equals("f") || input[1].equals("1")) {                 //
+            int[][] array = readFromDisk(input[0]);
+            if (array == null) {
+                System.out.println("Error reading the file <" + input[0] + ">");
+                return;
+            }
+            mainCube = new DataCube(array);
+        } else {                      //true ou 2
+            int[] sizes = getSizes(input[0]); // guarda valores dos tamanhos-> size[0] -> numero de tuples, size[1...lenght] cardinalidade de cada tuple
+            if (sizes == null) {
+                System.out.println("It was not possible to load the file <" + input[0] + ">");
+                return;
+            }
 
-        int[][] array = readFromDisk(filename);
-        if (array == null) {
-            System.out.println("Error reading the file <" + filename + ">");
-            return;
+            int[][] array = readFromDisk(input[0]);
+            if (array == null) {
+                System.out.println("Error reading the file <" + input[0] + ">");
+                return;
+            }
+            mainCube = new DataCube(array, sizes);
         }
-        mainCube = new DataCube(array, sizes);
         endDate = new Date();
-        int numSeconds = (int) ((endDate.getTime() - startDate.getTime()) / 1000);
-        System.out.println(numSeconds + " Seconds were Used to Load the data");
-        System.out.println(sizes[0] + " Tuples Read");
-        System.out.println(sizes.length - 1 + " Dimensions loaded");
-        System.out.println(mainCube.getNumberShellFragments() + " Shell Fragments constructed");
-        System.out.println("Number of Dimensions: " + mainCube.shellFragmentsList[0].values.length);
+        long numSeconds = ((endDate.getTime() - startDate.getTime()));
+        System.gc();
+        System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
+        System.out.println("Tuples Read\t" + mainCube.shellFragmentsList[0].getAllTIDs().length);                  //num tuples
+        System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
+        System.out.println("cardinality\t" + mainCube.getShellFreagmentSize());
+        System.out.println("load end");
+
     }
 
     /**
@@ -152,7 +180,7 @@ public class Main {
             }
             if (dimValues == null && !exceptionFlag)
                 System.out.println("Dimension id <" + query[i] + "> was not found");
-            else if(!exceptionFlag){
+            else if (!exceptionFlag) {
 
                 str.append(query[i]).append("\t|\t");
                 for (int d : dimValues)
@@ -240,23 +268,21 @@ public class Main {
                 }
             }
         }
-
+        Date startDate = new Date(), endDate;
         if (subCubeFlag) {
             subCube = dataCube.getSubCube(values);
             if (subCube == null) {
                 System.out.println("There were no tuples that had such values");
-                return;
-            }
-            System.out.println(subCube.showIndividualTuples());
+            } else
+                System.out.println(subCube.showIndividualTuples());
         } else {
-            if(useMainCube) {
+            if (useMainCube) {
                 int[] searchResult = dataCube.searchMultipleDimensionsAtOnce(values); //returns array of ids
                 if (searchResult == null)
                     System.out.println("Bad Query formation");
                 else
                     System.out.println("Query answers:\t" + searchResult.length);
-            }else
-            {
+            } else {
                 int[] searchResult = subCube.searchMultipleDimensionsAtOnce(values); //returns array of ids
                 if (searchResult == null)
                     System.out.println("Bad Query formation");
@@ -264,6 +290,10 @@ public class Main {
                     System.out.println("Query answers:\t" + searchResult.length);
             }
         }
+        endDate = new Date();
+        long numSeconds = ((endDate.getTime() - startDate.getTime()));
+        System.gc();
+        System.out.println("Miliseconds Used to Load the data\t" + numSeconds);
 
 
     }
@@ -436,18 +466,18 @@ public class Main {
     public static void createAndWriteRandomObjetosList(String path, int numberOfElements, int[] numberOfDimensions, int cardinality) {
         int[][] listObjets = new int[numberOfElements][numberOfDimensions.length];
         Random r = new Random();
-        System.out.println(cardinality);
-        for (int i = 0; i < numberOfElements; i++) {
-            StringBuilder str = new StringBuilder();
-            for (int n = 0; n < numberOfDimensions.length; n++) {
-                listObjets[i][n] = r.nextInt(cardinality) + numberOfDimensions[n];
-                str.append(numberOfDimensions[n]).append(" ").append(listObjets[i][n]).append(" ").append(listObjets[i][n] + numberOfDimensions[n]);
-                listObjets[i][n] += numberOfDimensions[n];
-                str.append("\t||\t");
+        System.out.println("Cardinality " + cardinality);
+        for (int i = 0; i < numberOfElements; i++) {                                //para cada um dos elementos
+            StringBuilder str = new StringBuilder();                                        //cria uma nova stringBuilder
+            for (int n = 0; n < numberOfDimensions.length; n++) {                           //para cada uma das dimensões
+                listObjets[i][n] = r.nextInt(cardinality) + numberOfDimensions[n];              //cria um valor para a dimensão com os numeros indicadosa
+                str.append(listObjets[i][n]);                                                   //adiciona valor criado a string
+                //listObjets[i][n] += numberOfDimensions[n];
+                str.append("\t||\t");                                                            //adiciona barras para efeito visual
             }
-            System.out.println(str);
+            System.out.println(str);                                                        //mostra a stringBuilder criada
         }
-        writeOnDisk(path, listObjets);
+        writeOnDisk(path, listObjets);                                              //escreve no disco
     }
 
 }
