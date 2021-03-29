@@ -67,13 +67,18 @@ public class DataCube {
         StringBuilder str = new StringBuilder();
         int dimension = 1;
         //for (ShellFragment shellFragment : shellFragmentsList) {
-        for (ShellFragmentsWithIDReduction shellFragment : shellFragmentsList) {
-            str.append("Dimension number ").append(dimension).append("\n");
-            for (int value : shellFragment.getValues()) {
-                str.append("\nvalue ").append(value).append("\n");
+        for (ShellFragmentsWithIDReduction shellFragment : shellFragmentsList) {        //pARA cara uma das dimensões
+            str.append("Dimension number ").append(dimension).append("\n");             //mostra numero de dimensão
+            for (int value : shellFragment.getValues()) {                               //para cada um dos valores
+                str.append("\nvalue ").append(value).append("\n");                      //mostra valor
                 str.append("TID List\t");
-                for (int i : shellFragment.getTIDListFromValue(value))
-                    str.append(i).append(" ");
+                for (int[] i : shellFragment.getTIDListFromValueWithIntervals(value))                  //mostra lista de  TIDS
+                {
+                    if(i.length == 1)
+                    str.append(i[0]).append(" ");
+                    else
+                        str.append("{").append(i[0]).append(";").append(i[1]).append("} ");
+                }
             }
             str.append("\n");
             dimension++;
@@ -185,6 +190,7 @@ public class DataCube {
             str.append("D").append((i + 1)).append("\t");
         str.append("\n");
 
+       // System.out.println("hello");
         for (int id : shellFragmentsList[0].getAllTIDs()) {
             str.append(id).append(":\t");
             //for (ShellFragment shellFragment : shellFragmentsList) {
@@ -198,7 +204,6 @@ public class DataCube {
 
     public void showAllQueryPossibilities() {
         StringBuilder str = new StringBuilder();
-        System.out.println(getShellFreagmentSize());
 
         //mostrar as dimensões
         for (int i = 0; i < shellFragmentsList.length; i++)
@@ -280,4 +285,11 @@ public class DataCube {
     public int getShellFreagmentSize() {
         return shellFragmentsList[0].values.length;
     }
+
+    public int getBiggestID(){
+        return shellFragmentsList[0].getBigestID();
+    }
+
+
+
 }

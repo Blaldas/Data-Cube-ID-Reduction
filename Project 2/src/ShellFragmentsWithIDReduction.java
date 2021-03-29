@@ -1,3 +1,6 @@
+import javax.swing.plaf.IconUIResource;
+import java.util.ArrayList;
+
 public class ShellFragmentsWithIDReduction {
 
     int[] values;
@@ -24,30 +27,30 @@ public class ShellFragmentsWithIDReduction {
 
         idsList = new int[values.length][0][0];               //alocamemoria para os ids, para cada um dos vlroes diferentes
 
-        for (int i = 0; i < rawData.length; i++) {
-            for (int n = 0; n < values.length; n++)
-                if (values[n] == rawData[i]) {
+        for (int i = 0; i < rawData.length; i++) {              //para cada um dos valores da dimensão
+            for (int n = 0; n < values.length; n++)                     //para cada uma das dinesões
+                if (values[n] == rawData[i]) {                              //se valor do tuple for igual ao vaor da dimensão
                     if (idsList[n].length == 0) {          //primeiro caso
                         idsList[n] = new int[1][1];
-                        idsList[n][0][0] = rawData[i];
-                    } else if (rawData[i] - getLastValue(n) == 1) {             //acrescimo
+                        idsList[n][0][0] = i;
+                    } else if (i - getLastValue(n) == 1) {             //acrescimo
                         if (idsList[n][idsList[n].length - 1].length == 1) {                    //tem tamanho 1
                             int[] arrSec = new int[2];
                             arrSec[0] = idsList[n][idsList[n].length - 1][0];
-                            arrSec[1] = rawData[i];
+                            arrSec[1] = i;
                             idsList[n][idsList[n].length - 1] = arrSec;
                         } else {                                                                //tem tamanho 2
-                            idsList[n][idsList[n].length - 1][1] = rawData[i];
+                            idsList[n][idsList[n].length - 1][1] = i;
                         }
                     } else {                       // não é primeiro porém tambem não é acrescimo
-                        int[][] arrSecundario = new int[idsList[n].length][0];
+                        int[][] arrSecundario = new int[idsList[n].length + 1][0];      //aloca matrix secundaria com tamanho + 1
 
                         for (int j = 0; j < idsList[n].length; j++) {
                             arrSecundario[j] = new int[idsList[n][j].length];
                             System.arraycopy(idsList[n][j], 0, arrSecundario[j], 0, idsList[n][j].length);
                         }
                         arrSecundario[arrSecundario.length - 1] = new int[1];
-                        arrSecundario[arrSecundario.length - 1][0] = rawData[i];
+                        arrSecundario[arrSecundario.length - 1][0] = i;
                         idsList[n] = arrSecundario;
                     }
 
@@ -154,45 +157,25 @@ public class ShellFragmentsWithIDReduction {
      * @return ID list of the tuples with that value, if the value is not found, return null
      */
     public int[] getTIDListFromValue(int value) {
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++)                         //para cada uma das dimensões
             if (values[i] == value) {
-                int[] retornable = new int[idsList[i].length];
+                int[] retornable = new int[getNumberTIDsFromIndex(i)];
                 int counter = 0;
 
-                for (int n = 0; n < idsList[i].length; n++) {
-
-                    if (idsList[i][n].length == 1) {
-                        if (counter < retornable.length) {
-                            retornable[counter] = idsList[i][n][0];
-                        } else {
-                            int[] secundary = new int[counter + 1];
-                            System.arraycopy(retornable, 0, secundary, 0, retornable.length);
-                            secundary[counter] = idsList[i][n][0];
-                            retornable = secundary;
-                        }
+                for(int[] n : idsList[i]){
+                    if(n.length == 1) {
+                        retornable[counter] = n[0];
                         counter++;
-                        System.gc();
-                    } else {
-                        for (int j = 0; j < (idsList[i][n][1] - idsList[i][n][0]); j++) {
-
-                            if (counter < retornable.length) {
-                                retornable[counter] = idsList[i][n][0] + j;
-                            } else {
-                                int[] secundary = new int[counter + 1];
-                                System.arraycopy(retornable, 0, secundary, 0, retornable.length);
-                                secundary[counter] = idsList[i][n][0] + j;
-                                retornable = secundary;
-                            }
+                    }
+                    else{
+                        for(int j = n[0]; j <= n[1]; j++){
+                            retornable[counter] = j;
                             counter++;
-                            System.gc();
                         }
                     }
-
                 }
-
                 return retornable;
             }
-
         return null;
     }
 
@@ -218,18 +201,91 @@ public class ShellFragmentsWithIDReduction {
         return values.clone();
     }
 
+    /**
+     *
+     * @return returns list with all the ids of the
+     */
     public int[] getAllTIDs() {
-        int[] retornable = new int[0];
+/*
+        int size = 0;
+        int count =0;
+
+        for(int i=0; i < values.length; i++)
+            size += getNumberTIDsFromIndex(i);
+        
+        int[] retornable = new int[size];
 
         for (int value : values) {
-            int[] secondary = new int[retornable.length + getTIDListFromValue(value).length];
-            System.arraycopy(retornable, 0, secondary, 0, retornable.length);
-            System.arraycopy(getTIDListFromValue(value), 0, secondary, retornable.length, getTIDListFromValue(value).length);
-            retornable = secondary;
+            int[] valueList = getTIDListFromValue(value);
+            System.arraycopy(valueList, 0, retornable, count, valueList.length);
+            count += valueList.length;
         }
+*/
+        int[] retornable = new int[getBigestID() + 1];
+
+        for(int i = 0; i < retornable.length; i++)
+            retornable[i] = i;
 
         return retornable;
     }
 
 
+    /**
+     * @param index position to be looked for on the idsList
+     * @return number of ids represented in that lne
+     * <p>
+     * This method can be used to know how many spaces to alloc in a lot of scenerarios.+
+     */
+    private int getNumberTIDsFromIndex(int index) {
+        int count = 0;
+
+        for (int[] i : idsList[index])
+            if (i.length == 1)
+                count++;
+            else
+                count += (i[1] - i[0]) + 1;
+
+        return count;
+
+    }
+
+
+    public void Teste() {
+        for (int i = 0; i < values.length; i++) {
+            StringBuilder str = new StringBuilder();
+            str.append("valor\t").append(values[i]).append("\nids\t");
+            for (int n = 0; n < idsList[i].length; n++) {
+                if (idsList[i][n].length == 1) {
+                    str.append(idsList[i][n][0]).append(" ");
+                } else {
+                    str.append("{ ").append(idsList[i][n][0]).append(" ; ").append(idsList[i][n][1]).append(" } ");
+                }
+            }
+            System.out.println(str);
+        }
+    }
+
+
+    /**
+     *
+     * @return biggest ID in the list
+     */
+    public int getBigestID() {
+        int max = 0;
+
+        for (int[][] ints : idsList) {
+            if (max < ints[ints.length - 1][ints[ints.length - 1].length - 1]) {
+                max = ints[ints.length - 1][ints[ints.length - 1].length - 1];
+            }
+        }
+        return max;
+    }
+
+    public int[][] getTIDListFromValueWithIntervals(int value) {
+
+        for (int n = 0; n < values.length; n++)
+            if (value == values[n])
+                return idsList[n];
+        return new int[0][0];
+    }
 }

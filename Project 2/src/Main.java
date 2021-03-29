@@ -3,6 +3,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLOutput;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -21,12 +22,12 @@ public class Main {
         //path = sc.next();
         //path += sc.nextLine();
 
-        load("path 2");
+        load("path 1");
 
         String input;
         //showAllRows();
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
-
+        System.out.println(Arrays.toString(mainCube.shellFragmentsList[0].getTIDListFromValue(4)));
         do {
             System.out.println(">");
             input = sc.next();
@@ -72,22 +73,28 @@ public class Main {
             System.out.println("bad code");
             return;
         }
-        String toSend = new String();
+        String toSend;
         toSend= str[1];
         toSend += " ";
         toSend += str[2];
         load(toSend);
         subCube = null;
+
+
+        mainCube.shellFragmentsList[1].Teste();
+
     }
 
 
     private static void load(String filename) {
+
 
         String[] input = filename.split(" ");
         if (input.length != 2) {
             System.out.println("unknow input <" + filename + ">");
             return;
         }
+        System.out.println("Loading <"+input[0]+">...");
 
         Date startDate = new Date(), endDate;
 
@@ -117,7 +124,7 @@ public class Main {
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
         System.gc();
         System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
-        System.out.println("Tuples Read\t" + mainCube.shellFragmentsList[0].getAllTIDs().length);                  //num tuples
+        System.out.println("Tuples Read\t" +( mainCube.getBiggestID()+1));                  //num tuples
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
         System.out.println("cardinality\t" + mainCube.getShellFreagmentSize());
         System.out.println("load end");
