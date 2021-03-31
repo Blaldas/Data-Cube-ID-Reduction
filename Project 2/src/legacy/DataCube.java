@@ -403,4 +403,8 @@ public class DataCube {
     public int getShellFreagmentSize() {
         return shellFragmentsList[0].values.length;
     }
+
+    public int getNumberTuples() {
+        return shellFragmentsList[0].getAllTIDs().length;
+    }
 }

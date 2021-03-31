@@ -126,6 +126,9 @@ public class Main {
         //System.out.println("Tuples Read\t" +( mainCube.getBiggestID()+1));                  //num tuples
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
         System.out.println("cardinality\t" + mainCube.getShellFreagmentSize());
+        System.out.println("number of tuples loaded\t" + mainCube.getNumberTuples());
+
+
         System.out.println("load end");
 
     }
