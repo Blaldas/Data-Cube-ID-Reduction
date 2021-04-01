@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        String path = "obj";
+        String path = "path";
         //System.out.println("<path> <faster (T/F)>");        //true usa o 2 args, false usa o 1 args
         //path = sc.next();
         //path += sc.nextLine();

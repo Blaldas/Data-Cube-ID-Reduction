@@ -16,6 +16,7 @@ public class DataCube {
             for (int d = 0; d < rawData.length; d++) {
                 dimensionalValues[d] = rawData[d][i];
             }
+           // shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0]);
             shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0]);
             System.out.println("Dimension number " + (i + 1) + " created");
         }
@@ -50,10 +51,9 @@ public class DataCube {
         int[] retornable = new int[0];
         for (int i = 0; i < query.length; i++) {
             if (query[i] != '*' && query[i] != '?') {
-                int[] secundary = shellFragmentList[i].getTidsListFromValue(query[i]);
-                if (secundary.length == 0) {
+                int[] secundary = shellFragmentList[i].getTidsListFromValue(query[i]);      //obtem lista de tids
+                if (secundary.length == 0)                                      //se a lista for vazia, devolve null
                     return secundary;
-                }
                 if (retornable.length == 0)
                     retornable = secundary;
                 else {
@@ -63,7 +63,7 @@ public class DataCube {
                 }
             }
         }
-
+        //caso todas tenham valor '?' ou '*'
         if (retornable.length == 0)
             return shellFragmentList[0].getAllTids();
         return retornable;
@@ -78,17 +78,21 @@ public class DataCube {
      * @return the array with the tids existing in both arrays received
      */
     private int[] intersect(int[] first, int[] second) {
-        int[] retornable = new int[0];
-        int[] secundary;
-        for (int a : first)
-            for (int b : second)
-                if (a == b) {
-                    secundary = new int[retornable.length + 1];
-                    System.arraycopy(retornable, 0, secundary, 0, retornable.length);
-                    secundary[secundary.length - 1] = a;
-                    retornable = secundary;
+        int[] retornable;
+        int[] secundary = first.length < second.length ? new int[first.length] : new int[second.length];
+        int counter = 0;
+
+        for (int a : first){                        //para cada um dos valores do array 1
+            for (int b : second) {                      //para cada um dos valores do array 2
+                if (a == b) {                               //se ambos valores forem iguais
+                    secundary[counter] = a;                     //valor A é adicionado
+                    counter++;
                     break;
                 }
+            }
+        }
+        retornable = new int[counter];
+        System.arraycopy(secundary, 0, retornable, 0, counter);
         return retornable;
     }
 
@@ -113,7 +117,10 @@ public class DataCube {
         int[] tidArrat = this.pointQuerySeach(values);            //obtem TIDs resultante
 
         if (tidArrat == null || tidArrat.length == 0)
+        {
+            System.out.println("no values found");
             return;
+        }
 
 
         int[][] subCubeValues = new int[tidArrat.length][];                             //aloca memoria array de valores
@@ -125,12 +132,10 @@ public class DataCube {
         showQueryDataCube(values, subCubeValues);        // a nova função que mostra as coisas
 
 
-
     }
 
     /**
-     *
-     * @param qValues the query
+     * @param qValues       the query
      * @param subCubeValues "subcube" values
      */
     private void showQueryDataCube(int[] qValues, int[][] subCubeValues) {
@@ -150,7 +155,7 @@ public class DataCube {
 
         int rounds = 0;
         do {
-            for (int i = 0; i < counter.length; i++)     //da os valores *as queries
+            for (int i = 0; i < counter.length; i++)     //da os valores as queries
                 query[i] = values[i][counter[i]];
 
 
@@ -177,10 +182,10 @@ public class DataCube {
         int[][] result = new int[subCubeValues[0].length][0];
 
         for (int i = 0; i < queryValues.length; i++) {               //para cada uma das dimensões
-            if (queryValues[i] == '?') { ;
-                result[i]= new int[shellFragmentList[i].getAllValues().length + 1];
-                result[i] = shellFragmentList[i].getAllValues();
-                result[i][result[i].length-1] = '*';
+            if (queryValues[i] == '?') {
+                result[i] = new int[shellFragmentList[i].getAllValues().length + 1];
+                System.arraycopy(shellFragmentList[i].getAllValues(), 0, result[i], 1, shellFragmentList[i].getAllValues().length);
+                result[i][0] = '*';
             } else {
                 result[i] = new int[]{queryValues[i]};
             }

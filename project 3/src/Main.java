@@ -15,12 +15,12 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        String path = "obj";
+        String path = "path";
         //System.out.println("<path> <faster (T/F)>");        //true usa o 2 args, false usa o 1 args
         //path = sc.next();
         //path += sc.nextLine();
 
-        load("path");
+        load(path);
 
         String input;
         //mainCube.showAllDimensions();
@@ -161,7 +161,7 @@ public class Main {
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
         System.gc();
-        System.out.println("Miliseconds Used to Load the data\t" + numSeconds);
+        System.out.println("Query executed in " + numSeconds+ " ms.");
 
 
     }

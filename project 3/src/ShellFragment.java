@@ -20,6 +20,7 @@ public class ShellFragment {
         matrix = new int[upper - lower + 1][0];
 
         fillMatrix(rawData, size);
+        System.gc();
     }
 
     private void fillMatrix(int[] rawData) {
@@ -35,7 +36,7 @@ public class ShellFragment {
         int[] counter = new int[matrix.length];
         int[][] secundary = new int[matrix.length][0];
         for (int i = 0; i <secundary.length; i++)
-            secundary[i] = new int[size / 2];
+            secundary[i] = new int[size/8];
 
         for (int i = 0; i < rawData.length; i++) {                                                                          //para cada uma dos tuples
             if(counter[rawData[i] - lower] < secundary[rawData[i] - lower].length){                                      //caso ainda haja espaço
