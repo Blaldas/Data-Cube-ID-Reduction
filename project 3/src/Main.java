@@ -150,9 +150,7 @@ public class Main {
 
         Date startDate = new Date(), endDate;           //incia as datas para fazer contagem do tempo
         if (subCubeFlag) {                  //caso seja um subcube
-
             dataCube.getSubCube(values);
-
         } else {
             int[] searchResult = dataCube.pointQuerySeach(values); //returns array of ids
             if (searchResult == null)

@@ -47,7 +47,6 @@ public class DataCube {
         if (query.length != shellFragmentList.length)
             return null;
 
-
         int[] retornable = new int[0];
         for (int i = 0; i < query.length; i++) {
             if (query[i] != '*' && query[i] != '?') {
@@ -64,8 +63,7 @@ public class DataCube {
                 }
             }
         }
-        int a = 1, b = 2;
-        System.out.println(a + b);
+
         if (retornable.length == 0)
             return shellFragmentList[0].getAllTids();
         return retornable;
