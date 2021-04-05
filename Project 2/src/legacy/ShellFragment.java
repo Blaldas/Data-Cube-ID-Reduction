@@ -18,6 +18,13 @@ public class ShellFragment {
         fillIDList(rawData, size);                    //completa a matrix 2d idsList
     }
 
+    public ShellFragment(int[] rawData, int size, int i) {
+
+        allocValues(rawData);                   //completa o arrau values
+
+        fillIDList(rawData, size, i);                    //completa a matrix 2d idsList
+    }
+
     /**
      * @param rawData array of ints with the raw data of some dimension.
      *                This method puts the IDs of the tuples into the id array,
@@ -51,7 +58,7 @@ public class ShellFragment {
             count = 0;
 
         //System.out.println(rawData.length);
-        int[][] idsListSecundario = new int[values.length][size / 2];
+        int[][] idsListSecundario = new int[values.length][size / 5];
 
 
         for (int i = 0; i < rawData.length; i++) {             //para cada um dos valores dos dados originais
@@ -82,6 +89,56 @@ public class ShellFragment {
         }
 
     }
+
+
+    //poupa 50% do tempo, mas gasta memoria à parva
+    private void fillIDList(int[] rawData, int size, int num) {
+
+        idsList = new int[values.length][0];               //alocamemoria para os ids, para cada um dos vlroes diferentes
+
+        int[] counter = new int[values.length];
+        for (int count : counter)
+            count = 0;
+
+        //System.out.println(rawData.length);
+        int[][] idsListSecundario;
+        if (num > 9 && num < 54)
+            idsListSecundario = new int[values.length][size];
+        else if (num <= 9)
+            idsListSecundario = new int[values.length][size / 10];
+        else
+            idsListSecundario = new int[values.length][size / 2];
+
+
+        for (int i = 0; i < rawData.length; i++) {             //para cada um dos valores dos dados originais
+
+            for (int n = 0; n < values.length; n++) {          //para cada um dos valores da dimensão
+                if (rawData[i] == values[n])                 //se o valor da dimensão for igual ao valor dos dados
+                {
+                    if (counter[n] < idsListSecundario[n].length) {
+                        idsListSecundario[n][counter[n]] = i;
+                        counter[n]++;
+                        break;
+                    } else {
+                        int[] idsListTerciario = new int[idsListSecundario[n].length + 1];
+                        System.arraycopy(idsListSecundario[n], 0, idsListTerciario, 0, idsListSecundario[n].length);
+                        idsListTerciario[idsListTerciario.length - 1] = i;
+                        idsListSecundario[n] = idsListTerciario;
+                        counter[n]++;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        for (int i = 0; i < idsListSecundario.length; i++) {
+            idsList[i] = new int[counter[i]];
+            System.arraycopy(idsListSecundario[i], 0, idsList[i], 0, idsList[i].length);
+        }
+
+    }
+
 
     /**
      * @param rawData int array with the raw data of some dimension.

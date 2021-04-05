@@ -3,7 +3,6 @@ package legacy;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -17,14 +16,14 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        String path = "path";
-        //System.out.println("<path> <faster (T/F)>");        //true usa o 2 args, false usa o 1 args
-        //path = sc.next();
-        //path += sc.nextLine();
+        String path = "";
 
-        load("path 2");
+
+        //load("path 2");
 
         String input;
+        //mainCube.showBiggestValue();
+
         //showAllRows();
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
         do {
@@ -73,7 +72,7 @@ public class Main {
             return;
         }
         String toSend;
-        toSend= str[1];
+        toSend = str[1];
         toSend += " ";
         toSend += str[2];
         load(toSend);
@@ -93,7 +92,7 @@ public class Main {
             System.out.println("unknow input <" + filename + ">");
             return;
         }
-        System.out.println("Loading <"+input[0]+">...");
+        System.out.println("Loading <" + input[0] + ">...");
 
         Date startDate = new Date(), endDate;
 
@@ -117,6 +116,9 @@ public class Main {
                 System.out.println("Error reading the file <" + input[0] + ">");
                 return;
             }
+            //System.out.println("array");
+            //writeOnDisk("lmao", array);
+            //System.exit(0);
             mainCube = new DataCube(array, sizes);
         }
         endDate = new Date();
@@ -372,8 +374,9 @@ public class Main {
         int[][] listaObjetos;
 
         Path path = Path.of(filePath);
+        String line = null;
         try {
-            String line = null;                                         //the information will be read here
+            //the information will be read here
             String[] values;
             //int [] sizes;       //size[0] -> num of tuple //else num of diferent values
 
@@ -403,11 +406,14 @@ public class Main {
                 listaObjetos[i] = new int[values.length];
                 for (int n = 0; n < values.length; n++)
                     listaObjetos[i][n] = Integer.parseInt(values[n]);
+
+
                 //System.out.println(i);
             }
             reader.close();
             in.close();
         } catch (Exception e) {             //in case there is any eception
+            System.out.println(line);
             e.printStackTrace();
             return null;
         }
@@ -425,11 +431,36 @@ public class Main {
      */
     public static void writeOnDisk(String filePath, int[][] array) {
 
+        System.out.println("jm nedwcjkn");
         try {
             FileWriter writer = new FileWriter(filePath, false);
             BufferedWriter bw = new BufferedWriter(writer);
 
             StringBuilder str = new StringBuilder();
+            for (int i = 0; i < array[0].length; i++) {
+                boolean menorFlag = false;
+                boolean zeroFlag = false;
+                for (int n = 0; n < array.length; n++) {
+                    if (array[n][i] < 0) {
+                        menorFlag = true;
+                        break;
+                    }
+                    if (array[n][i] == 0) {
+                        zeroFlag = true;
+                        break;
+                    }
+                }
+                if (menorFlag)
+                    for (int n = 0; n < array.length; n++) {
+                        array[n][i] += 200;
+                    }
+                if (zeroFlag)
+                    for (int n = 0; n < array.length; n++) {
+                        array[n][i] += 1;
+                        System.out.println("zero");
+                    }
+            }
+
 
             str.append(array.length).append(" ");        //escreve tamanho do array
 
@@ -441,7 +472,7 @@ public class Main {
                         max = array[n][i];
 
                 str.append(max).append(" ");
-                ;
+
             }
 
             bw.write(str.toString() + "\n");
@@ -491,6 +522,18 @@ public class Main {
         writeOnDisk(path, listObjets);                                              //escreve no disco
     }
 
+
+    public static void escreveCuboEmDisco() {
+        int[][] escrever = new int[mainCube.getNumberTuples()][mainCube.getNumberShellFragments()];
+
+
+        for (int i = 0; i < escrever.length; i++) {
+            escrever[i] = mainCube.getDimensions(i);
+        }
+        System.out.println("obteve resultados");
+        writeOnDisk("result", escrever);
+
+    }
 }
 
 

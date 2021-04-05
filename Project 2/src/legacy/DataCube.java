@@ -23,10 +23,9 @@ public class DataCube {
             shellFragmentsList[i] = new ShellFragment(arr, sizes[0]);              //cria shell fragment
             System.out.println("Dimension number " + count + " created");
             count++;
-            System.gc();            //calls the garbage collector as an attempt to reduce memory usage
+            //System.gc();            //calls the garbage collector as an attempt to reduce memory usage
 
         }
-
     }
 
     public DataCube(int[][] arrayOfValues) {
@@ -131,7 +130,6 @@ public class DataCube {
         int[] tidArrat = this.searchMultipleDimensionsAtOnce(arrayOfValues);            //obtem TIDs resultante
         if (tidArrat == null || tidArrat.length == 0)
             return null;
-
         int[][] subCubeValues = new int[tidArrat.length][];                             //aloca memoria array de valores
 
         for (int i = 0; i < subCubeValues.length; i++) {                                     //para cada um dos IDs de tuples que respeita o pedido
@@ -158,20 +156,11 @@ public class DataCube {
 
         int[][] values = getAllDifferentValues(subCubeValues, queryValues);      //guarda todos os valores diferentes para cada dimensão
 
-        StringBuilder str = new StringBuilder();
-        for (int[] d : values) {
-            for (int i : d)
-                str.append(i).append(" ");
-            str.append("\n");
-        }
-        System.out.println(str);
-        System.out.println("...");
 
         int total = 1;                              //guarda o numero de conbinações difrerentes
-        for (int[] d : values) {
+        for (int[] d : values)
             total *= (d.length);
-        }
-//___________
+
         int rounds = 0;
         do {
             for (int i = 0; i < counter.length; i++)     //da os valores *as queries
@@ -182,7 +171,7 @@ public class DataCube {
             getNumeroDeTuplesComCaracteristicas(query, subCubeValues);// faz pesquisa sobre esses valores
 
             //gere os counters
-            for (int i = 0; i < counter.length; i++) {              //para cada um dos counter
+            for (int i = counter.length-1; i >= 0; i--) {              //para cada um dos counter
                 if (counter[i] < values[i].length - 1) {
                     counter[i]++;
                     break;
@@ -205,14 +194,6 @@ public class DataCube {
      */
     private int[][] getAllDifferentValues(int[][] subCubeValues, int[] queryValues) {
         int[][] result = new int[subCubeValues[0].length][0];
-        StringBuilder str = new StringBuilder();
-        for(int[] d: subCubeValues){
-            for(int i : d)
-                str.append(i).append("\t");
-            str.append("\n");
-        }
-        System.out.println(str);
-        System.out.println(queryValues.length);
 
 
         for (int i = 0; i < queryValues.length; i++) {               //para cada uma das dimensões
@@ -268,12 +249,14 @@ public class DataCube {
             if (flagEqual)                                                          //se for tudo igual
                 count++;                                                                    //aumenta o contador
         }
+        if(count == 0)
+            return;
         StringBuilder str = new StringBuilder();                            //obtem os dados e mostra
         for (int i : query)
             if (i != '*')
-                str.append(i).append("\t");
+                str.append(i).append(" ");
             else
-                str.append("*\t");
+                str.append("* ");
         str.append(":\t").append(count);
         System.out.println(str);
 
@@ -406,5 +389,16 @@ public class DataCube {
 
     public int getNumberTuples() {
         return shellFragmentsList[0].getAllTIDs().length;
+    }
+
+    public void showBiggestValue() {
+        for(int i =0 ; i < shellFragmentsList.length; i++){
+            System.out.println(shellFragmentsList[i].getValues().length);
+
+
+        }
+        System.out.println("num dims\t" + shellFragmentsList.length);
+        System.out.println("num tuples\t" + getNumberTuples());
+
     }
 }
