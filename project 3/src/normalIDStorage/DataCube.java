@@ -14,12 +14,12 @@ public class DataCube {
 
         for (int i = 0; i < rawData[0].length; i++) {
             int[] dimensionalValues = new int[rawData.length];
-
             for (int d = 0; d < rawData.length; d++) {
                 dimensionalValues[d] = rawData[d][i];
             }
-           // shellFragmentList[i] = ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0]);
-            shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0], i);
+
+            shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0]);
+            //shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0], i);
             System.out.println("Dimension number " + (i + 1) + " created");
         }
     }
@@ -79,7 +79,7 @@ public class DataCube {
      * @param second array of tids
      * @return the array with the tids existing in both arrays received
      */
-    private int[] intersect(int[] first, int[] second) {
+    /*private int[] intersect(int[] first, int[] second) {
         int[] retornable;
         int[] secundary = first.length < second.length ? new int[first.length] : new int[second.length];
         int counter = 0;
@@ -96,6 +96,41 @@ public class DataCube {
         retornable = new int[counter];
         System.arraycopy(secundary, 0, retornable, 0, counter);
         return retornable;
+    }
+    */
+
+    /**
+     *
+     * @param arrayA
+     * @param arrayB
+     * @return
+     *
+     * chamar conuntos com o menor numero de tuples possivel
+     */
+    private static int[] intersect(int[] arrayA, int[] arrayB) {
+
+        int[] c = new int[Math.min(arrayA.length, arrayB.length)];
+        int ai = 0, bi = 0, ci = 0;
+
+        while (ai < arrayA.length && bi < arrayB.length) {
+            if (arrayA[ai] == arrayB[bi]) {
+
+                if (ci == 0 || arrayA[ai] != c[ci - 1]) {
+                    if (arrayA[ai] != 0) {
+                        c[ci++] = arrayA[ai];
+                    }
+                }
+                ai++;
+                bi++;
+            } else if (arrayA[ai] > arrayB[bi]) {
+                bi++;
+            } else if (arrayA[ai] < arrayB[bi]) {
+                ai++;
+            }
+        }
+
+        return Arrays.copyOfRange(c, 0, ci);
+
     }
 
 

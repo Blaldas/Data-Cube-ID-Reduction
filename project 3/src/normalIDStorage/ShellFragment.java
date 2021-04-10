@@ -19,10 +19,9 @@ public class ShellFragment {
         this.lower = lower;
         this.upper = upper;
 
-        matrix = new int[upper - lower + 1][0];
+        matrix = new int[upper - lower + 1][1000000];
 
         fillMatrix(rawData, size);
-        System.gc();
     }
 
     ShellFragment(int[] rawData, int lower, int upper, int size, int num) {
@@ -31,8 +30,7 @@ public class ShellFragment {
 
         matrix = new int[upper - lower + 1][0];
 
-        fillMatrix(rawData, size, num);
-        System.gc();
+        fillMatrix(rawData, size);
     }
 
 
@@ -49,7 +47,7 @@ public class ShellFragment {
         int[] counter = new int[matrix.length];
         int[][] secundary = new int[matrix.length][0];
         for (int i = 0; i < secundary.length; i++)
-            secundary[i] = new int[size / 8];
+            secundary[i] = new int[size];
 
         for (int i = 0; i < rawData.length; i++) {                                                                          //para cada uma dos tuples
             if (counter[rawData[i] - lower] < secundary[rawData[i] - lower].length) {                                      //caso ainda haja espaço
@@ -108,6 +106,7 @@ public class ShellFragment {
     public int[] getTidsListFromValue(int value) {
         if (value > upper || value < lower)
             return new int[0];
+
         return matrix[value - lower];
     }
 

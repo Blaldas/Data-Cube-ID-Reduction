@@ -18,10 +18,10 @@ public class DataCube {
             for (int d = 0; d < rawData.length; d++)
                 dimensionalValues[d] = rawData[d][i];
 
-            //shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0]);
-            shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0], i);
+            shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0]);
+            //shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0], i);
             //shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1]);
-            System.out.println("\nDimension number " + (i + 1) + " created");
+            System.out.println("Dimension number " + (i + 1) + " created");
         }
     }
 
@@ -56,7 +56,8 @@ public class DataCube {
             if (query[i] != '*' && query[i] != '?') {
                 int[] secundary = shellFragmentList[i].getTidsListFromValue(query[i]);      //obtem lista de tids
                 if (secundary.length == 0)                                      //se a lista for vazia, devolve null
-                    return secundary;
+                return secundary;
+
                 if (retornable.length == 0)
                     retornable = secundary;
                 else {
@@ -96,6 +97,7 @@ public class DataCube {
         }
         retornable = new int[counter];
         System.arraycopy(secundary, 0, retornable, 0, counter);
+
         return retornable;
     }
 

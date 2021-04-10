@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        String path = "lmao";
+        String path = "path";
 
         load(path);
 
@@ -40,14 +40,12 @@ public class Main {
                 break;
             else
                 System.out.println("Unknown Command");
-
         } while (true);
 
     }
 
 
     private static void load(String filename) {
-
 
         System.out.println("Loading <" + filename + ">...");
 

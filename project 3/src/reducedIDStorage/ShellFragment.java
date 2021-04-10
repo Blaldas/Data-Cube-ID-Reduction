@@ -71,7 +71,7 @@ public class ShellFragment {
         int[] counter = new int[matrix.length];                                 //cria array counter
         int[][][] secundary = new int[matrix.length][][];                      //cria array secundário com  numero de valores
         for (int i = 0; i < secundary.length; i++)                              //para cada linha
-            secundary[i] = new int[size / 8][1];                                //aloca size/x innicialmente
+            secundary[i] = new int[size / 10][1];                                //aloca size/x innicialmente
 
         for (int i = 0; i < rawData.length; i++) {                                  //para cada uma dos tuples
             if (counter[rawData[i] - lower] < secundary[rawData[i] - lower].length) {          //caso ainda haja espaço no buffer inicial
@@ -209,36 +209,41 @@ public class ShellFragment {
         if (value > upper || value < lower)
             return new int[0];
 
-        int[] returnable = new int[matrix[value - lower].length];
+        int[] secundary = new int[matrix[value - lower].length * 2];
+
         int counter = 0;
 
         for (int i = 0; i < matrix[value - lower].length; i++) {                    //para cada um dos ids do valor pedido
             if (matrix[value - lower][i].length == 1) {                                 //caso tenha length 1
-                if (counter < returnable.length) {                                              //caso esteja no buffer inicial
-                    returnable[counter] = matrix[value - lower][i][0];                          //adiona o valor ao array
+                if (counter < secundary.length) {                                              //caso esteja no buffer inicial
+                    secundary[counter] = matrix[value - lower][i][0];                          //adiona o valor ao array
                     counter++;                                                                  //aumenta o contador
                 } else {                                                                //caso o buffer inicial este cheio
-                    int[] secundary = new int[returnable.length + 1];                               //aloca memoria para um novo array com tamanho +1
-                    System.arraycopy(returnable, 0, secundary, 0, returnable.length);   //copia valores para o novo array
-                    secundary[secundary.length - 1] = matrix[value - lower][i][0];                   //adiciona novo valor ao array
-                    returnable = secundary;                                                          //coloca array velho a apontar para o novo
+                    int[] terciary = new int[secundary.length + 1];                               //aloca memoria para um novo array com tamanho +1
+                    System.arraycopy(secundary, 0, terciary, 0, secundary.length);   //copia valores para o novo array
+                    terciary[terciary.length - 1] = matrix[value - lower][i][0];                   //adiciona novo valor ao array
+                    secundary = terciary;                                                          //coloca array velho a apontar para o novo
                     counter++;                                                                       //aumenta o contador
                 }
             } else {                                                                //caso tenha length 2
                 for (int n = matrix[value - lower][i][0]; n <= matrix[value - lower][i][1]; n++) { //para cada um dos valores que se encontram no intervalor
-                    if (counter < returnable.length) {                                                       //caso esteja no buffer inicial
-                        returnable[counter] = n;                                                             //adiciona valor ao array
+                    if (counter < secundary.length) {                                                       //caso esteja no buffer inicial
+                        secundary[counter] = n;                                                             //adiciona valor ao array
                         counter++;                                                                           //aumenta o contador
                     } else {                                                                        //caso o buffer inicial este cheio
-                        int[] secundary = new int[returnable.length + 1];                                   //cria array secundario com tamanho +1
-                        System.arraycopy(returnable, 0, secundary, 0, returnable.length);       //copia valores para o array secundário
-                        secundary[secundary.length - 1] = n;                                                  //coloca valor no novo array
-                        returnable = secundary;
+                        int[] terciary = new int[secundary.length + 1];                                   //cria array secundario com tamanho +1
+                        System.arraycopy(secundary, 0, terciary, 0, secundary.length);       //copia valores para o array secundário
+                        terciary[terciary.length - 1] = n;                                                  //coloca valor no novo array
+                        secundary = terciary;
                         counter++;
                     }
                 }
             }
         }
+
+        int[] returnable = new int[counter];
+
+        System.arraycopy(secundary, 0, returnable, 0, counter);
         return returnable;
     }
 
