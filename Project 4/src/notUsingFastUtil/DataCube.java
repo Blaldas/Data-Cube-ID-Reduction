@@ -3,6 +3,7 @@ package notUsingFastUtil;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 
 import java.util.Arrays;
+import java.util.Date;
 
 public class DataCube {
 
@@ -15,14 +16,8 @@ public class DataCube {
         this.lower = lowerValue;
 
         for (int i = 0; i < rawData[0].length; i++) {
-            int[] dimensionalValues = new int[rawData.length];
-            for (int d = 0; d < rawData.length; d++) {
-                dimensionalValues[d] = rawData[d][i];
-            }
-            System.out.println(dimensionalValues.length);
-            shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1]);
-            //shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1], maxValue[0], i);
-            System.out.println("Dimension number " + (i + 1) + " created");
+            shellFragmentList[i] = new ShellFragment(rawData, i, lowerValue, maxValue[i + 1]);
+            //System.out.println("Dimension number " + (i + 1) + " created");
         }
     }
 
@@ -51,7 +46,6 @@ public class DataCube {
     public int[] pointQuerySeach(int[] query) {
         if (query.length != shellFragmentList.length)
             return null;
-
 
         int instanciated = 0;
         int[][] tidsList = new int[shellFragmentList.length][];                 //stores values of instanciated
@@ -155,7 +149,6 @@ public class DataCube {
         }
         showQueryDataCube(values, subCubeValues);        // a nova função que mostra as coisas
 
-
     }
 
     /**
@@ -202,6 +195,7 @@ public class DataCube {
         System.out.println(total + " lines written");
     }
 
+
     /**
      * @param queryValues the query
      * @return a matrix with all the values to be looped, in each dimension.
@@ -220,6 +214,7 @@ public class DataCube {
         }
         return result;
     }
+
 
     private void getNumeroDeTuplesComCaracteristicas(int[] query, int[][] values) {
         int count = 0;
@@ -255,7 +250,7 @@ public class DataCube {
 
         for (int i = 0; i < shellFragmentList.length; i++)
             returnable[i] = shellFragmentList[i].getValueFromTid(tid);
-       // System.out.println(Arrays.toString(returnable));
+        // System.out.println(Arrays.toString(returnable));
         return returnable;
     }
 

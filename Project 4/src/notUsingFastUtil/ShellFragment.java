@@ -3,6 +3,7 @@ package notUsingFastUtil;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 
 import java.util.Arrays;
+import java.util.Date;
 
 public class ShellFragment {
 
@@ -11,51 +12,68 @@ public class ShellFragment {
     int lower;
     int upper;
 
-    /**
-     * @param rawData matrix with the raw tuples dimension == column
-     * @param lower   smaller value to be stored
-     * @param upper   biggest value to be used
-     */
-    ShellFragment(int[] rawData, int lower, int upper) {
+
+    ShellFragment(int[][] rawData, int column, int lower, int upper) {
         this.lower = lower;                                 //guarda lower
         this.upper = upper;                                 //guarda upper
 
         matrix = new int[upper - lower + 1][0];             //aloca o número de linhas necssárias para a matrix -> uma linha == 1 valor
         size = new int[upper - lower + 1];                  //aloca um contador para cada linha da matrix
-        Arrays.fill(size, 0);                           //coloca todos os contadores a zero
-        fillMatrix(rawData);                                //chama método que coloca os valores na matrix
+        //Arrays.fill(size, 0);                           //coloca todos os contadores a zero
+        fillMatrixB(rawData, column);                                //chama método que coloca os valores na matrix
+        //fillMatrixA(rawData, column);
+    }
+
+    private void fillMatrixA(int[][] rawData, int column) {
+        int counter[] = new int[matrix.length];
+        //obtem o tamanho de todas as dimensões
+        for (int[] rawDatum : rawData) {
+            counter[rawDatum[column] - lower]++;
+        }
+        //aloca os tamanhos expressamente necessários
+        for (int i = 0; i < matrix.length; i++)
+            matrix[i] = new int[counter[i]];
+
+        for (int i = 0; i < rawData.length; i++) {
+            matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]] = i;                                           //coloca o novo valor no final do array
+            size[rawData[i][column] - lower]++;
+        }
 
     }
 
-    /**
-     * @param rawData matrix with the raw tuples dimension == column
-     */
-    private void fillMatrix(int[] rawData) {
+    private void fillMatrixB(int[][] rawData, int column) {
+
         for (int i = 0; i < rawData.length; i++) {                                                                      //para cada uma dos tuples
-            if (size[rawData[i] - lower] == matrix[rawData[i] - lower].length) {//se o tamanho máximo do array for igual ao tamanho
-                int[] b = new int[size[rawData[i] - lower] == 0 ?                                                           //se o tamanho for zero
-                        2 : (int) (size[rawData[i] - lower] * calculateGrowingRatio(rawData[i] - lower, rawData.length)) == size[rawData[i] - lower] ?
-                        size[rawData[i] - lower] + 1 : (int) (size[rawData[i] - lower] * calculateGrowingRatio(rawData[i] - lower, rawData.length))];//coloca tamanhoa a 2, senão chama função que indica o ratio de crescimento
 
-                for (int n = size[rawData[i] - lower]; n-- != 0; b[n] = matrix[rawData[i] - lower][n]) {
+            if (size[rawData[i][column] - lower] == matrix[rawData[i][column] - lower].length) {//se o tamanho máximo do array for igual ao tamanho
+                int[] b = new int[size[rawData[i][column] - lower] == 0 ?                                                           //se o tamanho for zero
+                        1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)) <= size[rawData[i][column] - lower] ?
+                        size[rawData[i][column] - lower] + 1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length))];//coloca tamanhoa a 2, senão chama função que indica o ratio de crescimento
+
+                for (int n = size[rawData[i][column] - lower]; n-- != 0; b[n] = matrix[rawData[i][column] - lower][n]) {
                 }    //copia os valores do anyigo array para o novo
-
-                matrix[rawData[i] - lower] = b;                                                                             //coloca a apontar para o novo array
+                matrix[rawData[i][column] - lower] = b;                                                                             //coloca a apontar para o novo array
             }
 
-            matrix[rawData[i] - lower][size[rawData[i] - lower]] = i;                                           //coloca o novo valor no final do array
-            size[rawData[i] - lower]++;                                                                         //aumenta o devido counter
+            matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]] = i;                                           //coloca o novo valor no final do array
+            size[rawData[i][column] - lower]++;                                                                         //aumenta o devido counter
         }
+
+        int[][] oldArray = new int[1][1];
+        int[][] newArray = new int[oldArray.length + 1][];
+        for (int n = oldArray.length; n-- != 0; newArray[n] = oldArray[n]) {}
+
     }
+
 
     /**
      * @param i      the index of the array
      * @param length the total data lenght
-     * @return a multipler between ]1,2]
+     * @return a multipler between ]1.1,2]
      */
     private float calculateGrowingRatio(int i, int length) {
         float r = 1.1f + (1f - ((float) size[i] / (float) length) * 2);     //formula simples para obter o ratio de crescimento
-        if (r < 1.1f)                                                          //restrição a 1.1
+        if (r <= 1f)                                                          //restrição a 1.1
             return 1.1f;
         return r;
     }

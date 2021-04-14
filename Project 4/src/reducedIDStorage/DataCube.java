@@ -13,12 +13,8 @@ public class DataCube {
         this.lower = lowerValue;
 
         for (int i = 0; i < rawData[0].length; i++) {
-            int[] dimensionalValues = new int[rawData.length];
 
-            for (int d = 0; d < rawData.length; d++)
-                dimensionalValues[d] = rawData[d][i];
-
-            shellFragmentList[i] = new ShellFragment(dimensionalValues, lowerValue, maxValue[i + 1]);
+            shellFragmentList[i] = new ShellFragment(rawData, i, lowerValue, maxValue[i + 1]);
             System.out.println("Dimension number " + (i + 1) + " created");
         }
 

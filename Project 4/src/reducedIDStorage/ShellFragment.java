@@ -9,7 +9,7 @@ public class ShellFragment {
     int lower;
     int upper;
 
-    ShellFragment(int[] rawData, int lower, int upper) {
+    ShellFragment(int[][] rawData, int column, int lower, int upper) {
         this.lower = lower;
         this.upper = upper;
 
@@ -18,37 +18,43 @@ public class ShellFragment {
         size = new int[upper - lower + 1];
         Arrays.fill(size, 0);
 
-        fillMatrix(rawData);
+        fillMatrix(rawData, column);
 
     }
 
 
-    private void fillMatrix(int[] rawData) {
-        for (int i = 0; i < rawData.length; i++) {                             //para cada uma dos tuples
-            if (size[rawData[i] - lower] == matrix[rawData[i] - lower].length) {                                            //se o tamanho máximo do array for igual ao tamanho
-                int[][] b = new int[size[rawData[i] - lower] == 0 ?                                                           //se o tamanho for zero
-                        1 : (int) (size[rawData[i] - lower] * calculateGrowingRatio(rawData[i] - lower, rawData.length))][1];//coloca tamanhoa a 2, senão chama função que indica o ratio de crescimento
+    private void fillMatrix(int[][] rawData, int column) {
 
-                for (int n = size[rawData[i] - lower]; n-- != 0; b[n] = matrix[rawData[i] - lower][n]) {
-                }                      //copia os valores do antigo array para o novo
 
-                matrix[rawData[i] - lower] = b;                                                                             //coloca a apontar para o novo array
+        for (int i = 0; i < rawData.length; i++) {
+            if (size[rawData[i][column] - lower] == matrix[rawData[i][column] - lower].length) {
+                int[][] b = new int[size[rawData[i][column] - lower] == 0 ?                                                           //se o tamanho for zero
+                        1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)) <= size[rawData[i][column] - lower] ?
+                        size[rawData[i][column] - lower] + 1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length))][];//coloca tamanhoa a 2, senão chama função que indica o ratio de crescimento
+
+                for (int n = size[rawData[i][column] - lower]; n-- != 0; b[n] = matrix[rawData[i][column] - lower][n]) {
+                }    //copia os valores do anyigo array para o novo -> verificvar que funciona em 3d, uma vez que nao copia os valores, apenas os redistribui
+                matrix[rawData[i][column] - lower] = b;                                                                             //coloca a apontar para o novo array
             }
 
-            if (size[rawData[i] - lower] > 0 && i - getLastValue(rawData[i]) == 1) {    //se tiver atamnho acima de zero e for acrescimo
-                if (matrix[rawData[i] - lower][size[rawData[i] - lower] - 1].length == 1) {     //se o tamanho do ultimo colocado for 1
-                    int[] b = new int[2];                                                           //cria array com tamanho 2
-                    b[0] = matrix[rawData[i] - lower][size[rawData[i] - lower] - 1][0];             //coloca valor na posição 0
-                    b[1] = i;                                                                       //coloca novo valor na posição 1
-                    matrix[rawData[i] - lower][size[rawData[i] - lower] - 1] = b;                   //coloca array antigo a apontar para o novo
-                } else                                                                          //se o tamanho do antigo for dois
-                    matrix[rawData[i] - lower][size[rawData[i] - lower] - 1][1] = i;                    //coloca novo valor na posição 1 do array
-            } else {                                                                    //se não for acrescimo
-                matrix[rawData[i] - lower][size[rawData[i] - lower]][0] = i;                //coloca novo valor na posição seguinte
-                size[rawData[i] - lower]++;                                                 //aumenta o devido counter
+            //caso seja o primeiro OU não seja incremenyto
+            if (size[rawData[i][column] - lower] == 0 || i - matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1].length - 1] != 0) {
+                matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]] = new int[1];
+                matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]][0] = i;
+            }//caso seja incremento da última posição
+            else {
+                if (matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]].length == 1) {
+                    int b[] = new int[2];
+                    b[0] = matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][0];
+                    b[1] = i;
+                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]] = b;
+                } else
+                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][1] = i;
             }
+
         }
     }
+
 
     /**
      * @param i      the index of the array
@@ -99,8 +105,7 @@ public class ShellFragment {
     }
 
 
-
-    public int getBigestValue(){
+    public int getBigestValue() {
         return upper;
     }
 
@@ -110,13 +115,13 @@ public class ShellFragment {
     public int[] getAllValues() {
         int[] returnable = new int[matrix.length];
 
-        for (int i = 0; i < returnable.length; returnable[i++] = lower + i){
+        for (int i = 0; i < returnable.length; returnable[i++] = lower + i) {
         }
         return returnable;
     }
 
 
-    public int[] getAllTids() {                 
+    public int[] getAllTids() {
         int b = getBiggestTid();
         int[] returnable = new int[b + 1];
 

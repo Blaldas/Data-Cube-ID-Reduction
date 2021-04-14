@@ -69,7 +69,6 @@ public class Main {
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
         System.gc();
         System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
-        //System.out.println("Tuples Read\t" +( mainCube.getBiggestID()+1));                  //num tuples
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
         System.out.println("number of tuples loaded\t" + mainCube.getNumberTuples());
 
