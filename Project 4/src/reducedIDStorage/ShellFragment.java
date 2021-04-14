@@ -1,5 +1,8 @@
 package reducedIDStorage;
 
+import it.unimi.dsi.fastutil.ints.IntArrays;
+import it.unimi.dsi.fastutil.ints.IntBigArrays;
+
 import java.util.Arrays;
 
 public class ShellFragment {
@@ -27,6 +30,7 @@ public class ShellFragment {
 
 
         for (int i = 0; i < rawData.length; i++) {
+
             if (size[rawData[i][column] - lower] == matrix[rawData[i][column] - lower].length) {
                 int[][] b = new int[size[rawData[i][column] - lower] == 0 ?                                                           //se o tamanho for zero
                         1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)) <= size[rawData[i][column] - lower] ?
@@ -38,18 +42,19 @@ public class ShellFragment {
             }
 
             //caso seja o primeiro OU não seja incremenyto
-            if (size[rawData[i][column] - lower] == 0 || i - matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1].length - 1] != 0) {
+            if (size[rawData[i][column] - lower] == 0 || (i - getLastValue(rawData[i][column])) != 1) {
                 matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]] = new int[1];
                 matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]][0] = i;
+                size[rawData[i][column] - lower]++;
             }//caso seja incremento da última posição
             else {
-                if (matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]].length == 1) {
+                if (matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1].length == 1) {
                     int b[] = new int[2];
-                    b[0] = matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][0];
+                    b[0] = matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1][0];
                     b[1] = i;
-                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]] = b;
+                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1] = b;
                 } else
-                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][1] = i;
+                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1][1] = i;
             }
 
         }
@@ -83,7 +88,7 @@ public class ShellFragment {
     public int[][] getTidsListFromValue(int value) {
         if (value > upper || value < lower)
             return new int[0][0];
-        return matrix[value - lower];
+        return copyMatrix(matrix[value - lower], size[value - lower]);      //talvez seja melhor nao usar isto, enviuar o array e que eles testem até ao null
     }
 
     /**
@@ -115,21 +120,11 @@ public class ShellFragment {
     public int[] getAllValues() {
         int[] returnable = new int[matrix.length];
 
-        for (int i = 0; i < returnable.length; returnable[i++] = lower + i) {
+        for (int i = 0; i < returnable.length; returnable[i] = lower + i++) {
         }
         return returnable;
     }
 
-
-    public int[] getAllTids() {
-        int b = getBiggestTid();
-        int[] returnable = new int[b + 1];
-
-        for (int i = 0; i < returnable.length; i++)
-            returnable[i] = i;
-
-        return returnable;
-    }
 
     public int getBiggestTid() {
         int max = -1;                                                                           //coloca um valor inicial nunca returnavel em max
@@ -141,5 +136,22 @@ public class ShellFragment {
         return max;                                                                             //devolve max
     }
 
+    public int[][] copyMatrix(int[][] matrix, int length){
+        int a[][] = new int[length][];
+        for(int i =0; i < length; a[i] = matrix[i++]){
+        }
 
+        return a;
+
+    }
+
+    public int[] getAllTids() {
+        int b = getBiggestTid();
+        int[] returnable = new int[b + 1];
+
+        for (int i = 0; i < returnable.length; i++)
+            returnable[i] = i;
+
+        return returnable;
+    }
 }

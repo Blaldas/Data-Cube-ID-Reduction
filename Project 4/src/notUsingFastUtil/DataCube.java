@@ -135,17 +135,17 @@ public class DataCube {
             return;
         }
 
-        int[] tidArrat = this.pointQuerySeach(values);            //obtem TIDs resultante
-        if (tidArrat == null || tidArrat.length == 0) {
+        int[] tidArray = this.pointQuerySeach(values);            //obtem TIDs resultante
+        if (tidArray == null || tidArray.length == 0) {
             System.out.println("no values found");
             return;
         }
 
 
-        int[][] subCubeValues = new int[tidArrat.length][];                      //aloca memoria array de valores
+        int[][] subCubeValues = new int[tidArray.length][];                      //aloca memoria array de valores
 
         for (int i = 0; i < subCubeValues.length; i++) {                                     //para cada um dos IDs de tuples que respeita o pedido
-            subCubeValues[i] = getDimensions(tidArrat[i]);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
+            subCubeValues[i] = getDimensions(tidArray[i]);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
         }
         showQueryDataCube(values, subCubeValues);        // a nova função que mostra as coisas
 

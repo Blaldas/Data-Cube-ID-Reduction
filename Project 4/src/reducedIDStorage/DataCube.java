@@ -15,13 +15,9 @@ public class DataCube {
         for (int i = 0; i < rawData[0].length; i++) {
 
             shellFragmentList[i] = new ShellFragment(rawData, i, lowerValue, maxValue[i + 1]);
+            System.out.println(shellFragmentList[i].matrix[0].length);
             System.out.println("Dimension number " + (i + 1) + " created");
         }
-
-       // for( int[][] d: shellFragmentList[21].matrix){
-       //     System.out.println(Arrays.deepToString(d));
-       // }
-
     }
 
 
@@ -33,71 +29,144 @@ public class DataCube {
             StringBuilder str;
             System.out.println("Dimension " + (i + 1));
             System.out.println("Value\tTuple IDs");
-            int[] valuesList = shellFragmentList[i].getAllValues();
-            for (int n = 0; n < valuesList.length; n++) {
+            for (int n = 0; n <= shellFragmentList[i].getBigestValue(); n++) {
                 str = new StringBuilder();
-                str.append(valuesList[n]).append("\t\t").append(Arrays.toString(shellFragmentList[i].getTidsListFromValue(valuesList[n])));
+                str.append(n).append("\t\t");
+                int[][] tidsForValue = shellFragmentList[i].getTidsListFromValue(n);
+                for (int[] arr : tidsForValue)
+                    str.append(Arrays.toString(arr)).append(" ");
                 System.out.println(str);
             }
         }
+    }
+
+    public int pointQueryCounter(int[] query) {
+         int[][] mat =pointQuerySeach(query);
+         if(mat == null)
+             return -1;
+         int counter =0;
+
+         for(int arr[] : mat){
+             if(arr.length == 2)
+                 counter += arr[1] - arr[0];
+             counter++;
+         }
+         return counter;
+    }
+
+    public int[] pointQueryAdapter(int[] query) {
+        return getArrayFromMatrix(pointQuerySeach(query));
+
     }
 
     /**
      * @param query the query being made
      * @return array with the tuple ids, null if query.length != shellFragmentList.length
      */
- /*   public int[] pointQuerySeach(int[] query) {
+    public int[][] pointQuerySeach(int[] query) {
         if (query.length != shellFragmentList.length)
             return null;
 
-        int[] retornable = new int[0];
+        int[][] result = new int[0][];
         for (int i = 0; i < query.length; i++) {
             if (query[i] != '*' && query[i] != '?') {
-                int[] secundary = shellFragmentList[i].getTidsListFromValue(query[i]);      //obtem lista de tids
+                int[][] secundary = shellFragmentList[i].getTidsListFromValue(query[i]);      //obtem lista de tids
                 if (secundary.length == 0)                                      //se a lista for vazia, devolve null
-                return secundary;
+                    return new int[0][0];
 
-                if (retornable.length == 0)
-                    retornable = secundary;
+                if (result.length == 0)
+                    result = secundary;
                 else {
-                    retornable = intersect(retornable, secundary);
-                    if (retornable.length == 0)
-                        return retornable;
+                    result = intersect(result, secundary);
+                    if (result.length == 0)
+                        return new int[0][0];
                 }
             }
         }
         //caso todas tenham valor '?' ou '*'
-        if (retornable.length == 0)
-            return shellFragmentList[0].getAllTids();
-        return retornable;
-
+        if (result.length == 0){
+            result = new int[1][2];
+            result[0][0] = 0;
+            result[0][1] = shellFragmentList[0].getBiggestTid();
+        }
+        return result;
     }
-*/
-    //can have its perforce improved
 
-    /**
-     * @param first  array of tids
-     * @param second array of tids
-     * @return the array with the tids existing in both arrays received
-     */
-    private int[] intersect(int[] first, int[] second) {
-        int[] retornable;
-        int[] secundary = first.length < second.length ? new int[first.length] : new int[second.length];
-        int counter = 0;
+    private int[] getArrayFromMatrix(int[][] matrix) {
+        if(matrix == null)
+            return null;
+        else if(matrix.length == 0)
+            return new int[0];
 
-        for (int a : first){                        //para cada um dos valores do array 1
-            for (int b : second) {                      //para cada um dos valores do array 2
-                if (a == b) {                               //se ambos valores forem iguais
-                    secundary[counter] = a;                     //valor A é adicionado
-                    counter++;
-                    break;
+        int size = 0;
+        int[] returnable = new int[matrix.length];
+
+        for (int[] arr : matrix) {
+            if (size == returnable.length) {
+                int[] b = new int[2 * size];
+                System.arraycopy(returnable, 0, b, 0, returnable.length);
+                returnable = b;
+            }
+
+            if (arr.length == 1) {
+                returnable[size++] = arr[0];
+            } else {
+                for (int i = arr[0]; i <= arr[1]; i++) {
+                    if (size == returnable.length) {
+                        int[] b = new int[2 * size];
+                        System.arraycopy(returnable, 0, b, 0, returnable.length);
+                        returnable = b;
+                    }
+                    returnable[size++] = i;
                 }
             }
         }
-        retornable = new int[counter];
-        System.arraycopy(secundary, 0, retornable, 0, counter);
 
-        return retornable;
+        return Arrays.copyOfRange(returnable, 0, size);
+    }
+
+
+    /**
+     * @param arrayA array of tids
+     * @param arrayB array of tids
+     * @return the array with the tids existing in both arrays received
+     */
+    private static int[][] intersect(int[][] arrayA, int[][] arrayB) {
+        int[][] c = new int[Math.max(arrayA.length, arrayB.length)][];
+        int ci = 0;
+
+        for (int[] a : arrayA) {
+            for (int[] b : arrayB) {
+                if (a.length == 1 && b.length == 1) {
+                    if (a[0] == b[0]) {
+                        c[ci] = new int[1];
+                        c[ci++][0] = a[0];
+                    }
+                } else if (a.length == 2 && b.length == 1) {
+                    if (a[0] <= b[0] && a[1] >= b[0]) {
+                        c[ci] = new int[1];
+                        c[ci++][0] = b[0];
+                    }
+                } else if (a.length == 1 && b.length == 2) {
+                    if (a[0] >= b[0] && a[0] <= b[1]) {
+                        c[ci] = new int[1];
+                        c[ci++][0] = a[0];
+                    }
+                } else {       //têm os 2 length == 2
+                    if (a[0] <= b[0] && a[1] >= b[0]) {         //[b0 , - ]
+                        c[ci] = new int[2];
+                        c[ci][0] = b[0];
+                        c[ci++][1] = Math.min(b[1], a[1]);
+                    } else if (a[0] >= b[0] && a[0] <= b[1]) {
+                        c[ci] = new int[2];
+                        c[ci][0] = a[0];
+                        c[ci++][1] = Math.min(b[1], a[1]);
+                    }
+                }
+            }
+        }
+
+        return Arrays.copyOfRange(c, 0, ci);
     }
 
 
@@ -111,33 +180,29 @@ public class DataCube {
 
     /**
      * @param values the query
-     *//*
+     */
     public void getSubCube(int[] values) {
         if (values.length != shellFragmentList.length) {
             System.out.println("wrong number of dimensions");
             return;
         }
 
-        int[] tidArrat = this.pointQuerySeach(values);            //obtem TIDs resultante
-
-        if (tidArrat == null || tidArrat.length == 0)
-        {
+        int[] tidArray = this.pointQueryAdapter(values);            //obtem TIDs resultante
+        if (tidArray.length == 0) {
             System.out.println("no values found");
             return;
         }
 
-
-        int[][] subCubeValues = new int[tidArrat.length][];                             //aloca memoria array de valores
+        int[][] subCubeValues = new int[tidArray.length][];                      //aloca memoria array de valores
 
         for (int i = 0; i < subCubeValues.length; i++) {                                     //para cada um dos IDs de tuples que respeita o pedido
-            subCubeValues[i] = getDimensions(tidArrat[i]);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
+            subCubeValues[i] = getDimensions(tidArray[i]);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
         }
-
         showQueryDataCube(values, subCubeValues);        // a nova função que mostra as coisas
 
-
     }
-*/
+
+
     /**
      * @param qValues       the query
      * @param subCubeValues "subcube" values
@@ -187,7 +252,9 @@ public class DataCube {
 
         for (int i = 0; i < queryValues.length; i++) {               //para cada uma das dimensões
             if (queryValues[i] == '?') {
-                result[i] = new int[shellFragmentList[i].getAllValues().length + 1];
+                result[i] = new int[shellFragmentList[i].getBigestValue() - shellFragmentList[i].lower + 2];
+                //for(int n = shellFragmentList[i].getBigestValue(); n > shellFragmentList[i].lower ; n++)
+                //  result[i][n] = n;
                 System.arraycopy(shellFragmentList[i].getAllValues(), 0, result[i], 1, shellFragmentList[i].getAllValues().length);
                 result[i][0] = '*';
             } else {
