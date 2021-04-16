@@ -41,17 +41,17 @@ public class DataCube {
     }
 
     public int pointQueryCounter(int[] query) {
-         int[][] mat =pointQuerySeach(query);
-         if(mat == null)
-             return -1;
-         int counter =0;
+        int[][] mat = pointQuerySeach(query);
+        if (mat == null)
+            return -1;
+        int counter = 0;
 
-         for(int arr[] : mat){
-             if(arr.length == 2)
-                 counter += arr[1] - arr[0];
-             counter++;
-         }
-         return counter;
+        for (int arr[] : mat) {
+            if (arr.length == 2)
+                counter += arr[1] - arr[0];
+            counter++;
+        }
+        return counter;
     }
 
     public int[] pointQueryAdapter(int[] query) {
@@ -84,7 +84,7 @@ public class DataCube {
             }
         }
         //caso todas tenham valor '?' ou '*'
-        if (result.length == 0){
+        if (result.length == 0) {
             result = new int[1][2];
             result[0][0] = 0;
             result[0][1] = shellFragmentList[0].getBiggestTid();
@@ -93,9 +93,9 @@ public class DataCube {
     }
 
     private int[] getArrayFromMatrix(int[][] matrix) {
-        if(matrix == null)
+        if (matrix == null)
             return null;
-        else if(matrix.length == 0)
+        else if (matrix.length == 0)
             return new int[0];
 
         int size = 0;
