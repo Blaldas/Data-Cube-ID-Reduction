@@ -97,13 +97,14 @@ public class ShellFragment {
      */
     public int getValueFromTid(int tid) {
         for (int i = 0; i < matrix.length; i++) {                   //para cada uma das linhas
-            for (int[] v : matrix[i]) {                                 //para cada coluna das linhas
-                if (v[0] == tid)                                            //se tiver o id pretendiso
+            for (int v =0; v < size[i]; v++) {                                 //para cada coluna das linhas
+                if (matrix[i][v][0] == tid)                                            //se tiver o id pretendiso
                     return lower + i;                                           //devolve logo o valor
-                else if (v.length == 2 && v[0] >= tid && v[1] <= tid)       //se tiver tamanho 2 e o id estiver entre os valores
+                else if (matrix[i][v].length == 2 && matrix[i][v][0] <= tid && matrix[i][v][1] >= tid)       //se tiver tamanho 2 e o id estiver entre os valores
                     return lower + i;                                           //devolve logo o valor
-                else if (v[0] > tid)                                        //se ids forem superiores - eficiencia
+                else if (matrix[i][v][0] > tid)                                        //se ids forem superiores - eficiencia
                     break;                                                  //faz break;
+
             }
         }
         return lower - 1;
