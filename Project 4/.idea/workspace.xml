@@ -19,7 +19,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c29ec5f6-4a18-4285-b15a-576c3e41eeea" name="Default Changelist" comment="">
+    <list default="true" id="c29ec5f6-4a18-4285-b15a-576c3e41eeea" name="Default Changelist" comment="intersect method updated">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project 4/notUsingFastUtil/DataCube.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project 4/notUsingFastUtil/DataCube.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/DataCube.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/DataCube.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/notUsingFastUtil/DataCube.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/notUsingFastUtil/DataCube.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reducedIDStorage/DataCube.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/reducedIDStorage/DataCube.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,17 +50,18 @@
     <property name="restartRequiresConfirmation" value="false" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src" />
+      <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\fastUtil" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\notUsingFastUtil" />
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4" />
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\fastUtil" />
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\fastUtil" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Main (1)">
@@ -116,7 +122,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618533673410</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="intersect method updated">
+      <created>1618534035334</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1618534035334</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -133,7 +146,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit" />
+    <MESSAGE value="intersect method updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="intersect method updated" />
   </component>
   <component name="WindowStateProjectService">
     <state x="440" y="94" key="#Project_Structure" timestamp="1617782851631">

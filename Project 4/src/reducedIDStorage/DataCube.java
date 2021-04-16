@@ -133,38 +133,72 @@ public class DataCube {
      */
     private static int[][] intersect(int[][] arrayA, int[][] arrayB) {
         int[][] c = new int[Math.max(arrayA.length, arrayB.length)][];
-        int ci = 0;
+        int ai = 0, bi = 0, ci = 0;
 
-        for (int[] a : arrayA) {
-            for (int[] b : arrayB) {
-                if (a.length == 1 && b.length == 1) {
-                    if (a[0] == b[0]) {
-                        c[ci] = new int[1];
-                        c[ci++][0] = a[0];
+        while (ai < arrayA.length && bi < arrayB.length) {
+            if (arrayA[ai].length == 1 && arrayB[bi].length == 1) {
+                if (arrayA[ai][0] == arrayB[bi][0]) {
+                    c[ci] = new int[1];
+                    c[ci++][0] = arrayA[ai][0];
+                    ai++;
+                    bi++;
+                } else {
+                    if (arrayA[ai][0] < arrayB[bi][0])
+                        ai++;
+                    else
+                        bi++;
+                }
+            } else if (arrayA[ai].length == 2 && arrayB[bi].length == 1) {
+                if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {
+                    c[ci] = new int[1];
+                    c[ci++][0] = arrayB[bi][0];
+                    bi++;
+                } else {
+                    if (arrayA[ai][1] < arrayB[bi][0])
+                        ai++;
+                    else
+                        bi++;
+                }
+            } else if (arrayA[ai].length == 1 && arrayB[bi].length == 2) {
+                if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
+                    c[ci] = new int[1];
+                    c[ci++][0] = arrayA[ai][0];
+                    ai++;
+                } else {
+                    if (arrayA[ai][0] < arrayB[bi][1])
+                        ai++;
+                    else
+                        bi++;
+                }
+            } else {       //têm os 2 length == 2
+                if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {         //[b0 , - ]
+                    c[ci] = new int[2];
+                    c[ci][0] = arrayB[bi][0];
+                    c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
+                    if (Math.min(arrayB[bi][1], arrayA[ai][1]) == arrayA[ai][1]) {
+                        ai++;
+                    } else {
+                        bi++;
                     }
-                } else if (a.length == 2 && b.length == 1) {
-                    if (a[0] <= b[0] && a[1] >= b[0]) {
-                        c[ci] = new int[1];
-                        c[ci++][0] = b[0];
+                } else if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
+                    c[ci] = new int[2];
+                    c[ci][0] = arrayA[ai][0];
+                    c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
+                    if (Math.min(arrayB[bi][1], arrayA[ai][1]) == arrayA[ai][1]) {
+                        ai++;
+                    } else {
+                        bi++;
                     }
-                } else if (a.length == 1 && b.length == 2) {
-                    if (a[0] >= b[0] && a[0] <= b[1]) {
-                        c[ci] = new int[1];
-                        c[ci++][0] = a[0];
-                    }
-                } else {       //têm os 2 length == 2
-                    if (a[0] <= b[0] && a[1] >= b[0]) {         //[b0 , - ]
-                        c[ci] = new int[2];
-                        c[ci][0] = b[0];
-                        c[ci++][1] = Math.min(b[1], a[1]);
-                    } else if (a[0] >= b[0] && a[0] <= b[1]) {
-                        c[ci] = new int[2];
-                        c[ci][0] = a[0];
-                        c[ci++][1] = Math.min(b[1], a[1]);
-                    }
+
+                } else {
+                    if (arrayA[ai][1] < arrayB[bi][1])
+                        ai++;
+                    else
+                        bi++;
                 }
             }
         }
+
 
         return Arrays.copyOfRange(c, 0, ci);
     }
