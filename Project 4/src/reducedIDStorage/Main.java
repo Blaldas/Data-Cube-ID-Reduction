@@ -134,22 +134,38 @@ public class Main {
                 }
             }
         }
+<<<<<<< HEAD
 
+=======
+/*
+>>>>>>> main
         Date startDate = new Date(), endDate;           //incia as datas para fazer contagem do tempo
         if (subCubeFlag) {                  //caso seja um subcube
             mainCube.getSubCube(values);
         } else {
+<<<<<<< HEAD
             int searchResult = mainCube.pointQueryCounter(values); //returns array of ids
         if (searchResult == -1)
             System.out.println("Bad Query formation");
         else
             System.out.println("Query answers:\t" + searchResult);
+=======
+            int[] searchResult = mainCube.pointQuerySeach(values); //returns array of ids
+            if (searchResult == null)
+                System.out.println("Bad Query formation");
+            else
+                System.out.println("Query answers:\t" + searchResult.length);
+>>>>>>> main
         }
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
         System.gc();
         System.out.println("Query executed in " + numSeconds+ " ms.");
+<<<<<<< HEAD
 
+=======
+*/
+>>>>>>> main
 
     }
 

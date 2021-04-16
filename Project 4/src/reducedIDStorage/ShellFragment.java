@@ -1,8 +1,5 @@
 package reducedIDStorage;
 
-import it.unimi.dsi.fastutil.ints.IntArrays;
-import it.unimi.dsi.fastutil.ints.IntBigArrays;
-
 import java.util.Arrays;
 
 public class ShellFragment {
@@ -42,6 +39,7 @@ public class ShellFragment {
             }
 
             //caso seja o primeiro OU não seja incremenyto
+
             if (size[rawData[i][column] - lower] == 0 || (i - getLastValue(rawData[i][column])) != 1) {
                 matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]] = new int[1];
                 matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]][0] = i;
@@ -55,11 +53,26 @@ public class ShellFragment {
                     matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1] = b;
                 } else
                     matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1][1] = i;
+
+                if (size[rawData[i][column] - lower] == 0 || i - matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1].length - 1] != 0) {
+                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]] = new int[1];
+                    matrix[rawData[i][column] - lower][size[rawData[i][column] - lower]][0] = i;
+                }//caso seja incremento da última posição
+                else {
+                    if (matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]].length == 1) {
+                        int b[] = new int[2];
+                        b[0] = matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][0];
+                        b[1] = i;
+                        matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]] = b;
+                    } else
+                        matrix[rawData[i][column] - lower][size[rawData[i][column] - lower - 1]][1] = i;
+
+                }
+
             }
-
         }
-    }
 
+    }
 
     /**
      * @param i      the index of the array
@@ -88,7 +101,11 @@ public class ShellFragment {
     public int[][] getTidsListFromValue(int value) {
         if (value > upper || value < lower)
             return new int[0][0];
+
         return copyMatrix(matrix[value - lower], size[value - lower]);      //talvez seja melhor nao usar isto, enviuar o array e que eles testem até ao null
+
+        return matrix[value - lower];
+
     }
 
     /**
@@ -98,10 +115,12 @@ public class ShellFragment {
     public int getValueFromTid(int tid) {
         for (int i = 0; i < matrix.length; i++) {                   //para cada uma das linhas
             for (int[] v : matrix[i]) {                                 //para cada coluna das linhas
-                if(v == null || v[0] > tid)
-                    break;
-                else if (v[0] == tid || v.length == 2 && v[1] >= tid)        //se tiver o id pretendiso ouse tiver tamanho 2 e o id estiver entre os valores
+                if (v[0] == tid)                                            //se tiver o id pretendiso
                     return lower + i;                                           //devolve logo o valor
+                else if (v.length == 2 && v[0] >= tid && v[1] <= tid)       //se tiver tamanho 2 e o id estiver entre os valores
+                    return lower + i;                                           //devolve logo o valor
+                else if (v[0] > tid)                                        //se ids forem superiores - eficiencia
+                    break;                                                  //faz break;
             }
         }
         return lower - 1;
@@ -118,38 +137,50 @@ public class ShellFragment {
     public int[] getAllValues() {
         int[] returnable = new int[matrix.length];
 
+
         for (int i = 0; i < returnable.length; returnable[i] = lower + i++) {
+
+            for (int i = 0; i < returnable.length; returnable[i++] = lower + i) {
+            }
+            return returnable;
         }
-        return returnable;
     }
+        public int[] getAllTids () {
+            int b = getBiggestTid();
+            int[] returnable = new int[b + 1];
 
+            for (int i = 0; i < returnable.length; i++)
+                returnable[i] = i;
 
-    public int getBiggestTid() {
-        int max = -1;                                                                           //coloca um valor inicial nunca returnavel em max
-
-        for (int i = 0; i < size.length; i++)                                                  //para cada dimensão
-            if (size[i] != 0 && matrix[i][size[i] - 1][matrix[i][size[i] - 1].length - 1] > max)    //se o tamanho da dimensão for maior que zero e a ultima posição for maior que max
-                max = matrix[i][size[i] - 1][matrix[i][size[i] - 1].length - 1];                        //max guarda a ultima posição
-
-        return max;                                                                             //devolve max
-    }
-
-    public int[][] copyMatrix(int[][] matrix, int length){
-        int a[][] = new int[length][];
-        for(int i =0; i < length; a[i] = matrix[i++]){
+            return returnable;
         }
 
-        return a;
+        public int getBiggestTid () {
+            int max = -1;                                                                           //coloca um valor inicial nunca returnavel em max
 
+            for (int i = 0; i < size.length; i++)                                                  //para cada dimensão
+                if (size[i] != 0 && matrix[i][size[i] - 1][matrix[i][size[i] - 1].length - 1] > max)    //se o tamanho da dimensão for maior que zero e a ultima posição for maior que max
+                    max = matrix[i][size[i] - 1][matrix[i][size[i] - 1].length - 1];                        //max guarda a ultima posição
+
+            return max;                                                                             //devolve max
+        }
+
+        public int[][] copyMatrix ( int[][] matrix, int length){
+            int a[][] = new int[length][];
+            for (int i = 0; i < length; a[i] = matrix[i++]) {
+            }
+
+            return a;
+
+        }
+
+        public int[] getAllTids () {
+            int b = getBiggestTid();
+            int[] returnable = new int[b + 1];
+
+            for (int i = 0; i < returnable.length; i++)
+                returnable[i] = i;
+
+            return returnable;
+        }
     }
-
-    public int[] getAllTids() {
-        int b = getBiggestTid();
-        int[] returnable = new int[b + 1];
-
-        for (int i = 0; i < returnable.length; i++)
-            returnable[i] = i;
-
-        return returnable;
-    }
-}

@@ -13,7 +13,10 @@ public class DataCube {
         this.lower = lowerValue;
 
         for (int i = 0; i < rawData[0].length; i++) {
+
             shellFragmentList[i] = new ShellFragment(rawData, i, lowerValue, maxValue[i + 1]);
+            System.out.println(shellFragmentList[i].matrix[0].length);
+            System.out.println("Dimension number " + (i + 1) + " created");
         }
     }
 
@@ -26,7 +29,7 @@ public class DataCube {
             StringBuilder str;
             System.out.println("Dimension " + (i + 1));
             System.out.println("Value\tTuple IDs");
-            for (int n = shellFragmentList[i].lower; n <= shellFragmentList[i].getBigestValue(); n++) {
+            for (int n = 0; n <= shellFragmentList[i].getBigestValue(); n++) {
                 str = new StringBuilder();
                 str.append(n).append("\t\t");
                 int[][] tidsForValue = shellFragmentList[i].getTidsListFromValue(n);
