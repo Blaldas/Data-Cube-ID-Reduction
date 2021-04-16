@@ -13,10 +13,7 @@ public class DataCube {
         this.lower = lowerValue;
 
         for (int i = 0; i < rawData[0].length; i++) {
-
             shellFragmentList[i] = new ShellFragment(rawData, i, lowerValue, maxValue[i + 1]);
-            System.out.println(shellFragmentList[i].matrix[0].length);
-            System.out.println("Dimension number " + (i + 1) + " created");
         }
     }
 
