@@ -132,70 +132,69 @@ public class DataCube {
         int[][] c = new int[Math.max(arrayA.length, arrayB.length)][];
         int ai = 0, bi = 0, ci = 0;
 
-        while (ai < arrayA.length && bi < arrayB.length) {
-            if (arrayA[ai].length == 1 && arrayB[bi].length == 1) {
-                if (arrayA[ai][0] == arrayB[bi][0]) {
-                    c[ci] = new int[1];
-                    c[ci++][0] = arrayA[ai][0];
-                    ai++;
-                    bi++;
-                } else {
-                    if (arrayA[ai][0] < arrayB[bi][0])
-                        ai++;
-                    else
-                        bi++;
-                }
-            } else if (arrayA[ai].length == 2 && arrayB[bi].length == 1) {
-                if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {
-                    c[ci] = new int[1];
-                    c[ci++][0] = arrayB[bi][0];
-                    bi++;
-                } else {
-                    if (arrayA[ai][1] < arrayB[bi][0])
-                        ai++;
-                    else
-                        bi++;
-                }
-            } else if (arrayA[ai].length == 1 && arrayB[bi].length == 2) {
-                if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
-                    c[ci] = new int[1];
-                    c[ci++][0] = arrayA[ai][0];
-                    ai++;
-                } else {
-                    if (arrayA[ai][0] < arrayB[bi][1])
-                        ai++;
-                    else
-                        bi++;
-                }
-            } else {       //têm os 2 length == 2
-                if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {         //[b0 , - ]
-                    c[ci] = new int[2];
-                    c[ci][0] = arrayB[bi][0];
-                    c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
-                    if (Math.min(arrayB[bi][1], arrayA[ai][1]) == arrayA[ai][1]) {
-                        ai++;
-                    } else {
-                        bi++;
-                    }
-                } else if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
-                    c[ci] = new int[2];
-                    c[ci][0] = arrayA[ai][0];
-                    c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
-                    if (Math.min(arrayB[bi][1], arrayA[ai][1]) == arrayA[ai][1]) {
-                        ai++;
-                    } else {
-                        bi++;
-                    }
 
-                } else {
-                    if (arrayA[ai][1] < arrayB[bi][1])
-                        ai++;
-                    else
-                        bi++;
-                }
+        while (ai < arrayA.length && bi < arrayB.length) {
+
+            switch (arrayA[ai].length) {
+                case 1:
+                    switch (arrayB[bi].length) {
+                        case 1:                                     //os 2 tamanho 1
+                            if (arrayA[ai][0] == arrayB[bi][0]) {
+                                c[ci] = new int[1];
+                                c[ci++][0] = arrayA[ai][0];
+                                ai++;
+                                bi++;
+                            } else if (arrayA[ai][0] < arrayB[bi][0])
+                                ai++;
+                            else
+                                bi++;
+
+                            break;
+                        case 2:
+                            //A 1, b 2
+                            if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
+                                c[ci] = new int[1];
+                                c[ci++][0] = arrayA[ai][0];
+                                ai++;
+                            } else if (arrayA[ai][0] < arrayB[bi][1])
+                                ai++;
+                            else
+                                bi++;
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (arrayB[bi].length) {
+                        case 1:                             //a 2, b 1
+
+                            if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {
+                                c[ci] = new int[1];
+                                c[ci++][0] = arrayB[bi][0];
+                                bi++;
+                            } else if (arrayA[ai][1] < arrayB[bi][0])
+                                ai++;
+                            else
+                                bi++;
+                            break;
+                        case 2:                             //a 2, b 2
+
+                            if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {         //[b0 , - ]
+                                c[ci] = new int[2];
+                                c[ci][0] = arrayB[bi][0];
+                                c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
+                            } else if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
+                                c[ci] = new int[2];
+                                c[ci][0] = arrayA[ai][0];
+                                c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
+                            }
+                            if (arrayA[ai][1] < arrayB[bi][1])
+                                ai++;
+                            else
+                                bi++;
+                            break;
+                    }
             }
         }
-
 
         return Arrays.copyOfRange(c, 0, ci);
     }
