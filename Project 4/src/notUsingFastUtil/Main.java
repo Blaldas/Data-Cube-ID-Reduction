@@ -14,15 +14,16 @@ public class Main {
 
 
     public static void main(String[] args) {
+        System.out.println("\nnot using ID REDUCTION \n");
+
 
         Scanner sc = new Scanner(System.in);
         String path = "lmao";
 
-        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+
         load(path);
-        System.gc();
-        long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
-        System.out.println("Memory used:\t" + (afterUsedMem-beforeUsedMem));
+        System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
+
         String input;
 
         do {
@@ -66,20 +67,17 @@ public class Main {
             return;
         }
 
-        endDate = new Date();
-        long numSeconds = ((endDate.getTime() - startDate.getTime()));
-        System.out.println("Miliseconds Used to read file\t" + numSeconds);             //tempo
-        startDate = new Date();
         mainCube = new DataCube(array, sizes, lowerValue);
 
         endDate = new Date();
-        numSeconds = ((endDate.getTime() - startDate.getTime()));
+        long numSeconds = ((endDate.getTime() - startDate.getTime()));
+        System.gc();
         System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
-        System.out.println("Tuples Read\t" +( mainCube.getBiggestID()+1));                  //num tuples
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
+        System.out.println("Cardinality\t" + mainCube.shellFragmentList[0].size.length);          //num dimensões
         System.out.println("number of tuples loaded\t" + mainCube.getNumberTuples());
-        System.out.println("number unused ints\t" + mainCube.getNumberUnnusedInts());
-        System.out.println("number used ints\t" + mainCube.getNumberUsedInts());
+
+
 
 
         System.out.println("load end");

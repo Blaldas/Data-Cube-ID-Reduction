@@ -14,16 +14,15 @@ public class Main {
 
 
     public static void main(String[] args) {
+        System.out.println("\nID REDUCTION \n");
 
         Scanner sc = new Scanner(System.in);
         String path = "lmao";
 
         load(path);
-
-        String input;
-        //mainCube.showAllDimensions();
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
 
+        String input;
 
         do {
             System.out.println(">");
@@ -70,6 +69,7 @@ public class Main {
         System.gc();
         System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
+        System.out.println("Cardinality\t" + mainCube.shellFragmentList[0].size.length);          //num dimensões
         System.out.println("number of tuples loaded\t" + mainCube.getNumberTuples());
 
 

@@ -19,7 +19,6 @@ public class ShellFragment {
 
         matrix = new int[upper - lower + 1][0][0];
         size = new int[upper - lower + 1];
-        Arrays.fill(size, 0);
 
         fillMatrix(rawData, column);
 
@@ -29,15 +28,16 @@ public class ShellFragment {
     private void fillMatrix(int[][] rawData, int column) {
 
 
-        for (int i = 0; i < rawData.length; i++) {
+        for (int i = 0; i < rawData.length; i++) {          //para cada uma das tuples
 
-            if (size[rawData[i][column] - lower] == matrix[rawData[i][column] - lower].length) {
+            if (size[rawData[i][column] - lower] == matrix[rawData[i][column] - lower].length) {                //se não houver espaço para guardar tid no valor a ser looped
                 int[][] b = new int[size[rawData[i][column] - lower] == 0 ?                                                           //se o tamanho for zero
                         1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)) <= size[rawData[i][column] - lower] ?
                         size[rawData[i][column] - lower] + 1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length))][];//coloca tamanhoa a 2, senão chama função que indica o ratio de crescimento
 
                 for (int n = size[rawData[i][column] - lower]; n-- != 0; b[n] = matrix[rawData[i][column] - lower][n]) {
-                }    //copia os valores do anyigo array para o novo -> verificvar que funciona em 3d, uma vez que nao copia os valores, apenas os redistribui
+                    //copia os valores do anyigo array para o novo
+                }
                 matrix[rawData[i][column] - lower] = b;                                                                             //coloca a apontar para o novo array
             }
 
@@ -49,7 +49,7 @@ public class ShellFragment {
             }//caso seja incremento da última posição
             else {
                 if (matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1].length == 1) {
-                    int b[] = new int[2];
+                    int[] b = new int[2];
                     b[0] = matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1][0];
                     b[1] = i;
                     matrix[rawData[i][column] - lower][size[rawData[i][column] - lower] - 1] = b;

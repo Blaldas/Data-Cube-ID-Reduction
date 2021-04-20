@@ -1,6 +1,7 @@
 package reducedIDStorage;
 
 import java.util.Arrays;
+import java.util.Date;
 
 public class DataCube {
 
@@ -14,6 +15,8 @@ public class DataCube {
 
         for (int i = 0; i < rawData[0].length; i++) {
             shellFragmentList[i] = new ShellFragment(rawData, i, lowerValue, maxValue[i + 1]);
+            //System.gc();
+            //System.out.println(i);
         }
     }
 
@@ -74,7 +77,13 @@ public class DataCube {
                 if (result.length == 0)
                     result = secundary;
                 else {
+                    //Date startDate = new Date(), endDate;
                     result = intersect(result, secundary);
+                    /*
+                    endDate = new Date();
+                    long numSeconds = ((endDate.getTime() - startDate.getTime()));
+                    System.out.println("intersect\t" + numSeconds);             //tempo
+                     */
                     if (result.length == 0)
                         return new int[0][0];
                 }

@@ -19,9 +19,8 @@ public class ShellFragment {
 
         matrix = new int[upper - lower + 1][0];             //aloca o número de linhas necssárias para a matrix -> uma linha == 1 valor
         size = new int[upper - lower + 1];                  //aloca um contador para cada linha da matrix
-        //Arrays.fill(size, 0);                           //coloca todos os contadores a zero
-        fillMatrixB(rawData, column);                                //chama método que coloca os valores na matrix
-        //fillMatrixA(rawData, column);
+        //fillMatrixB(rawData, column);                                //chama método que coloca os valores na matrix
+        fillMatrixA(rawData, column);
     }
 
     private void fillMatrixA(int[][] rawData, int column) {
