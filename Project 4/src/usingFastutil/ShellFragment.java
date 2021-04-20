@@ -21,7 +21,6 @@ public class ShellFragment {
     }
 
     private void fillMatrix(int[] rawData) {
-        System.out.println("klmdsvknodlmvs");
 
         for (int i = 0; i < rawData.length; i++)                                                                   //para cada uma dos tuples
         {
