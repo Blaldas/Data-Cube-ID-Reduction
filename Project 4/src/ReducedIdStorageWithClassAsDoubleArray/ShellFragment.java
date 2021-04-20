@@ -79,7 +79,7 @@ public class ShellFragment {
     public int[][] getTidsListFromValue(int value) {
         if (value > upper || value < lower)
             return new int[0][0];
-        return matrix[value - lower].get2dMatrix(size[value - lower] - 1);      //talvez seja melhor nao usar isto, enviuar o array e que eles testem até ao null
+        return matrix[value - lower].get2dMatrix(size[value - lower]);      //talvez seja melhor nao usar isto, enviuar o array e que eles testem até ao null
     }
 
     /**
