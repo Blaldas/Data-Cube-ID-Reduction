@@ -77,7 +77,7 @@ public class ShellFragment {
      * @return ID list of the tuples with that value, if the value is not found returns an array with size 0. Care that the array of a found value may be zero as well, so it's not a flag
      */
     public int[][] getTidsListFromValue(int value) {
-        if (value > upper || value < lower)
+        if (value > upper || value < lower || matrix[value - lower] == null)
             return new int[0][0];
         return matrix[value - lower].get2dMatrix(size[value - lower]);      //talvez seja melhor nao usar isto, enviuar o array e que eles testem até ao null
     }
