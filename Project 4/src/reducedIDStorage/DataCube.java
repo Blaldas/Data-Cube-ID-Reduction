@@ -143,6 +143,12 @@ public class DataCube {
 
 
         while (ai < arrayA.length && bi < arrayB.length) {
+            if(ci == c.length)
+            {
+                int[][] b = new int[2 * c.length][];
+                for(int i = ci - 1; i >= 0; b[i] = c[i--]){};
+                c = b;
+            }
 
             switch (arrayA[ai].length) {
                 case 1:
