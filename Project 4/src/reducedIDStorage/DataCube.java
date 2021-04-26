@@ -241,7 +241,7 @@ public class DataCube {
         int[][] subCubeValues = new int[tidArray.length][];                      //aloca memoria array de valores
 
         for (int i = 0; i < subCubeValues.length; i++) {                                     //para cada um dos IDs de tuples que respeita o pedido
-            subCubeValues[i] = getDimensions(tidArray[i]);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
+            subCubeValues[i] = getDimensions(tidArray[i], values);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
         }
         showQueryDataCube(values, subCubeValues);        // a nova função que mostra as coisas
 
@@ -314,7 +314,7 @@ public class DataCube {
         for (int[] tuple : values) {                                                //para cada uma das tuples
             boolean flagEqual = true;
             for (int i = 0; i < tuple.length; i++) {                                //para cada uma das diemnsões
-                if (tuple[i] != query[i] && query[i] != '*') {                          //se os valores da dimensão forem diferentes
+                if (query[i] != '*' && tuple[i] != query[i]) {                          //se os valores da dimensão forem diferentes
                     flagEqual = false;                                                      //mete flag a false
                     break;
                 }
@@ -338,11 +338,17 @@ public class DataCube {
      * @param tid tuple id to seach on
      * @return an array with the dimensional values of such tuple.
      */
-    private int[] getDimensions(int tid) {
+    private int[] getDimensions(int tid, int[] query) {
         int[] returnable = new int[shellFragmentList.length];
 
-        for (int i = 0; i < shellFragmentList.length; i++)
-            returnable[i] = shellFragmentList[i].getValueFromTid(tid);
+
+        for(int i =0; i < query.length; i++){//query.length == shellfragmentelist.length
+            if(query[i]  == '?' || query[i] == '*')      //se estiver instanciado tem de ter estes valores
+                returnable[i] = shellFragmentList[i].getValueFromTid(tid);
+            else{                                       //se não tiver instanciado tem de se procurar
+                returnable[i] = query[i];
+            }
+        }
 
         return returnable;
     }
