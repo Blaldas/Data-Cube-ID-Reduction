@@ -96,18 +96,25 @@ public class ShellFragment {
      * @return the value of such tuple, or lower-1 if not found.
      */
     public int getValueFromTid(int tid) {
+
         for (int i = 0; i < matrix.length; i++) {                   //para cada uma das linhas
-            for (int v =0; v < size[i]; v++) {                                 //para cada coluna das linhas
-                if (matrix[i][v][0] == tid)                                            //se tiver o id pretendiso
-                    return lower + i;                                           //devolve logo o valor
-                else if (matrix[i][v].length == 2 && matrix[i][v][0] <= tid && matrix[i][v][1] >= tid)       //se tiver tamanho 2 e o id estiver entre os valores
-                    return lower + i;                                           //devolve logo o valor
-                else if (matrix[i][v][0] > tid)                                        //se ids forem superiores - eficiencia
-                    break;                                                  //faz break;
+            //attempt to binary search
+            int start = 0;
+            int end = size[i] - 1;
+            int mid;
+            while (start <= end) {
+                mid = (end + start) / 2;
+                if (matrix[i][mid][0] == tid || (matrix[i][mid].length == 2 && matrix[i][mid][0] <= tid && matrix[i][mid][1] >= tid)) {
+                    return lower + i;
+                } else if (matrix[i][mid][0] > tid)
+                    end = mid - 1;
+                else
+                    start = mid + 1;
 
             }
         }
         return lower - 1;
+
     }
 
 
@@ -137,9 +144,9 @@ public class ShellFragment {
         return max;                                                                             //devolve max
     }
 
-    public int[][] copyMatrix(int[][] matrix, int length){
+    public int[][] copyMatrix(int[][] matrix, int length) {
         int a[][] = new int[length][];
-        for(int i =0; i < length; a[i] = matrix[i++]){
+        for (int i = 0; i < length; a[i] = matrix[i++]) {
         }
 
         return a;

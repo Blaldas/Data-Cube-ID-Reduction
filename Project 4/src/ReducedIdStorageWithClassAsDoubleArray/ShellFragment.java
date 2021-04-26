@@ -88,6 +88,25 @@ public class ShellFragment {
      */
     public int getValueFromTid(int tid) {
         for (int i = 0; i < matrix.length; i++) {                   //para cada uma das linhas
+            //attempt to binary search
+            int start = 0;
+            int end = size[i] - 1;
+            int mid;
+            while (start <= end){
+                mid = (end + start) / 2;
+                if (matrix[i].array1[mid] == tid || (matrix[i].array1[mid] < tid && matrix[i].array2[mid] != -1 && matrix[i].array2[mid] >= tid))
+                {
+                    return lower + i;
+                }
+                else if (matrix[i].array1[mid] > tid)
+                    end = mid - 1;
+                else
+                    start = mid + 1;
+
+            }
+        }
+        //System.out.println("opkmdscadsikmoasdamiok");
+      /*  for (int i = 0; i < matrix.length; i++) {
             for (int v = 0; v < size[i]; v++) {                                 //para cada coluna das linhas
                 if (matrix[i].array1[v] == tid)                                            //se tiver o id pretendiso
                     return lower + i;                                           //devolve logo o valor
@@ -98,9 +117,9 @@ public class ShellFragment {
 
             }
         }
+       */
         return lower - 1;
     }
-
 
     public int getBigestValue() {
         return upper;
