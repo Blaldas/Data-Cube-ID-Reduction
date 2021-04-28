@@ -139,15 +139,17 @@ public class DataCube {
      * @return the array with the tids existing in both arrays received
      */
     private static int[][] intersect(int[][] arrayA, int[][] arrayB) {
-        int[][] c = new int[Math.max(arrayA.length, arrayB.length)][];
+        int[][] c = new int[2 * arrayA.length > arrayB.length ? arrayA.length : arrayB.length][1];
         int ai = 0, bi = 0, ci = 0;
 
 
         while (ai < arrayA.length && bi < arrayB.length) {
-            if(ci == c.length)
-            {
-                int[][] b = new int[2 * c.length][];
-                for(int i = ci - 1; i >= 0; b[i] = c[i--]){};
+            if (ci == c.length) {
+                System.out.println("efcsaaces");
+                int[][] b = new int[2 * c.length][1];        //instanciação instantanea
+                for (int i = ci - 1; i >= 0; b[i] = c[i--]) {
+                }
+                ;
                 c = b;
             }
 
@@ -156,57 +158,67 @@ public class DataCube {
                     switch (arrayB[bi].length) {
                         case 1:                                     //os 2 tamanho 1
                             if (arrayA[ai][0] == arrayB[bi][0]) {
-                                c[ci] = new int[1];
                                 c[ci++][0] = arrayA[ai][0];
-                                ai++;
-                                bi++;
+                                ++ai;
+                                ++bi;
                             } else if (arrayA[ai][0] < arrayB[bi][0])
-                                ai++;
+                                ++ai;
                             else
-                                bi++;
-
+                                ++bi;
                             break;
+
                         case 2:
-                            //A 1, b 2
                             if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
-                                c[ci] = new int[1];
                                 c[ci++][0] = arrayA[ai][0];
-                                ai++;
+                                ++ai;
                             } else if (arrayA[ai][0] < arrayB[bi][1])
-                                ai++;
+                                ++ai;
                             else
-                                bi++;
+                                ++bi;
                             break;
                     }
                     break;
                 case 2:
                     switch (arrayB[bi].length) {
                         case 1:                             //a 2, b 1
-
                             if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {
-                                c[ci] = new int[1];
+                                //c[ci] = new int[1];
                                 c[ci++][0] = arrayB[bi][0];
-                                bi++;
+                                ++bi;
                             } else if (arrayA[ai][1] < arrayB[bi][0])
-                                ai++;
+                                ++ai;
                             else
-                                bi++;
+                                ++bi;
                             break;
-                        case 2:                             //a 2, b 2
 
+                        case 2:                             //a 2, b 2
                             if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {         //[b0 , - ]
                                 c[ci] = new int[2];
                                 c[ci][0] = arrayB[bi][0];
-                                c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
+                                c[ci++][1] = arrayB[bi][1] > arrayA[ai][1] ? arrayA[ai][1] : arrayB[bi][1];        /////ascccccccccccccccccccccc
+
+                                if (c[ci - 1][0] == c[ci - 1][1])     //caso o primeiro esteja no final do útimo
+                                {
+                                    int b[] = new int[1];
+                                    b[0] = c[ci - 1][0];
+                                    c[ci - 1] = b;
+                                }
+
                             } else if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
                                 c[ci] = new int[2];
                                 c[ci][0] = arrayA[ai][0];
-                                c[ci++][1] = Math.min(arrayB[bi][1], arrayA[ai][1]);
-                            }
-                            if (arrayA[ai][1] < arrayB[bi][1])
-                                ai++;
+                                c[ci++][1] = arrayB[bi][1] > arrayA[ai][1] ? arrayA[ai][1] : arrayB[bi][1];          /////ascccccccccccccccccccccc
+
+                                if (c[ci - 1][0] == c[ci - 1][1])     //caso o primeiro esteja no final do útimo
+                                {
+                                    int b[] = new int[1];
+                                    b[0] = c[ci - 1][0];
+                                    c[ci - 1] = b;
+                                }
+                            } else if (arrayA[ai][1] < arrayB[bi][1])
+                                ++ai;
                             else
-                                bi++;
+                                ++bi;
                             break;
                     }
             }
@@ -346,10 +358,10 @@ public class DataCube {
         int[] returnable = new int[shellFragmentList.length];
 
 
-        for(int i =0; i < query.length; i++){//query.length == shellfragmentelist.length
-            if(query[i]  == '?' || query[i] == '*')      //se estiver instanciado tem de ter estes valores
+        for (int i = 0; i < query.length; i++) {//query.length == shellfragmentelist.length
+            if (query[i] == '?' || query[i] == '*')      //se estiver instanciado tem de ter estes valores
                 returnable[i] = shellFragmentList[i].getValueFromTid(tid);
-            else{                                       //se não tiver instanciado tem de se procurar
+            else {                                       //se não tiver instanciado tem de se procurar
                 returnable[i] = query[i];
             }
         }
