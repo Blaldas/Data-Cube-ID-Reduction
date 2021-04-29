@@ -179,7 +179,6 @@ public class DataCube {
                     switch (arrayB[bi].length) {
                         case 1:                             //a 2, b 1
                             if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {
-                                //c[ci] = new int[1];
                                 c[ci++][0] = arrayB[bi][0];
                                 ++bi;
                             } else if (arrayA[ai][1] < arrayB[bi][0])
@@ -212,7 +211,9 @@ public class DataCube {
                                     b[0] = c[ci - 1][0];
                                     c[ci - 1] = b;
                                 }
-                            } else if (arrayA[ai][1] < arrayB[bi][1])
+
+                            }
+                            if (arrayA[ai][1] < arrayB[bi][1])
                                 ++ai;
                             else
                                 ++bi;

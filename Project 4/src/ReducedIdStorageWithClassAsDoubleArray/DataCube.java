@@ -145,7 +145,6 @@ public class DataCube {
 
         while (ai < arrayA.length && bi < arrayB.length) {
             if (ci == c.length) {
-                System.out.println("efcsaaces");
                 int[][] b = new int[2 * c.length][1];        //instanciação instantanea
                 for (int i = ci - 1; i >= 0; b[i] = c[i--]) {
                 }
@@ -182,7 +181,6 @@ public class DataCube {
                     switch (arrayB[bi].length) {
                         case 1:                             //a 2, b 1
                             if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {
-                                //c[ci] = new int[1];
                                 c[ci++][0] = arrayB[bi][0];
                                 ++bi;
                             } else if (arrayA[ai][1] < arrayB[bi][0])
@@ -199,7 +197,7 @@ public class DataCube {
 
                                 if (c[ci - 1][0] == c[ci - 1][1])     //caso o primeiro esteja no final do útimo
                                 {
-                                    int b[] = new int[1];
+                                    int[] b = new int[1];
                                     b[0] = c[ci - 1][0];
                                     c[ci - 1] = b;
                                 }
@@ -211,11 +209,12 @@ public class DataCube {
 
                                 if (c[ci - 1][0] == c[ci - 1][1])     //caso o primeiro esteja no final do útimo
                                 {
-                                    int b[] = new int[1];
+                                    int[] b = new int[1];
                                     b[0] = c[ci - 1][0];
                                     c[ci - 1] = b;
                                 }
-                            } else if (arrayA[ai][1] < arrayB[bi][1])
+                            }
+                            if (arrayA[ai][1] < arrayB[bi][1])
                                 ++ai;
                             else
                                 ++bi;
