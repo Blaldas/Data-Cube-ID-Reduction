@@ -3,6 +3,9 @@ package notUsingFastUtil;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.SQLOutput;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -12,13 +15,21 @@ public class Main {
     static DataCube mainCube;
     static int lowerValue = 1;
 
+    //memory
+    static long maxMemory = 0;//System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
+
 
     public static void main(String[] args) {
         System.out.println("\nnot using ID REDUCTION \n");
 
+        if(args.length != 1)
+        {
+            System.out.println("fragCubing_java.jar <dataset name>");
+            //System.exit(1);
+        }
 
         Scanner sc = new Scanner(System.in);
-        String path = "lmao";
+        String path = "Forest";//args[0];
 
 
         load(path);
@@ -31,9 +42,10 @@ public class Main {
             input = sc.next();
             input += sc.nextLine();
 
-            if (input.charAt(0) == 'q')
+            if (input.charAt(0) == 'q') {
+                maxMemory = 0;
                 query(input);
-            else if (input.equals("show"))
+            }else if (input.equals("show"))
                 mainCube.showAllDimensions();
             else if (input.charAt(0) == 'w' && input.charAt(1) == 'r' && input.charAt(2) == 't')
                 createAndWriteNew(input);
@@ -71,13 +83,13 @@ public class Main {
 
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
+        array = null;
+        sizes = null;
         System.gc();
         System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
         System.out.println("Cardinality\t" + mainCube.shellFragmentList[0].size.length);          //num dimensões
         System.out.println("number of tuples loaded\t" + mainCube.getNumberTuples());
-
-
 
 
         System.out.println("load end");
@@ -147,6 +159,7 @@ public class Main {
             mainCube.getSubCube(values);
         } else {
             int[] searchResult = mainCube.pointQuerySeach(values); //returns array of ids
+            System.out.println(Arrays.toString(searchResult));
             if (searchResult == null)
             {
                 System.out.println("Bad Query formation");
@@ -154,11 +167,14 @@ public class Main {
             else
                 System.out.println("Query answers:\t" + searchResult.length);
         }
+        if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
         System.gc();
         System.out.println("Query executed in " + numSeconds+ " ms.");
-
+        System.out.println("Biggest ammount of memory used: " +  maxMemory + " bytes");
 
     }
 
@@ -168,7 +184,7 @@ public class Main {
      *
      */
     private static int[] getSizes(String filePath) {
-        Path path = Path.of(filePath);
+        Path path = Paths.get(filePath);
         try {
             String line = null;                                         //the information will be read here
             String[] values;
