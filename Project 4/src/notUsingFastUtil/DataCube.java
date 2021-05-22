@@ -1,9 +1,7 @@
 package notUsingFastUtil;
 
-import it.unimi.dsi.fastutil.ints.IntArrays;
 
 import java.util.Arrays;
-import java.util.Date;
 
 public class DataCube {
 
@@ -66,22 +64,37 @@ public class DataCube {
                             tidsList[n + 1] = returned;
                             break;
                         }
-
                     }
                 }
                 //tidsList[instanciated] = returned;
                 instanciated++;
             }
+            System.out.println(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
         }
+        if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
+        int[] returnable = tidsList[0];
         if (instanciated > 0) {
             for (int i = 1; i < instanciated; i++) {
-                tidsList[0] = intersect(tidsList[0], tidsList[i]);
-                if (tidsList[0].length == 0)
-                    return tidsList[0];
+                if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+                    Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+                returnable = intersect(returnable, tidsList[i]);
+
+                if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+                    Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+                if (returnable.length == 0)
+                    return returnable;
+                tidsList[i] = null; //chama para o garabge colector
             }
-            return tidsList[0];
+
+            return returnable;
         }
+        if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
         return shellFragmentList[0].getAllTids();
     }
 
@@ -175,7 +188,7 @@ public class DataCube {
                 query[i] = values[i][counter[i]];
 
 
-            //pesquisa com valores do query
+            //pesquisa e mostra com valores do query
             getNumeroDeTuplesComCaracteristicas(query, subCubeValues);// faz pesquisa sobre esses valores
 
             //gere os counters
@@ -189,6 +202,9 @@ public class DataCube {
             }
 
             rounds++;
+            if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+                Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
         } while (rounds < total);
 
         System.out.println(total + " lines written");
@@ -231,10 +247,10 @@ public class DataCube {
         StringBuilder str = new StringBuilder();                            //obtem os dados e mostra
         for (int i : query)
             if (i != '*')
-                str.append((i)).append("\t");
+                str.append((i)).append(" ");
             else
-                str.append("*\t");
-        str.append(":\t").append(count);
+                str.append("* ");
+        str.append(": ").append(count);
         System.out.println(str);
 
     }
