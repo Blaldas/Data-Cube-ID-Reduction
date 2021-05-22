@@ -1,5 +1,7 @@
 package ReducedIdStorageWithClassAsDoubleArray;
 
+import notUsingFastUtil.Main;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -25,7 +27,7 @@ public class DataCube {
     /**
      * prints all the values and the number of tuples they store, for every single diemension
      */
-    public void showAllDimensions() {
+   /* public void showAllDimensions() {
         for (int i = 0; i < shellFragmentList.length; i++) {
             StringBuilder str;
             System.out.println("Dimension " + (i + 1));
@@ -41,17 +43,20 @@ public class DataCube {
         }
     }
 
+    */
     public int pointQueryCounter(int[] query) {
-        int[][] mat = pointQuerySeach(query);
+        DIntArray mat = pointQuerySeach(query);
         if (mat == null)
             return -1;
         int counter = 0;
 
-        for (int arr[] : mat) {
-            if (arr.length == 2)
-                counter += arr[1] - arr[0];
+
+        for (int i = 0; i < mat.size; i++) {
+            if (mat.array2[i] != -1)
+                counter += mat.array2[i] - mat.array1[i];
             counter++;
         }
+
         return counter;
     }
 
@@ -64,10 +69,35 @@ public class DataCube {
      * @param query the query being made
      * @return array with the tuple ids, null if query.length != shellFragmentList.length
      */
-    public int[][] pointQuerySeach(int[] query) {
+    public DIntArray pointQuerySeach(int[] query) {
         if (query.length != shellFragmentList.length)
             return null;
 
+        DIntArray result = new DIntArray(0);
+        for (int i = 0; i < query.length; i++) {
+            if (query[i] != '*' && query[i] != '?') {
+                DIntArray secundary = shellFragmentList[i].getTidsListFromValue(query[i]);
+                if (secundary.size == 0)
+                    return secundary;
+                if (result.size == 0)
+                    result = secundary;
+
+                else {
+                    result = intersect(result, secundary);
+
+                    if (result.size == 0)
+                        return result;
+                }
+            }
+            if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
+                ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+            if (result.size == 0) { //caso não exista nenhuma instanciação
+                result = new DIntArray(1);
+                result.addValues(0, shellFragmentList[0].getBiggestTid());
+            }
+        }
+        /*
         int[][] result = new int[0][];
         for (int i = 0; i < query.length; i++) {
             if (query[i] != '*' && query[i] != '?') {
@@ -84,28 +114,57 @@ public class DataCube {
                     /*endDate = new Date();
                     long numSeconds = ((endDate.getTime() - startDate.getTime()));
                     System.out.println("intersect\t" + numSeconds);             //tempo
-                    */
+                    ///
                     if (result.length == 0)
                         return new int[0][0];
                 }
             }
+            if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
+                ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
         }
+
         //caso todas tenham valor '?' ou '*'
         if (result.length == 0) {
             result = new int[1][2];
             result[0][0] = 0;
             result[0][1] = shellFragmentList[0].getBiggestTid();
         }
+        */
         return result;
     }
 
-    private int[] getArrayFromMatrix(int[][] matrix) {
+    private int[] getArrayFromMatrix(DIntArray matrix) {
         if (matrix == null)
             return null;
-        else if (matrix.length == 0)
+        else if (matrix.size == 0)
             return new int[0];
 
         int size = 0;
+        int[] returnable = new int[matrix.size];
+        for (int i = 0; i < matrix.size; i++) {
+            if (size == returnable.length) {
+                int[] b = new int[2 * size];
+                System.arraycopy(returnable, 0, b, 0, returnable.length);
+                returnable = b;
+            }
+            if (matrix.array2[i] == -1) {
+                returnable[size++] = matrix.array1[i];
+            } else {
+                for (int n = matrix.array1[i]; n <= matrix.array2[i]; n++) {
+                    if (size == returnable.length) {
+                        int[] b = new int[2 * size];
+                        System.arraycopy(returnable, 0, b, 0, returnable.length);
+                        returnable = b;
+                    }
+                    returnable[size++] = n;
+                }
+            }
+        }
+
+
+
+        /*
         int[] returnable = new int[matrix.length];
 
         for (int[] arr : matrix) {
@@ -128,6 +187,7 @@ public class DataCube {
                 }
             }
         }
+        */
 
         return Arrays.copyOfRange(returnable, 0, size);
     }
@@ -138,7 +198,69 @@ public class DataCube {
      * @param arrayB array of tids
      * @return the array with the tids existing in both arrays received
      */
-    private static int[][] intersect(int[][] arrayA, int[][] arrayB) {
+    private static DIntArray intersect(DIntArray arrayA, DIntArray arrayB) {
+
+        DIntArray c = new DIntArray(2 * arrayA.size > arrayB.size ? arrayA.size : arrayB.size);
+        int ai = 0, bi = 0;
+
+
+        while (ai < arrayA.size && bi < arrayB.size) {
+            if (arrayA.array2[ai] == -1) {                //A tem tamanho 1:
+                if (arrayB.array2[bi] == -1) {               //B tem tamanho 1
+                    if (arrayA.array1[ai] == arrayB.array1[bi]) {       //sao iguais
+                        c.addValues(arrayA.array1[ai], -1);                             //adiciona valor 1
+                        ++ai;                                                           //avança com pontyeiro A
+                        ++bi;                                                           //avança com ponteiro B
+                    } else if (arrayA.array1[ai] < arrayB.array1[bi])       //A menor que B
+                        ++ai;                                                    //avança com pontyeiro A
+                    else                                                    //B menor que A
+                        ++bi;                                                   //avança com ponteiro B
+                } else {                    //B tem tamanho 2
+                    if (arrayA.array1[ai] >= arrayB.array1[bi] && arrayA.array1[ai] <= arrayB.array2[bi]) {     //A1 entre B1 e B2
+                        c.addValues(arrayA.array1[ai], -1);
+                        ++ai;
+                    } else if (arrayA.array1[ai] < arrayB.array2[bi])                                           //A1 menor que B2
+                        ++ai;                                                                                       //avança com pontyeiro A
+                    else                                                                                //A1 maior que  B2
+                        ++bi;                                                                                //avança com ponteiro B
+                }
+            } else {                    //A tem tamanho 2
+                if (arrayB.array2[bi] == -1) {   //B tem tamanho 1
+                    if (arrayA.array1[ai] <= arrayB.array1[bi] && arrayA.array2[ai] >= arrayB.array1[bi]) {     //B1 entre A1 e A2
+                        c.addValues(arrayB.array1[bi], -1);
+                        ++bi;
+                    } else if (arrayA.array2[ai] < arrayB.array1[bi])                                           //A1 menor que B1
+                        ++ai;
+                    else                                                                                //A1 maior que B1
+                        ++bi;
+                } else {        //A e B têm tamanho 2
+                    if (arrayA.array1[ai] <= arrayB.array1[bi] && arrayA.array2[ai] >= arrayB.array1[bi]) {         //[b0 , - ]
+                        if (arrayB.array1[bi] == arrayA.array2[ai])     //caso o primeiro esteja no final do útimo
+                            c.addValues(arrayB.array1[bi], -1);
+                        else
+                            c.addValues(arrayB.array1[bi], arrayA.array2[ai] > arrayB.array2[bi] ? arrayB.array2[bi] : arrayA.array2[ai]);
+                    } else if (arrayA.array1[ai] >= arrayB.array1[bi] && arrayA.array1[ai] <= arrayB.array2[bi]) {
+                        if (arrayB.array2[bi] == arrayA.array1[ai])     //caso o primeiro esteja no final do útimo
+                            c.addValues(arrayA.array1[ai], -1);
+                        else
+                            c.addValues(arrayA.array1[ai], arrayA.array2[ai] > arrayB.array2[bi] ? arrayB.array2[bi] : arrayA.array2[ai]);
+                    }
+                    if (arrayA.array2[ai] < arrayB.array2[bi])
+                        ++ai;
+                    else
+                        ++bi;
+                }
+            }
+        }
+
+        System.out.println(c.size);
+
+        DIntArray returnable = new DIntArray(c.size);
+        returnable.addArrays(c.array1, c.array2, c.size);
+        c = null;
+        return returnable;
+
+        /*
         int[][] c = new int[2 * arrayA.length > arrayB.length ? arrayA.length : arrayB.length][1];
         int ai = 0, bi = 0, ci = 0;
 
@@ -224,6 +346,8 @@ public class DataCube {
         }
 
         return Arrays.copyOfRange(c, 0, ci);
+
+         */
     }
 
 
@@ -243,6 +367,7 @@ public class DataCube {
             System.out.println("wrong number of dimensions");
             return;
         }
+
 
         int[] tidArray = this.pointQueryAdapter(values);            //obtem TIDs resultante
         if (tidArray.length == 0) {
@@ -302,6 +427,9 @@ public class DataCube {
             }
 
             rounds++;
+            if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
+                ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
         } while (rounds < total);
 
         System.out.println(total + " lines written");
@@ -340,10 +468,10 @@ public class DataCube {
         StringBuilder str = new StringBuilder();                            //obtem os dados e mostra
         for (int i : query)
             if (i != '*')
-                str.append((i)).append("\t");
+                str.append((i)).append(" ");
             else
-                str.append("*\t");
-        str.append(":\t").append(count);
+                str.append("* ");
+        str.append(": ").append(count);
         System.out.println(str);
 
     }

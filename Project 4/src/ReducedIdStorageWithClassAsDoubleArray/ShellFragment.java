@@ -3,7 +3,7 @@ package ReducedIdStorageWithClassAsDoubleArray;
 public class ShellFragment {
 
     DIntArray[] matrix;
-    int[] size;
+    //int[] size;
     int lower;
     int upper;
 
@@ -13,7 +13,7 @@ public class ShellFragment {
 
 
         matrix = new DIntArray[upper - lower + 1];      //aloca array de DoubleIntArray com o tamanho necessário
-        size = new int[upper - lower + 1];              //aloca array de sizes com tamnho necessário
+        //size = new int[upper - lower + 1];              //aloca array de sizes com tamnho necessário
 
         fillMatrix(rawData, column);
 
@@ -25,13 +25,17 @@ public class ShellFragment {
 
         for (int i = 0; i < rawData.length; i++) {          //para cada uma das tuples
 
-            if (size[rawData[i][column] - lower] == 0 || size[rawData[i][column] - lower] == matrix[rawData[i][column] - lower].getLength()) {                //se não houver espaço para guardar tid no valor a ser looped
+            if(matrix[rawData[i][column] - lower] == null)
+                matrix[rawData[i][column] - lower] = new DIntArray(1);
 
-                DIntArray b = new DIntArray(size[rawData[i][column] - lower] == 0 ?                                                           //se o tamanho for zero
-                        1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)) <= size[rawData[i][column] - lower] ?
-                        size[rawData[i][column] - lower] + 1 : (int) (size[rawData[i][column] - lower] * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)));
+            if (matrix[rawData[i][column] - lower].size == 0 || matrix[rawData[i][column] - lower].size == matrix[rawData[i][column] - lower].getLength()) {                //se não houver espaço para guardar tid no valor a ser looped
 
-                if (size[rawData[i][column] - lower] != 0) {
+                DIntArray b = new DIntArray(matrix[rawData[i][column] - lower].size == 0 ?                                                           //se o tamanho for zero
+                        1 : (int) (matrix[rawData[i][column] - lower].size * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)) <= matrix[rawData[i][column] - lower].size ?
+                        matrix[rawData[i][column] - lower].size + 1 : (int) (matrix[rawData[i][column] - lower].size * calculateGrowingRatio(rawData[i][column] - lower, rawData.length)));
+
+                if (matrix[rawData[i][column] - lower].size != 0) {
+                    b.size = matrix[rawData[i][column] - lower].size;
                     b.SetArray1(matrix[rawData[i][column] - lower].array1);
                     b.SetArray2(matrix[rawData[i][column] - lower].array2);
                 }
@@ -40,11 +44,11 @@ public class ShellFragment {
             }
 
             //caso seja o primeiro OU não seja incremenyto
-            if (size[rawData[i][column] - lower] == 0 || (i - getLastValue(rawData[i][column])) != 1) {
-                matrix[rawData[i][column] - lower].array1[size[rawData[i][column] - lower]] = i;
-                size[rawData[i][column] - lower]++;
+            if (matrix[rawData[i][column] - lower].size == 0 || (i - getLastValue(rawData[i][column])) != 1) {
+                matrix[rawData[i][column] - lower].array1[matrix[rawData[i][column] - lower].size] = i;
+                matrix[rawData[i][column] - lower].size++;
             } else {                  //caso seja incremento da última posição -> acrescenta ou troca valor no array 2
-                matrix[rawData[i][column] - lower].array2[size[rawData[i][column] - lower] - 1] = i;
+                matrix[rawData[i][column] - lower].array2[matrix[rawData[i][column] - lower].size - 1] = i;
             }
         }
     }
@@ -56,7 +60,7 @@ public class ShellFragment {
      * @return a multipler between ]1,2]
      */
     private float calculateGrowingRatio(int i, int length) {
-        float r = 1.1f + (1f - ((float) size[i] / (float) length) * 2);     //formula simples para obter o ratio de crescimento
+        float r = 1.1f + (1f - ((float) matrix[i].size / (float) length) * 2);     //formula simples para obter o ratio de crescimento
         if (r > 2)                                                              //restrição a 2
             return 2;
         else if (r < 1)                                                          //restrição a 1.1
@@ -66,9 +70,9 @@ public class ShellFragment {
 
     //returns the last value stored for value i
     private int getLastValue(int val) {
-        if (matrix[val - lower].array2[size[val - lower] - 1] != -1)
-            return matrix[val - lower].array2[size[val - lower] - 1];
-        return matrix[val - lower].array1[size[val - lower] - 1];
+        if (matrix[val - lower].array2[matrix[val - lower].size - 1] != -1)
+            return matrix[val - lower].array2[matrix[val - lower].size - 1];
+        return matrix[val - lower].array1[matrix[val - lower].size - 1];
     }
 
 
@@ -76,10 +80,10 @@ public class ShellFragment {
      * @param value value of the dimension
      * @return ID list of the tuples with that value, if the value is not found returns an array with size 0. Care that the array of a found value may be zero as well, so it's not a flag
      */
-    public int[][] getTidsListFromValue(int value) {
+    public DIntArray getTidsListFromValue(int value) {
         if (value > upper || value < lower || matrix[value - lower] == null)
-            return new int[0][0];
-        return matrix[value - lower].get2dMatrix(size[value - lower]);      //talvez seja melhor nao usar isto, enviuar o array e que eles testem até ao null
+            return new DIntArray(0);
+        return matrix[value - lower];      //talvez seja melhor nao usar isto, enviuar o array e que eles testem até ao null
     }
 
     /**
@@ -90,7 +94,7 @@ public class ShellFragment {
         for (int i = 0; i < matrix.length; i++) {                   //para cada uma das linhas
             //attempt to binary search
             int start = 0;
-            int end = size[i] - 1;
+            int end = matrix[i].size - 1;
             int mid;
             while (start <= end){
                 mid = (end + start) / 2;
@@ -105,19 +109,6 @@ public class ShellFragment {
 
             }
         }
-        //System.out.println("opkmdscadsikmoasdamiok");
-      /*  for (int i = 0; i < matrix.length; i++) {
-            for (int v = 0; v < size[i]; v++) {                                 //para cada coluna das linhas
-                if (matrix[i].array1[v] == tid)                                            //se tiver o id pretendiso
-                    return lower + i;                                           //devolve logo o valor
-                else if (matrix[i].array2[v] != -1 && matrix[i].array1[v] <= tid && matrix[i].array2[v] >= tid)       //se tiver tamanho 2 e o id estiver entre os valores
-                    return lower + i;                                           //devolve logo o valor
-                else if (matrix[i].array1[v] > tid)                                        //se ids forem superiores - eficiencia
-                    break;                                                  //faz break;
-
-            }
-        }
-       */
         return lower - 1;
     }
 
@@ -140,12 +131,12 @@ public class ShellFragment {
     public int getBiggestTid() {
         int max = -1;                                                                           //coloca um valor inicial nunca returnavel em max
 
-        for (int i = 0; i < size.length; i++)                                   //para cada dimensão
-            if (size[i] != 0)                                                       //se o tamanho da dimensão for maior que zero
-                if (matrix[i].array2[size[i] - 1] > max)                                    //se a segunda posição for maior que zero
-                    max = matrix[i].array2[size[i] - 1];                                        //max guarda a ultima posição
-                else if (matrix[i].array1[size[i] - 1] > max)                               //senão, se a primeira posição for maior que zero
-                    max = matrix[i].array1[size[i] - 1];                                        //max guarda a ultima posição
+        for (int i = 0; i < matrix.length; i++)                                   //para cada dimensão
+            if (matrix[i] != null && matrix[i].size != 0)                                                       //se o tamanho da dimensão for maior que zero
+                if (matrix[i].array2[matrix[i].size - 1] > max)                                    //se a segunda posição for maior que zero
+                    max = matrix[i].array2[matrix[i].size - 1];                                        //max guarda a ultima posição
+                else if (matrix[i].array1[matrix[i].size - 1] > max)                               //senão, se a primeira posição for maior que zero
+                    max = matrix[i].array1[matrix[i].size - 1];                                        //max guarda a ultima posição
         return max;                                                             //devolve max
     }
 

@@ -4,6 +4,7 @@ package ReducedIdStorageWithClassAsDoubleArray;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -13,13 +14,20 @@ public class Main {
     static DataCube mainCube;
     static int lowerValue = 1;
 
+    static long maxMemory;
+
 
     public static void main(String[] args) {
-        System.out.println("\nID REDUCTION v2\n");
+
+        if (args.length != 1) {
+            System.out.println("fragCubing_reduced_java.jar <dataset name>");
+            //System.exit(1);
+        }
+
+        System.out.println("\nID REDUCTION C ARRAY STYLE\n");
 
         Scanner sc = new Scanner(System.in);
-        String path = "path";
-
+        String path = "Forest";//args[0];
         load(path);
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
 
@@ -31,9 +39,12 @@ public class Main {
             input += sc.nextLine();
 
             if (input.charAt(0) == 'q')
+            {
+                maxMemory = 0;
                 query(input);
+            }
             else if (input.equals("show"))
-                mainCube.showAllDimensions();
+             ;   //mainCube.showAllDimensions();
             else if (input.charAt(0) == 'w' && input.charAt(1) == 'r' && input.charAt(2) == 't')
                 createAndWriteNew(input);
             else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
@@ -67,10 +78,12 @@ public class Main {
 
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
+        array = null;
+        sizes = null;
         System.gc();
         System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
-        System.out.println("Cardinality\t" + mainCube.shellFragmentList[0].size.length);          //num dimensões
+        System.out.println("Cardinality\t" + mainCube.shellFragmentList[0].matrix.length);          //num dimensões
         System.out.println("number of tuples loaded\t" + mainCube.getNumberTuples());
 
 
@@ -107,7 +120,7 @@ public class Main {
 
 
     /**
-     * @param input    user input. Something like "q 1 2 3"
+     * @param input user input. Something like "q 1 2 3"
      */
     private static void query(String input) {
 
@@ -141,26 +154,30 @@ public class Main {
             mainCube.getSubCube(values);
         } else {
             int searchResult = mainCube.pointQueryCounter(values); //returns array of ids
-        if (searchResult == -1)
-            System.out.println("Bad Query formation");
-        else
-            System.out.println("Query answers:\t" + searchResult);
+            if (searchResult == -1)
+                System.out.println("Bad Query formation");
+            else
+                System.out.println("Query answers:\t" + searchResult);
         }
+        if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
         System.gc();
-        System.out.println("Query executed in " + numSeconds+ " ms.");
+        System.out.println("Query executed in " + numSeconds + " ms.");
 
+        System.out.println("Biggest ammount of memory used: " +  maxMemory + " bytes");
 
     }
 
     /**
      * @param filePath Path of the file to be read
      * @return int array were the first element is the number of tuples and the other ones are the biggest element of each dimension
-     *
      */
     private static int[] getSizes(String filePath) {
-        Path path = Path.of(filePath);
+        Path path = Paths.get(filePath);
         try {
             String line = null;                                         //the information will be read here
             String[] values;
