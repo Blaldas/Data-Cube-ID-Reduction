@@ -58,7 +58,7 @@ public class ShellFragment {
      */
     public int getValueFromTid(int tid) {
         for (int i = 0; i < matrix.length; i++) {                   //para cada uma das linhas
-            if(matrix[i].hasTid(tid))
+            if(matrix[i] != null && matrix[i].hasTid(tid))
                 return i + lower;
         }
         return lower - 1;
