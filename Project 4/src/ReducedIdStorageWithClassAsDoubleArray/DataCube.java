@@ -81,9 +81,9 @@ public class DataCube {
                     return secundary;
                 if (result.size == 0)
                     result = secundary;
-
                 else {
                     result = intersect(result, secundary);
+                   // System.out.println(Arrays.deepToString(result.get2dMatrix(result.size)));
 
                     if (result.size == 0)
                         return result;
@@ -97,40 +97,7 @@ public class DataCube {
                 result.addValues(0, shellFragmentList[0].getBiggestTid());
             }
         }
-        /*
-        int[][] result = new int[0][];
-        for (int i = 0; i < query.length; i++) {
-            if (query[i] != '*' && query[i] != '?') {
-                int[][] secundary = shellFragmentList[i].getTidsListFromValue(query[i]);      //obtem lista de tids
-                if (secundary.length == 0)                                      //se a lista for vazia, devolve null
-                    return new int[0][0];
 
-                if (result.length == 0)
-                    result = secundary;
-                else {
-                    //Date startDate = new Date(), endDate;
-                    result = intersect(result, secundary);
-
-                    /*endDate = new Date();
-                    long numSeconds = ((endDate.getTime() - startDate.getTime()));
-                    System.out.println("intersect\t" + numSeconds);             //tempo
-                    ///
-                    if (result.length == 0)
-                        return new int[0][0];
-                }
-            }
-            if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
-                ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-
-        }
-
-        //caso todas tenham valor '?' ou '*'
-        if (result.length == 0) {
-            result = new int[1][2];
-            result[0][0] = 0;
-            result[0][1] = shellFragmentList[0].getBiggestTid();
-        }
-        */
         return result;
     }
 
@@ -161,33 +128,8 @@ public class DataCube {
                 }
             }
         }
-
-
-
-        /*
-        int[] returnable = new int[matrix.length];
-
-        for (int[] arr : matrix) {
-            if (size == returnable.length) {
-                int[] b = new int[2 * size];
-                System.arraycopy(returnable, 0, b, 0, returnable.length);
-                returnable = b;
-            }
-
-            if (arr.length == 1) {
-                returnable[size++] = arr[0];
-            } else {
-                for (int i = arr[0]; i <= arr[1]; i++) {
-                    if (size == returnable.length) {
-                        int[] b = new int[2 * size];
-                        System.arraycopy(returnable, 0, b, 0, returnable.length);
-                        returnable = b;
-                    }
-                    returnable[size++] = i;
-                }
-            }
-        }
-        */
+        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
+            ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         return Arrays.copyOfRange(returnable, 0, size);
     }
@@ -253,101 +195,11 @@ public class DataCube {
             }
         }
 
-        System.out.println(c.size);
-
         DIntArray returnable = new DIntArray(c.size);
         returnable.addArrays(c.array1, c.array2, c.size);
         c = null;
         return returnable;
 
-        /*
-        int[][] c = new int[2 * arrayA.length > arrayB.length ? arrayA.length : arrayB.length][1];
-        int ai = 0, bi = 0, ci = 0;
-
-
-        while (ai < arrayA.length && bi < arrayB.length) {
-            if (ci == c.length) {
-                int[][] b = new int[2 * c.length][1];        //instanciação instantanea
-                for (int i = ci - 1; i >= 0; b[i] = c[i--]) {
-                }
-                ;
-                c = b;
-            }
-
-            switch (arrayA[ai].length) {
-                case 1:
-                    switch (arrayB[bi].length) {
-                        case 1:                                     //os 2 tamanho 1
-                            if (arrayA[ai][0] == arrayB[bi][0]) {
-                                c[ci++][0] = arrayA[ai][0];
-                                ++ai;
-                                ++bi;
-                            } else if (arrayA[ai][0] < arrayB[bi][0])
-                                ++ai;
-                            else
-                                ++bi;
-                            break;
-
-                        case 2:
-                            if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
-                                c[ci++][0] = arrayA[ai][0];
-                                ++ai;
-                            } else if (arrayA[ai][0] < arrayB[bi][1])
-                                ++ai;
-                            else
-                                ++bi;
-                            break;
-                    }
-                    break;
-                case 2:
-                    switch (arrayB[bi].length) {
-                        case 1:                             //a 2, b 1
-                            if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {
-                                c[ci++][0] = arrayB[bi][0];
-                                ++bi;
-                            } else if (arrayA[ai][1] < arrayB[bi][0])
-                                ++ai;
-                            else
-                                ++bi;
-                            break;
-
-                        case 2:                             //a 2, b 2
-                            if (arrayA[ai][0] <= arrayB[bi][0] && arrayA[ai][1] >= arrayB[bi][0]) {         //[b0 , - ]
-                                c[ci] = new int[2];
-                                c[ci][0] = arrayB[bi][0];
-                                c[ci++][1] = arrayB[bi][1] > arrayA[ai][1] ? arrayA[ai][1] : arrayB[bi][1];        /////ascccccccccccccccccccccc
-
-                                if (c[ci - 1][0] == c[ci - 1][1])     //caso o primeiro esteja no final do útimo
-                                {
-                                    int[] b = new int[1];
-                                    b[0] = c[ci - 1][0];
-                                    c[ci - 1] = b;
-                                }
-
-                            } else if (arrayA[ai][0] >= arrayB[bi][0] && arrayA[ai][0] <= arrayB[bi][1]) {
-                                c[ci] = new int[2];
-                                c[ci][0] = arrayA[ai][0];
-                                c[ci++][1] = arrayB[bi][1] > arrayA[ai][1] ? arrayA[ai][1] : arrayB[bi][1];          /////ascccccccccccccccccccccc
-
-                                if (c[ci - 1][0] == c[ci - 1][1])     //caso o primeiro esteja no final do útimo
-                                {
-                                    int[] b = new int[1];
-                                    b[0] = c[ci - 1][0];
-                                    c[ci - 1] = b;
-                                }
-                            }
-                            if (arrayA[ai][1] < arrayB[bi][1])
-                                ++ai;
-                            else
-                                ++bi;
-                            break;
-                    }
-            }
-        }
-
-        return Arrays.copyOfRange(c, 0, ci);
-
-         */
     }
 
 
@@ -374,12 +226,16 @@ public class DataCube {
             System.out.println("no values found");
             return;
         }
+        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
+            ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         int[][] subCubeValues = new int[tidArray.length][];                      //aloca memoria array de valores
 
         for (int i = 0; i < subCubeValues.length; i++) {                                     //para cada um dos IDs de tuples que respeita o pedido
             subCubeValues[i] = getDimensions(tidArray[i], values);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
         }
+        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
+            ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 
         showQueryDataCube(values, subCubeValues);        // a nova função que mostra as coisas
@@ -400,6 +256,8 @@ public class DataCube {
 
 
         int[][] values = getAllDifferentValues(subCubeValues, qValues);      //guarda todos os valores diferentes para cada dimensão
+        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory)
+            ReducedIdStorageWithClassAsDoubleArray.Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 
         int total = 1;                              //guarda o numero de conbinações difrerentes

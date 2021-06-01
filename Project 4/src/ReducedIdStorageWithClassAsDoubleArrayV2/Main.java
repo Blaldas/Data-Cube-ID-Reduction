@@ -4,6 +4,7 @@ package ReducedIdStorageWithClassAsDoubleArrayV2;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -160,7 +161,7 @@ public class Main {
      *
      */
     private static int[] getSizes(String filePath) {
-        Path path = Path.of(filePath);
+        Path path = Paths.get(filePath);
         try {
             String line = null;                                         //the information will be read here
             String[] values;

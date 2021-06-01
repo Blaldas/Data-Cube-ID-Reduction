@@ -56,15 +56,12 @@ public class DataCube {
                     result = secundary;
                 else {
                     result = intersect(result, secundary);
-                   // System.out.println(Arrays.deepToString(result.get2dMatrix()));
+                    // System.out.println(Arrays.deepToString(result.get2dMatrix()));
                     if (result.countStoredTids() == 0) {
                         return result;
                     }
                 }
             }
-
-            if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
-                Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
             if (result == null) { //caso não exista nenhuma instanciação
                 result = new DIntArray();
@@ -345,15 +342,12 @@ public class DataCube {
             System.out.println("no values found");
             return;
         }
-        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
-            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
         int[][] subCubeValues = new int[tidArray.length][];                      //aloca memoria array de valores
 
         for (int i = 0; i < subCubeValues.length; i++) {                                     //para cada um dos IDs de tuples que respeita o pedido
             subCubeValues[i] = getDimensions(tidArray[i], values);                              //obtem-se os seus valores e coloca-se no array de representação de objetos
         }
-        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
-            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         showQueryDataCube(values, subCubeValues);        // a nova função que mostra as coisas
 
@@ -362,19 +356,15 @@ public class DataCube {
 
     /**
      * @param qValues       the query
-     * @param subCubeValues "subcube" values
+     * @param subCubeValues "subcube" values -> array with all the complete tuples.
      */
     private void showQueryDataCube(int[] qValues, int[][] subCubeValues) {
 
-        int[] query = new int[subCubeValues[0].length];               //stores all the values as a query.
-        int[] counter = new int[subCubeValues[0].length];             //counter to the query values
-        for (int c : counter)
-            c = 0;
+        int[] query = new int[qValues.length];               //stores all the values as a query.
+        int[] counter = new int[qValues.length];             //counter to the query values in each dimension-> looper counter
 
 
-        int[][] values = getAllDifferentValues(subCubeValues, qValues);      //guarda todos os valores diferentes para cada dimensão
-        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
-            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        int[][] values = getAllDifferentValues(qValues);      //guarda todos os valores diferentes para cada dimensão
 
         int total = 1;                              //guarda o numero de conbinações difrerentes
         for (int[] d : values) {
@@ -382,12 +372,16 @@ public class DataCube {
         }
 
         int rounds = 0;
+
+        //Não chama o gc porque nada que foi alocado até ao momento foi desperdiçado, e existe o risco de dar um valor menor que o valor base xD
+        if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
+            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
         do {
             for (int i = 0; i < counter.length; i++)     //da os valores as queries
                 query[i] = values[i][counter[i]];
 
-
-            //pesquisa com valores do query
+            //pesquisa com valores do query e mostra
             getNumeroDeTuplesComCaracteristicas(query, subCubeValues);// faz pesquisa sobre esses valores
 
             //gere os counters
@@ -401,27 +395,33 @@ public class DataCube {
             }
 
             rounds++;
-            if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
-                Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         } while (rounds < total);
 
         System.out.println(total + " lines written");
     }
 
-    private int[][] getAllDifferentValues(int[][] subCubeValues, int[] queryValues) {
-        int[][] result = new int[subCubeValues[0].length][0];
+    /**
+     *
+     * @param queryValues the query
+     * @return matrix with all the values to loop on
+     *  this method is used to create a matrix with all the possible combinations
+     */
+    private int[][] getAllDifferentValues( int[] queryValues) {
+        int[][] result = new int[queryValues.length][0];
 
         for (int i = 0; i < queryValues.length; i++) {               //para cada uma das dimensões
             if (queryValues[i] == '?') {
-                result[i] = new int[shellFragmentList[i].getBigestValue() - shellFragmentList[i].lower + 2];
-                //for(int n = shellFragmentList[i].getBigestValue(); n > shellFragmentList[i].lower ; n++)
-                //  result[i][n] = n;
-                System.arraycopy(shellFragmentList[i].getAllValues(), 0, result[i], 1, shellFragmentList[i].getAllValues().length);
+                result[i] = new int[shellFragmentList[i].matrix.length + 1];
                 result[i][0] = '*';
+                for (int j = result[i].length; j > 1; result[i][--j] = j) {
+                }
+
+
             } else {
                 result[i] = new int[]{queryValues[i]};
             }
+            System.out.println(result[i].length);
         }
         return result;
     }
@@ -439,6 +439,7 @@ public class DataCube {
             if (flagEqual)                                                          //se for tudo igual
                 count++;                                                                    //aumenta o contador
         }
+
         StringBuilder str = new StringBuilder();                            //obtem os dados e mostra
         for (int i : query)
             if (i != '*')
@@ -447,6 +448,8 @@ public class DataCube {
                 str.append("* ");
         str.append(": ").append(count);
         System.out.println(str);
+
+
 
     }
 

@@ -20,14 +20,15 @@ public class Main {
 
         if (args.length != 1) {
             System.out.println("fragCubing_reduced_java.jar <dataset name>");
-            //System.exit(1);
+            System.exit(1);
         }
 
         System.out.println("\nID REDUCTION MIXED ARRAY STYLE\n");
 
         Scanner sc = new Scanner(System.in);
-        String path = "path";//args[0];
+        String path = args[0];
         load(path);
+        System.gc();
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
 
         String input;
@@ -158,15 +159,16 @@ public class Main {
             else
                 System.out.println("Query answers:\t" + searchResult);
         }
+
+
+        System.gc();
         if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
             Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-
-
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
-        System.gc();
-        System.out.println("Query executed in " + numSeconds + " ms.");
 
+
+        System.out.println("Query executed in " + numSeconds + " ms.");
         System.out.println("Biggest ammount of memory used: " +  maxMemory + " bytes");
 
     }
