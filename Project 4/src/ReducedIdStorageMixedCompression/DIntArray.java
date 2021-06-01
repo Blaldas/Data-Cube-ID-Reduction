@@ -175,7 +175,7 @@ public class DIntArray {
             secundary[pos++] = noReductionArray[i];
 
         int[] returnable = new int[pos];
-        for (int i = pos; i >= 0; returnable[--i] = secundary[i]) {
+        for (int i = pos; i > 0; returnable[--i] = secundary[i]) {
         }
 
         secundary = null;
