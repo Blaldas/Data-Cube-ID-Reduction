@@ -13,6 +13,40 @@ public class ShellFragment {
     int upper;
 
 
+    ShellFragment( int lower, int upper){
+        this.lower = lower;
+        this.upper = upper;
+        this.size = new int[upper - lower + 1];
+        this.matrix = new int[upper - lower + 1][0];
+
+    }
+
+    public void addTuple(int tid, int value){
+        //verifica o tamanho
+        if(size[value-lower] == matrix[value-lower].length)
+        {
+            int[] a = new int[size[value-lower] == 0 ? 1 : 2* size[value-lower]];
+            for(int i = size[value-lower]; i>0; a[--i] = matrix[value-lower][i]){}
+
+            matrix[value-lower] = a;
+        }
+
+        matrix[value-lower][size[value-lower]++] = tid;
+    }
+
+
+    public void proneShellFragment(){
+        int[] b;
+        for(int v = 0; v < matrix.length; v++){
+            b = new int[size[v]];
+            for(int i = size[v]; i>0; b[--i] = matrix[v][i]){}
+            matrix[v] = b;
+
+        }
+    }
+
+
+
     ShellFragment(int[][] rawData, int column, int lower, int upper) {
         this.lower = lower;                                 //guarda lower
         this.upper = upper;                                 //guarda upper
