@@ -76,11 +76,6 @@ public class DIntArray {
             b[i] = reducedPos2[i];
         }
 
-        //verificar se funciona
-        reducedPos1 = null;
-        reducedPos2 = null;
-        //System.gc();
-
         reducedPos1 = a;
         reducedPos2 = b;
     }
@@ -90,10 +85,6 @@ public class DIntArray {
         for (int i = 0; i < sizeNonReduced; i++) {
             a[i] = noReductionArray[i];
         }
-
-        //verificar se funciona
-        noReductionArray = null;
-        //System.gc();
 
         noReductionArray = a;
     }
@@ -145,6 +136,11 @@ public class DIntArray {
         return returnable;
     }
 
+    /**
+     *
+     * @return an int array with all the tids.
+     *  De-compresses the DIntArray Class to an array
+     */
     public int[] getAsArray() {
         int[] secundary = new int[2 * sizeReduced + sizeNonReduced];
         int pos = 0;
@@ -163,8 +159,6 @@ public class DIntArray {
             for (int i = 0; i < pos; i++) {
                 a[i] = secundary[i];
             }
-            secundary = null;
-            //System.gc();
             secundary = a;
         }
 
@@ -174,9 +168,6 @@ public class DIntArray {
         int[] returnable = new int[pos];
         for (int i = pos; i > 0; returnable[--i] = secundary[i]) {
         }
-
-        secundary = null;
-        //System.gc();
 
         return returnable;
     }
@@ -188,6 +179,7 @@ public class DIntArray {
 
         if (sizeReduced > 0) {
             if (sizeNonReduced > 0)
+                //I do not use math.min in order to avoid lose any kind of processing power
                 return reducedPos2[sizeReduced - 1] > noReductionArray[sizeNonReduced - 1] ? reducedPos2[sizeReduced - 1] : noReductionArray[sizeNonReduced - 1];
             return reducedPos2[sizeReduced - 1];
         } else if (sizeNonReduced > 0)
@@ -221,6 +213,7 @@ public class DIntArray {
         return false;
     }
 
+
     public int countStoredTids() {
         int count = 0;
         for (int i = 0; i < sizeReduced; i++)
@@ -236,6 +229,16 @@ public class DIntArray {
     public void clearSpace() {
         sizeReduced = 0;
         sizeNonReduced = 0;
+    }
+
+    /**
+     *
+     * @return the total arrays size
+     *
+     * used to check if the class is empty or not. Just like countStoredTids(), but better.
+     */
+    public int intersetionCount() {
+        return  sizeReduced +  sizeNonReduced;
     }
 /*
 
