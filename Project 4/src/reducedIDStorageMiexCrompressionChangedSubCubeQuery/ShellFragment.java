@@ -24,7 +24,7 @@ public class ShellFragment {
      *              <p>
      *              used to create subCubes!
      */
-    ShellFragment(int upper, int lower) {
+    ShellFragment(int lower, int upper) {
         this.lower = lower;
         this.upper = upper;
         matrix = new DIntArray[upper - lower + 1];
@@ -34,14 +34,14 @@ public class ShellFragment {
      * @param tid      the tid to add - what to add
      * @param tidValue the valye to add - where to add
      */
-    public void addTid(int tid, int tidValue) {
+    public void addTuple(int tid, int tidValue) {
         if (matrix[tidValue - lower] == null) {
             matrix[tidValue - lower] = new DIntArray();
         }
         matrix[tidValue - lower].addTid(tid);
     }
 
-    private void reduceMaximumMemory() {
+    public void reduceMaximumMemory() {
         for (DIntArray d : matrix) {
             if (d == null)
                 continue;
