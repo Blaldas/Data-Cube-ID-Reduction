@@ -366,12 +366,12 @@ public class DataCube {
 
         int[][] values = getAllDifferentValues(qValues);      //guarda todos os valores diferentes para cada dimensão
 
-        int total = 1;                              //guarda o numero de conbinações difrerentes
+        double total = 1;                              //guarda o numero de conbinações difrerentes
         for (int[] d : values) {
             total *= (d.length);
         }
 
-        int rounds = 0;
+        double rounds = 0;
 
         //Não chama o gc porque nada que foi alocado até ao momento foi desperdiçado, e existe o risco de dar um valor menor que o valor base xD
         if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
