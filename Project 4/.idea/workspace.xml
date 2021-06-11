@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="FragCubing_Mixed_Compression_jar:jar" />
+      <artifact name="Project 4:jar" />
     </artifacts-to-build>
   </component>
   <component name="BranchesTreeState">
@@ -25,6 +25,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c29ec5f6-4a18-4285-b15a-576c3e41eeea" name="Default Changelist" comment="Fixed array length limit in intersect method">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/Project_4_jar.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Project 5/Project 5.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Project 5/src/DIntArray.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Project 5/src/DataCube.java" afterDir="false" />
@@ -40,7 +41,6 @@
       <change beforePath="$PROJECT_DIR$/../Project 2/path" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 2/result" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 2/teste4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lmao" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Project 4/fastUtil/fastutil.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project 4/fastUtil/fastutil.jar" afterDir="false" />
@@ -50,11 +50,12 @@
       <change beforePath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/DataCube.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/DataCube.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project 4/reducedIDStorage/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/path" beforeDir="false" afterPath="$PROJECT_DIR$/path" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ReducedIdStorageMixedCompression/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ReducedIdStorageMixedCompression/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ReducedIdStorageWithClassAsDoubleArray/DIntArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ReducedIdStorageWithClassAsDoubleArray/DIntArray.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ReducedIdStorageWithClassAsDoubleArray/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ReducedIdStorageWithClassAsDoubleArray/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ReducedIdStorageWithClassAsDoubleArray/ShellFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ReducedIdStorageWithClassAsDoubleArray/ShellFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/notUsingFastUtil/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/notUsingFastUtil/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reducedIDStorage/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/reducedIDStorage/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reducedIDStorageMiexCrompressionChangedSubCubeQuery/ShellFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/reducedIDStorageMiexCrompressionChangedSubCubeQuery/ShellFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../project 3/Objectos" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../project 3/Project_3.drawio" beforeDir="false" afterPath="$PROJECT_DIR$/../project 3/Project_3.drawio" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../project 3/data" beforeDir="false" />
@@ -107,6 +108,14 @@
     <property name="restartRequiresConfirmation" value="false" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src" />
+      <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\fastUtil" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="ReducedIdStorageWithClassAsDoubleArray" />
+      <recent name="" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\reducedIDStorageMiexCrompressionChangedSubCubeQuery" />
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\ReducedIdStorageMixedCompression" />
@@ -114,16 +123,13 @@
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\out\artifacts\FragCubing_java_jar" />
       <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4" />
     </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="ReducedIdStorageWithClassAsDoubleArray" />
-      <recent name="" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src" />
-      <recent name="D:\Desktop\isec\3 ano\2 semestre\Estágio\Código\Internship Data Cube ID Reduction\Project 4\src\fastUtil" />
-    </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="sout" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.FragCubing_Java">
     <configuration name="FragCubing_Java" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="notUsingFastUtil.Main" />
       <module name="Project 4" />
@@ -192,17 +198,17 @@
     </configuration>
     <list>
       <item itemvalue="Application.FragCubing_Java" />
+      <item itemvalue="Application.Main (1)" />
       <item itemvalue="Application.Main (2)" />
       <item itemvalue="Application.Main (3)" />
-      <item itemvalue="Application.Main (1)" />
       <item itemvalue="Application.Main" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.FragCubing_Java" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main (1)" />
         <item itemvalue="Application.Main (3)" />
-        <item itemvalue="Application.FragCubing_Java" />
         <item itemvalue="Application.Main (2)" />
       </list>
     </recent_temporary>
@@ -419,7 +425,56 @@
       <option name="project" value="LOCAL" />
       <updated>1622514854486</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="updated java version to 16">
+      <created>1622515280390</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1622515280390</updated>
+    </task>
+    <task id="LOCAL-00031" summary="updated workspace.xml">
+      <created>1622515318070</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1622515318070</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Changed subcube and loading processing">
+      <created>1623425777651</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1623425777651</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Code cleanup">
+      <created>1623425794134</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1623425794134</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Changed total var to double in order to allow bigger counts">
+      <created>1623425841343</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1623425841343</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Changed memory usage count method">
+      <created>1623425941502</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1623425941502</updated>
+    </task>
+    <task id="LOCAL-00036" summary="now allows adding tuple by tuple">
+      <created>1623426012077</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1623426012077</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -450,13 +505,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed method getValueFromTid" />
-    <MESSAGE value="added gitgnore to ignore external jars" />
-    <MESSAGE value="creating DataCube no longer prints every single ShellFragment created" />
-    <MESSAGE value="getValueFromTid method fixed" />
-    <MESSAGE value="don't ask me, I don't know what this really is" />
-    <MESSAGE value="performance improved the intersect method" />
-    <MESSAGE value="added new program with reduced ids and personalized arrays to improve memory usage" />
     <MESSAGE value="code clean up" />
     <MESSAGE value="Fixed get2dMatrix call on getTidsListFromValue" />
     <MESSAGE value="This sub project attempts to reduce the memory usage even more. It won't be used or changed anymore." />
@@ -475,7 +523,14 @@
     <MESSAGE value="performance improvements" />
     <MESSAGE value="code cleanup" />
     <MESSAGE value="getValueFromTid null DIntArray bug fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="getValueFromTid null DIntArray bug fix" />
+    <MESSAGE value="updated java version to 16" />
+    <MESSAGE value="updated workspace.xml" />
+    <MESSAGE value="Changed subcube and loading processing" />
+    <MESSAGE value="Code cleanup" />
+    <MESSAGE value="Changed total var to double in order to allow bigger counts" />
+    <MESSAGE value="Changed memory usage count method" />
+    <MESSAGE value="now allows adding tuple by tuple" />
+    <option name="LAST_COMMIT_MESSAGE" value="now allows adding tuple by tuple" />
   </component>
   <component name="WindowStateProjectService">
     <state x="352" y="0" key="#Project_Structure" timestamp="1619835719072">
@@ -491,11 +546,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="731" y="321" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1621266912304" />
-    <state x="499" y="202" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1622508766704">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="624" y="255" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1623247945435">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="499" y="202" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1536.824@0.0.1536.824" timestamp="1622508766704" />
-    <state x="624" y="255" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1622482690942" />
+    <state x="624" y="255" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1623247945435" />
     <state x="681" y="208" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog" timestamp="1617780888837">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -504,39 +559,43 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1622060867914" />
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1619585958673">
+    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1623426013897">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1619585958673" />
-    <state x="740" y="229" width="657" height="518" key="FileChooserDialogImpl" timestamp="1622482712217">
+    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1623426013897" />
+    <state x="740" y="229" width="657" height="518" key="FileChooserDialogImpl" timestamp="1622730952425">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="592" y="181" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1618046879300" />
-    <state x="740" y="229" width="657" height="518" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1622482712217" />
+    <state x="740" y="229" width="657" height="518" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1622730952425" />
     <state x="784" y="421" key="Github.CreateGistDialog" timestamp="1619585403588">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="784" y="421" key="Github.CreateGistDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1619585403588" />
-    <state width="1493" height="273" key="GridCell.Tab.0.bottom" timestamp="1622514128395">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1877" height="254" key="GridCell.Tab.0.bottom" timestamp="1623338205285">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1493" height="273" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1622514128395" />
-    <state width="1877" height="267" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1622484893642" />
-    <state width="1493" height="273" key="GridCell.Tab.0.center" timestamp="1622514128395">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1493" height="233" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1622984807578" />
+    <state width="1877" height="254" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1536.824@0.0.1920.1040" timestamp="1623338205285" />
+    <state width="1877" height="254" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1623251068544" />
+    <state width="1877" height="254" key="GridCell.Tab.0.center" timestamp="1623338205284">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1493" height="273" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1622514128395" />
-    <state width="1877" height="267" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1622484893640" />
-    <state width="1493" height="273" key="GridCell.Tab.0.left" timestamp="1622514128395">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1493" height="233" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1622984807578" />
+    <state width="1877" height="254" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1536.824@0.0.1920.1040" timestamp="1623338205284" />
+    <state width="1877" height="254" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1623251068544" />
+    <state width="1877" height="254" key="GridCell.Tab.0.left" timestamp="1623338205282">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1493" height="273" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1622514128395" />
-    <state width="1877" height="267" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1622484893640" />
-    <state width="1493" height="273" key="GridCell.Tab.0.right" timestamp="1622514128395">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1493" height="233" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1622984807578" />
+    <state width="1877" height="254" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1536.824@0.0.1920.1040" timestamp="1623338205282" />
+    <state width="1877" height="254" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1623251068543" />
+    <state width="1877" height="254" key="GridCell.Tab.0.right" timestamp="1623338205285">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1493" height="273" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1622514128395" />
-    <state width="1877" height="267" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1622484893642" />
+    <state width="1493" height="233" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1622984807578" />
+    <state width="1877" height="254" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1536.824@0.0.1920.1040" timestamp="1623338205285" />
+    <state width="1877" height="254" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1623251068544" />
     <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1619451552276">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -561,36 +620,40 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="598" y="281" key="MultipleFileMergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1618533758681" />
-    <state x="249" y="0" key="SettingsEditor" timestamp="1622508808039">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="634" y="105" key="SettingsEditor" timestamp="1623251012287">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="249" y="0" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1622508808039" />
-    <state x="634" y="105" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1622482718685" />
+    <state x="634" y="105" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1623251012287" />
     <state x="807" y="433" key="VCS.ChangelistChooser" timestamp="1619053538164">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="807" y="433" key="VCS.ChangelistChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1619053538164" />
-    <state x="442" y="200" key="Vcs.Push.Dialog.v2" timestamp="1622514870310">
+    <state x="442" y="200" key="Vcs.Push.Dialog.v2" timestamp="1622515327115">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="442" y="200" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1622514870310" />
+    <state x="442" y="200" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1622515327115" />
     <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1622228803597" />
     <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1618764996882">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1618764996882" />
+    <state x="13" y="28" width="1358" height="746" key="dock-window-1" timestamp="1623075155239">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="13" y="28" width="1358" height="746" key="dock-window-1/0.0.1920.1040@0.0.1920.1040" timestamp="1623075155239" />
     <state x="638" y="309" key="git4idea.ui.GitUnstashDialog" timestamp="1619585464061">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="638" y="309" key="git4idea.ui.GitUnstashDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1619585464061" />
-    <state x="343" y="140" key="new project wizard" timestamp="1621883727380">
+    <state x="343" y="140" key="new project wizard" timestamp="1622730954562">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="343" y="140" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1621883727380" />
-    <state x="616" y="240" key="run.anything.popup" timestamp="1620340063181">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="343" y="140" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1622730954562" />
+    <state x="493" y="190" width="672" height="677" key="run.anything.popup" timestamp="1622939907643">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="493" y="190" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1618591627304" />
+    <state x="493" y="190" width="672" height="677" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1622939907643" />
     <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1620340063181" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1622221411499">
       <screen x="0" y="0" width="1920" height="1040" />
