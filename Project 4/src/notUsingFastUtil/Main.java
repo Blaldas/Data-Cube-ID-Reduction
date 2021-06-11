@@ -3,9 +3,6 @@ package notUsingFastUtil;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLOutput;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -15,24 +12,20 @@ public class Main {
     static DataCube mainCube;
     static int lowerValue = 1;
 
-    //memory
-    static long maxMemory = 0;//System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
-
 
     public static void main(String[] args) {
         System.out.println("\nnot using ID REDUCTION \n");
 
-        if(args.length != 1)
-        {
+        if (args.length != 1) {
             System.out.println("fragCubing_java.jar <dataset name>");
-            //System.exit(1);
+            System.exit(1);
         }
 
         Scanner sc = new Scanner(System.in);
-        String path = "Forest";//args[0];
-
-
+        String path = args[0];
         load(path);
+        System.gc();
+
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
 
         String input;
@@ -43,19 +36,20 @@ public class Main {
             input += sc.nextLine();
 
             if (input.charAt(0) == 'q') {
-                maxMemory = 0;
                 query(input);
-            }else if (input.equals("show"))
+                System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+            } else if (input.equals("show"))
                 mainCube.showAllDimensions();
             else if (input.charAt(0) == 'w' && input.charAt(1) == 'r' && input.charAt(2) == 't')
                 createAndWriteNew(input);
             else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
                 break;
-            else if(input.charAt(0) == 'l' && input.charAt(1) == 'o' && input.charAt(2) == 'a' && input.charAt(3) == 'd'){
+            else if (input.charAt(0) == 'l' && input.charAt(1) == 'o' && input.charAt(2) == 'a' && input.charAt(3) == 'd') {
                 load(input.split(" ")[1]);
-            }
-            else
+            } else
                 System.out.println("Unknown Command");
+
+            System.gc();        //used to be able to do multiple operations in a single run.
         } while (true);
 
     }
@@ -67,28 +61,14 @@ public class Main {
 
         Date startDate = new Date(), endDate;
 
-        int[] sizes = getSizes(filename); // guarda valores dos tamanhos-> size[0] -> numero de tuples, size[1...lenght] cardinalidade de cada tuple
-        if (sizes == null) {
-            System.out.println("It was not possible to load the file <" + filename + ">");
-            return;
-        }
-
-        int[][] array = readFromDisk(filename);
-        if (array == null) {
-            System.out.println("Error reading the file <" + filename + ">");
-            return;
-        }
-
-        mainCube = new DataCube(array, sizes, lowerValue);
+        generalReadFromDisk(filename);
 
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
-        array = null;
-        sizes = null;
-        System.gc();
+        //System.gc();
         System.out.println("Miliseconds Used to Load the data\t" + numSeconds);             //tempo
         System.out.println("Dimensions loaded\t" + mainCube.getNumberShellFragments());          //num dimensões
-        System.out.println("Cardinality\t" + mainCube.shellFragmentList[0].size.length);          //num dimensões
+        //System.out.println("Cardinality\t" + mainCube.shellFragmentList[0].size.length);          //num dimensões
         System.out.println("number of tuples loaded\t" + mainCube.getNumberTuples());
 
 
@@ -125,7 +105,7 @@ public class Main {
 
 
     /**
-     * @param input    user input. Something like "q 1 2 3"
+     * @param input user input. Something like "q 1 2 3"
      */
     private static void query(String input) {
 
@@ -141,11 +121,11 @@ public class Main {
             } catch (Exception e) {
                 switch (stringValues[i]) {
                     case "?":
-                        values[i - 1] = '?';
+                        values[i - 1] = -99;
                         subCubeFlag = true;
                         break;
                     case "*":
-                        values[i - 1] = '*';
+                        values[i - 1] = -88;
                         break;
                     default:
                         System.out.println("Invalid value in query");
@@ -159,74 +139,32 @@ public class Main {
             mainCube.getSubCube(values);
         } else {
             int[] searchResult = mainCube.pointQuerySeach(values); //returns array of ids
-            System.out.println(Arrays.toString(searchResult));
-            if (searchResult == null)
-            {
+            if (searchResult == null) {
                 System.out.println("Bad Query formation");
-            }
-            else
+            } else
                 System.out.println("Query answers:\t" + searchResult.length);
         }
-        if(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() > Main.maxMemory)
-            Main.maxMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         endDate = new Date();
         long numSeconds = ((endDate.getTime() - startDate.getTime()));
-        System.gc();
-        System.out.println("Query executed in " + numSeconds+ " ms.");
-        System.out.println("Biggest ammount of memory used: " +  maxMemory + " bytes");
-
-    }
-
-    /**
-     * @param filePath Path of the file to be read
-     * @return int array were the first element is the number of tuples and the other ones are the biggest element of each dimension
-     *
-     */
-    private static int[] getSizes(String filePath) {
-        Path path = Paths.get(filePath);
-        try {
-            String line = null;                                         //the information will be read here
-            String[] values;
-            //int [] sizes;       //size[0] -> num of tuple //else num of diferent values
-
-            InputStream in = Files.newInputStream(path);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-            //first read -> reads the number of objects
-            line = reader.readLine();
-
-            values = line.split(" ");
-            int[] sizes = new int[values.length];
-
-            for (int i = 0; i < sizes.length; i++) {
-                sizes[i] = Integer.parseInt(values[i]);
-            }
-            reader.close();
-            in.close();
-            return sizes;
-        } catch (Exception e) {             //in case there is any eception
-            e.printStackTrace();
-            return null;
-        }
+        //System.gc();
+        System.out.println("Query executed in " + numSeconds + " ms.");
 
     }
 
 
     /**
      * @param filePath path of the database file
-     * @return int[][] matrix. Null if any exception was found, such as File Not Found Exception
-     * Reads a given file name
+     * Reads a given dataset and creates the data cube
      */
-    public static int[][] readFromDisk(String filePath) {
-
-        int[][] listaObjetos;
+    public static void generalReadFromDisk(String filePath) {
 
         Path path = Path.of(filePath);
         try {
             String line = null;                                         //the information will be read here
             String[] values;
             //int [] sizes;       //size[0] -> num of tuple //else num of diferent values
+            int totalTuples;
 
             InputStream in = Files.newInputStream(path);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -235,35 +173,49 @@ public class Main {
             line = reader.readLine();
 
             values = line.split(" ");
-            int[] sizes = new int[values.length];
 
-            for (int i = 0; i < sizes.length; i++) {
-                sizes[i] = Integer.parseInt(values[i]);
+            totalTuples = Integer.parseInt(values[0]);
+
+            int[] sizes = new int[values.length-1];
+
+            for (int i = 1; i < values.length; i++) {
+                sizes[i-1] = Integer.parseInt(values[i]);
             }
 
-            //size = 100000;
-            listaObjetos = new int[sizes[0]][];            //allocs the memory to the array
 
 
-            for (int i = 0; i < sizes[0]; i++) {            //reads all the lines
+            mainCube = new DataCube(sizes, lowerValue);
+
+
+
+            int numDimensions = sizes.length;        //guarda o numero de dimensãos
+
+            int[] newTuple = new int[numDimensions];
+            for (int i = 0; i < totalTuples; i++) {            //reads all the lines
                 line = reader.readLine();               //reads a line
-                //System.out.println(line);
+
                 values = line.split(" ");           //splits the line read into X Strings
 
-                //stores the values of the Strings
-                listaObjetos[i] = new int[values.length];
-                for (int n = 0; n < values.length; n++)
-                    listaObjetos[i][n] = Integer.parseInt(values[n]);
-                //System.out.println(i);
+                if(values.length !=numDimensions){
+                    System.out.println("tuple id = " + i + " doesn't have the same number of dimensions");
+                    System.exit(1);
+                }
+
+                for (int n = 0; n < numDimensions; n++)
+                    newTuple[n] = Integer.parseInt(values[n]);
+                mainCube.addTuple(i, newTuple);
+
             }
             reader.close();
             in.close();
+
+
         } catch (Exception e) {             //in case there is any eception
             e.printStackTrace();
-            return null;
+            System.exit(1);
         }
 
-        return listaObjetos;
+        mainCube.proneShellfragments();
     }
 
     /**
