@@ -2,6 +2,8 @@ package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
 
 import it.unimi.dsi.fastutil.ints.IntArrays;
 
+import java.util.Arrays;
+
 public class DIntArray {
 
     int[] reducedPos1, reducedPos2, noReductionArray;
@@ -20,12 +22,16 @@ public class DIntArray {
         int[] b1 = new int[sizeReduced];
         int[] b2 = new int[sizeReduced];
 
-        for(int i = sizeReduced; i > 0; b1[--i] = reducedPos1[i], b2[i] = reducedPos2[i]){;}
+        for (int i = sizeReduced; i > 0; b1[--i] = reducedPos1[i], b2[i] = reducedPos2[i]) {
+            ;
+        }
         reducedPos1 = b1;
         reducedPos2 = b2;
 
         int[] a = new int[sizeNonReduced];
-        for(int i = sizeNonReduced; i > 0; a[--i] = noReductionArray[i]){;}
+        for (int i = sizeNonReduced; i > 0; a[--i] = noReductionArray[i]) {
+            ;
+        }
         noReductionArray = a;
 
     }
@@ -124,8 +130,8 @@ public class DIntArray {
                 returnable[c][0] = noReductionArray[noReduction++];
                 c++;
             }
-        }else{
-            while(reduction < sizeReduced) {
+        } else {
+            while (reduction < sizeReduced) {
                 returnable[c] = new int[2];
                 returnable[c][0] = reducedPos1[reduction];
                 returnable[c][1] = reducedPos2[reduction++];
@@ -137,38 +143,78 @@ public class DIntArray {
     }
 
     /**
-     *
      * @return an int array with all the tids.
-     *  De-compresses the DIntArray Class to an array
+     * De-compresses the DIntArray Class to an array. The returning array has is tids in order
      */
     public int[] getAsArray() {
         int[] secundary = new int[2 * sizeReduced + sizeNonReduced];
         int pos = 0;
-        for (int i = 0; i < sizeReduced; i++) {
-            for (int n = reducedPos1[i]; n <= reducedPos2[i]; n++) {
-                if (pos == secundary.length) {
-                    int[] b = new int[2 * pos];
-                    System.arraycopy(secundary, 0, b, 0, secundary.length);
-                    secundary = b;
-                }
-                secundary[pos++] = n;
-            }
-        }
-        if (secundary.length - pos < sizeNonReduced) {
-            int[] a = new int[secundary.length + (sizeNonReduced - secundary.length - pos + 1)];
-            for (int i = 0; i < pos; i++) {
-                a[i] = secundary[i];
-            }
-            secundary = a;
-        }
+        int ci = 0; //compressed arrays
+        int di = 0; //decompressed arrays
 
-        for (int i = 0; i < sizeNonReduced; i++)
-            secundary[pos++] = noReductionArray[i];
+
+        while (ci < sizeReduced || di < sizeNonReduced) {
+            //Aumenta o tamanho se necessário
+            if (pos == secundary.length) {
+                int[] b = new int[2 * secundary.length];
+                System.arraycopy(secundary, 0, b, 0, secundary.length);
+                secundary = b;
+            }
+
+            if (ci == sizeReduced) {  //é o sem compressão até ao final
+                while (di < sizeNonReduced) {
+                    if (pos == secundary.length) {
+                        int[] b = new int[2 * secundary.length];
+                        System.arraycopy(secundary, 0, b, 0, secundary.length);
+                        secundary = b;
+                    }
+                    secundary[pos++] = noReductionArray[di++];
+                }
+            } else if (di == sizeNonReduced) {
+                while (ci < sizeReduced) {
+                    //verifica o tamanho
+                    if (pos == secundary.length) {
+                        int[] b = new int[2 * secundary.length];
+                        System.arraycopy(secundary, 0, b, 0, secundary.length);
+                        secundary = b;
+                    }
+                    //para cada intervalor
+                    for (int i = reducedPos1[ci]; i <= reducedPos2[ci]; i++) {
+                        //adiciona o valor
+                        secundary[pos++] = i;
+                        //verifica o tamanho dentro do intervalo
+                        if (pos == secundary.length) {
+                            int[] b = new int[2 * secundary.length];
+                            System.arraycopy(secundary, 0, b, 0, secundary.length);
+                            secundary = b;
+                        }
+                    }
+                    ++ci;   //adiciona ci após adicionar o intervalo
+
+                }
+            } else if (reducedPos1[ci] < noReductionArray[di]) {    //intervalo é o menor
+                //adiciona o intervalo-> para cada valor dentro do intervalo
+                for (int i = reducedPos1[ci]; i <= reducedPos2[ci]; i++) {
+                    //adiciona o valor
+                    secundary[pos++] = i;
+                    //verifica o tamanho dentro do intervalo
+                    if (pos == secundary.length) {
+                        int[] b = new int[2 * secundary.length];
+                        System.arraycopy(secundary, 0, b, 0, secundary.length);
+                        secundary = b;
+                    }
+                }
+                ++ci;   //adiciona ci após adicionar o intervalo
+            }
+            else{   //não intervalor é o menor
+                secundary[pos++] = noReductionArray[di++];
+            }
+        }
 
         int[] returnable = new int[pos];
         for (int i = pos; i > 0; returnable[--i] = secundary[i]) {
         }
-
+        //System.out.println(Arrays.toString(returnable));
         return returnable;
     }
 
@@ -224,7 +270,7 @@ public class DIntArray {
     }
 
     /**
-     *  I know this may look like a joke to you, but if every value gets added right, "it just works" xD
+     * I know this may look like a joke to you, but if every value gets added right, "it just works" xD
      */
     public void clearSpace() {
         sizeReduced = 0;
@@ -232,13 +278,12 @@ public class DIntArray {
     }
 
     /**
-     *
      * @return the total arrays size
-     *
+     * <p>
      * used to check if the class is empty or not. Just like countStoredTids(), but better.
      */
     public int intersetionCount() {
-        return  sizeReduced +  sizeNonReduced;
+        return sizeReduced + sizeNonReduced;
     }
 /*
 
