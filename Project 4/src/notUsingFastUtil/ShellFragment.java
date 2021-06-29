@@ -120,14 +120,13 @@ public class ShellFragment {
         if (value > upper || value < lower)                         //se os valores nao estiverem nos intervalos
             return new int[0];                                          //devolve array a zero
 
-        /*int[] returnable = new int[matrix[value - lower].length];
-        // for(int i =0; i < returnable.length; i++)
-            returnable[i] = matrix[value - lower][i];
-
-        return returnable;       //devolver os valores
-
-         */
         return matrix[value - lower];
+    }
+    public int[] getTidsListFromValueWithoutPronage(int value) {
+        if (value > upper || value < lower)                         //se os valores nao estiverem nos intervalos
+            return new int[0];                                          //devolve array a zero
+
+        return Arrays.copyOfRange(matrix[value - lower], 0, size[value-lower]);
     }
 
     /**
