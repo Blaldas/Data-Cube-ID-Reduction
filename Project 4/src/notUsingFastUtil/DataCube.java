@@ -1,8 +1,6 @@
 package notUsingFastUtil;
 
 
-import reducedIDStorageMiexCrompressionChangedSubCubeQuery.DIntArray;
-
 import java.util.Arrays;
 
 public class DataCube {
@@ -274,155 +272,6 @@ public class DataCube {
 
     }
 
-    /**
-     * @param qValues the query
-     * @param subCube the resulted subCube
-     */
-   /* private void showQueryDataCube(int[] qValues, ShellFragment[] subCube) {
-
-        int[] query = new int[subCube.length];               //stores all the values as a query.
-        int[] counter = new int[subCube.length];             //counter to the query values
-        for (int c : counter)
-            c = 0;
-
-        int[][] values = getAllDifferentValues(qValues);      //guarda todos os valores diferentes para cada dimensão
-
-
-        int total = 1;                              //guarda o numero de conbinações difrerentes
-        for (int[] d : values) {
-            total *= (d.length);
-        }
-
-        int[][] arrayQueriesEResultados = new int[total][qValues.length + 1];
-
-        int rounds = 0;
-        do {
-            for (int i = 0; i < counter.length; i++)     //da os valores as queries
-                arrayQueriesEResultados[rounds][i] = query[i] = values[i][counter[i]];
-
-
-            //pesquisa e mostra com valores do query
-            arrayQueriesEResultados[rounds][qValues.length] = pointQueryCounterSubCube(subCube, query, qValues);// faz pesquisa sobre esses valores
-
-            //gere os counters
-            for (int i = 0; i < counter.length; i++) {              //para cada um dos counter
-                if (counter[i] < values[i].length - 1) {
-                    counter[i]++;
-                    break;
-                } else        //if( counter[i] == '*')
-                    counter[i] = 0;
-
-            }
-
-            rounds++;
-        } while (rounds < total);
-
- /*       StringBuilder str = new StringBuilder();
-        for (int[] q : arrayQueriesEResultados) {
-            str.setLength(0);
-            for (int i = 0; i < q.length - 1; i++) {
-                if (q[i] == -88)
-                    str.append('*').append(" ");
-                else if (q[i] == -99)
-                    str.append('?').append(" ");
-                else
-                    str.append(q[i]).append(" ");
-            }
-            str.append(" : ").append(q[q.length - 1]);
-            System.out.println(str);
-        }
-
-
-
-
-        System.out.println(total + " lines written");
-    }
-
-    */
-    private void showQueryDataCube(int[] qValues, int[][] subCube) {
-
-        int[] query = new int[qValues.length];               //stores all the values as a query.
-        int[] counter = new int[qValues.length];             //counter to the query values
-        for (int c : counter)
-            c = 0;
-
-        int[][] values = getAllDifferentValues(qValues);      //guarda todos os valores diferentes para cada dimensão
-
-
-        int total = 1;                              //guarda o numero de conbinações difrerentes
-        for (int[] d : values) {
-            total *= (d.length);
-        }
-
-        int[][] arrayQueriesEResultados = new int[total][qValues.length + 1];
-
-        int c = 0;
-        for (int i : qValues)
-            if (i == -99)
-                c++;
-        int[] dimensoesInquiridas = new int[c];
-        c = 0;
-        for (int i = 0; i < qValues.length; i++)
-            if (qValues[i] == -99)
-                dimensoesInquiridas[c++] = i;
-
-        //dimensoesInquiridas contem os indices das diemnsões inquiridas
-
-        System.out.println(Arrays.toString(dimensoesInquiridas));
-        int rounds = 0;
-        boolean flag = true;
-        do {
-            for (int i = 0; i < counter.length; i++)     //da os valores as queries
-                arrayQueriesEResultados[rounds][i] = query[i] = values[i][counter[i]];
-            arrayQueriesEResultados[rounds][qValues.length] = 0;
-
-
-            for (int[] tuple : subCube) {
-                flag = true;
-                for (int i = 0; i < dimensoesInquiridas.length; i++) {
-                    if (tuple[dimensoesInquiridas[i]] != query[dimensoesInquiridas[i]] && query[dimensoesInquiridas[i]] != -88) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag)
-                    ++arrayQueriesEResultados[rounds][qValues.length];
-            }
-
-            //gere os counters
-            for (int i = 0; i < counter.length; i++) {              //para cada um dos counter
-                if (counter[i] < values[i].length - 1) {
-                    counter[i]++;
-                    break;
-                } else        //if( counter[i] == '*')
-                    counter[i] = 0;
-
-            }
-
-            rounds++;
-        } while (rounds < total);
-
-        StringBuilder str = new StringBuilder();
-        for (int[] q : arrayQueriesEResultados) {
-            str.setLength(0);
-            for (int i = 0; i < q.length - 1; i++) {
-                if (q[i] == -88)
-                    str.append('*').append(" ");
-                else if (q[i] == -99)
-                    str.append('?').append(" ");
-                else
-                    str.append(q[i]).append(" ");
-            }
-            str.append(" : ").append(q[q.length - 1]);
-            System.out.println(str);
-        }
-
-
-
-
-        System.out.println(total + " lines written");
-    }
-
     private void showQueryDataCube(int[] qValues, int[] mapeamentoDimInq, ShellFragment[] subCube) {
 
         int[] query = new int[subCube.length];               //stores all the values as a query.
@@ -516,39 +365,6 @@ public class DataCube {
         if (mat == null)
             return -1;
         return mat.length;
-    }
-
-
-    /**
-     * @param tid tuple id to seach on
-     * @return an array with the dimensional values of such tuple.
-     */
-    private int[] getDimensions(int tid, int[] query) {
-        int[] returnable = new int[shellFragmentList.length];
-
-        for (int i = 0; i < query.length; i++) {//query.length == shellfragmentelist.length
-            if (query[i] == -99 || query[i] == -88)      //se estiver instanciado tem de ter estes valores
-                returnable[i] = shellFragmentList[i].getValueFromTid(tid);
-            else {                                       //se não tiver instanciado tem de se procurar
-                returnable[i] = query[i];
-            }
-        }
-
-        return returnable;
-    }
-
-    public int getNumberUnnusedInts() {
-        int total = 0;
-        for (ShellFragment d : shellFragmentList)
-            total += d.getNumberUnnusedInts();
-        return total;
-    }
-
-    public int getNumberUsedInts() {
-        int total = 0;
-        for (ShellFragment d : shellFragmentList)
-            total += d.getNumberUsedInts();
-        return total;
     }
 
     public int getBiggestID() {
