@@ -1,9 +1,5 @@
 package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
 
-import it.unimi.dsi.fastutil.ints.IntArrays;
-
-import java.util.Arrays;
-
 public class DIntArray {
 
     int[] reducedPos1, reducedPos2, noReductionArray;
@@ -18,22 +14,21 @@ public class DIntArray {
         sizeNonReduced = 0;
     }
 
-    public void reduceMaximumMemory() {
+    public void proneDIntArray() {
         int[] b1 = new int[sizeReduced];
         int[] b2 = new int[sizeReduced];
 
-        for (int i = sizeReduced; i > 0; b1[--i] = reducedPos1[i], b2[i] = reducedPos2[i]) {
-            ;
+        if(sizeReduced != reducedPos1.length) {
+            for (int i = sizeReduced; i > 0; b1[--i] = reducedPos1[i], b2[i] = reducedPos2[i])
+            reducedPos1 = b1;
+            reducedPos2 = b2;
         }
-        reducedPos1 = b1;
-        reducedPos2 = b2;
 
-        int[] a = new int[sizeNonReduced];
-        for (int i = sizeNonReduced; i > 0; a[--i] = noReductionArray[i]) {
-            ;
+        if(sizeNonReduced != noReductionArray.length) {
+            int[] a = new int[sizeNonReduced];
+            for (int i = sizeNonReduced; i > 0; a[--i] = noReductionArray[i])
+            noReductionArray = a;
         }
-        noReductionArray = a;
-
     }
 
     public void addTid(int newTid) {
@@ -93,53 +88,6 @@ public class DIntArray {
         }
 
         noReductionArray = a;
-    }
-
-    /**
-     * @return an tid ordered 2d Matrix
-     */
-    public int[][] get2dMatrix() {
-        int[][] returnable = new int[sizeReduced + sizeNonReduced][1];
-
-        /*
-        for (int i = 0; i < sizeNonReduced; i++) {
-            returnable[i][0] = noReductionArray[i];
-        }
-
-        for (int i = 0; i < sizeReduced; i++) {
-            returnable[i] = new int[2];
-            returnable[i][0] = reducedPos1[i];
-            returnable[i][1] = reducedPos2[i];
-        }
-         */
-        int noReduction = 0, reduction = 0;
-        int c = 0;
-
-        while (noReduction < sizeNonReduced && reduction < sizeReduced) {
-            if (reducedPos1[reduction] < noReductionArray[noReduction]) {
-                returnable[c] = new int[2];
-                returnable[c][0] = reducedPos1[reduction];
-                returnable[c][1] = reducedPos2[reduction++];
-            } else
-                returnable[c][0] = noReductionArray[noReduction++];
-            c++;
-        }
-
-        if (noReduction != sizeNonReduced) {
-            while (noReduction < sizeNonReduced) {
-                returnable[c][0] = noReductionArray[noReduction++];
-                c++;
-            }
-        } else {
-            while (reduction < sizeReduced) {
-                returnable[c] = new int[2];
-                returnable[c][0] = reducedPos1[reduction];
-                returnable[c][1] = reducedPos2[reduction++];
-                c++;
-            }
-        }
-
-        return returnable;
     }
 
     /**
@@ -233,32 +181,6 @@ public class DIntArray {
         return -1;
     }
 
-    /**
-     * @param tid the tuple to be found
-     * @return true if found, false if not found
-     */
-    public boolean hasTid(int tid) {
-        //matrix sem redução
-        if (IntArrays.binarySearch(noReductionArray, 0, sizeNonReduced, tid) >= 0)
-            return true;
-
-        //matrix com redução
-        //attempt to binary search
-        int start = 0;
-        int end = sizeReduced - 1;
-        int mid;
-        while (start <= end) {
-            mid = (end + start) / 2;
-            if (reducedPos1[mid] == tid || (reducedPos1[mid] < tid && reducedPos2[mid] != -1 && reducedPos2[mid] >= tid)) {
-                return true;
-            } else if (reducedPos1[mid] > tid)
-                end = mid - 1;
-            else
-                start = mid + 1;
-        }
-        return false;
-    }
-
 
     public int countStoredTids() {
         int count = 0;
@@ -285,77 +207,5 @@ public class DIntArray {
     public int intersetionCount() {
         return sizeReduced + sizeNonReduced;
     }
-/*
-
-    public void SetArray1(int[] array1) {
-        for (int i = 0; i < array1.length; i++)
-            this.array1[i] = array1[i];
-    }
-
-    public void SetArray2(int[] array2) {
-        for (int i = 0; i < array2.length; i++)
-            this.array2[i] = array2[i];
-    }
-
-    /**
-     * @param newArray1 array1 to add
-     * @param newArray2 array2 to add
-     *                  this method ADDs the arrays to the existing ones.
-     */
-    /*
-    public void addArrays(int[] newArray1, int[] newArray2, int newArraysSize) {
-        for (int i = 0; i < newArraysSize; i++) {
-            if (array1.length == size) {
-                int[] a = new int[size == 0 ? 1 : 2 * size];
-                int[] b = new int[size == 0 ? 1 : 2 * size];
-
-                System.arraycopy(array1, 0, a, 0, size);
-                System.arraycopy(array2, 0, b, 0, size);
-
-                array1 = a;
-                array2 = b;
-            }
-
-            array1[size] = newArray1[i];
-            array2[size++] = newArray2[i];
-        }
-
-    }
-
-    //returns 2d matrix based on this values
-    public int[][] get2dMatrix(int length) {
-        int[][] a = new int[length][1];
-
-        for (int i = 0; i < length; i++) {
-            if (array2[i] == -1) {        //caso tenha tamanho 1
-                //a[i] = new int[1];
-                a[i][0] = array1[i];
-            } else {
-                a[i] = new int[2];
-                a[i][0] = array1[i];
-                a[i][1] = array2[i];
-            }
-        }
-        return a;
-    }
-
-
-    public void addValues(int v1, int v2) {
-
-        if (this.array1.length == size) {
-            int[] a = new int[((int) (1.5 * size)) == size ? size + 1 : (int) (1.5 * size)];
-            int[] b = new int[((int) (1.5 * size)) == size ? size + 1 : (int) (1.5 * size)];
-
-            System.arraycopy(this.array1, 0, a, 0, this.size);
-            System.arraycopy(this.array2, 0, b, 0, this.size);
-
-            this.array1 = a;
-            this.array2 = b;
-        }
-
-        array1[size] = v1;
-        array2[size++] = v2;
-    }
-*/
 
 }
