@@ -3,10 +3,7 @@ package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -56,12 +53,20 @@ public class Main {
 
     }
 
+    /**
+     * Changes the verbose variable and signals its effects to the user as a printf
+     */
     private static void changeVerbose() {
         verbose = !verbose;
         System.out.println("verbose: " +  (verbose ? "showing results" : "not showing results"));
     }
 
-
+    /**
+     *
+     * @param filename the path/name of the file
+     *
+     * loads the dataset to the data cube tuple by tuple and then prones the datacube
+     */
     private static void load(String filename) {
 
         System.out.println("Loading <" + filename + ">...");
@@ -83,7 +88,6 @@ public class Main {
         System.out.println("load end");
 
     }
-
 
     /**
      * @param input user input. Something like "q 1 2 3"
@@ -132,40 +136,6 @@ public class Main {
         //System.out.println("Biggest ammount of memory used: " +  maxMemory + " bytes");
 
     }
-
-    /**
-     * @param filePath Path of the file to be read
-     * @return int array were the first element is the number of tuples and the other ones are the biggest element of each dimension
-     */
-    private static int[] getSizes(String filePath) {
-        Path path = Paths.get(filePath);
-        try {
-            String line = null;                                         //the information will be read here
-            String[] values;
-            //int [] sizes;       //size[0] -> num of tuple //else num of diferent values
-
-            InputStream in = Files.newInputStream(path);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-            //first read -> reads the number of objects
-            line = reader.readLine();
-
-            values = line.split(" ");
-            int[] sizes = new int[values.length];
-
-            for (int i = 0; i < sizes.length; i++) {
-                sizes[i] = Integer.parseInt(values[i]);
-            }
-            reader.close();
-            in.close();
-            return sizes;
-        } catch (Exception e) {             //in case there is any eception
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
 
     /**
      * @param filePath path of the database file
@@ -223,115 +193,7 @@ public class Main {
             System.exit(1);
         }
 
-        mainCube.reduceMaximumMemory();
+        mainCube.proneDataCube();
     }
-
-
-
-
-
-    /**
-     * @param filePath path of the file to write on/create
-     * @param array    array to be written.
-     *                 <p> d1 d2 d3
-     *                 <p> d1 d2 d3
-     *                 <p> d1 d2 d3
-     *                 <p> d1 d2 d3
-     */
-    public static void writeOnDisk(String filePath, int[][] array) {
-
-        try {
-            FileWriter writer = new FileWriter(filePath, false);
-            BufferedWriter bw = new BufferedWriter(writer);
-
-            StringBuilder str = new StringBuilder();
-
-            str.append(array.length).append(" ");        //escreve tamanho do array
-
-            //escreve maior valor de cada uma das dimensões
-            for (int i = 0; i < array[0].length; i++) {         //coluna
-                int max = array[0][i];
-                for (int n = 1; n < array.length; n++)          //linha
-                    if (array[n][i] > max)
-                        max = array[n][i];
-
-                str.append(max).append(" ");
-                ;
-            }
-
-            bw.write(str.toString() + "\n");
-
-            for (int[] ints : array) {
-                for (int anInt : ints)
-                    bw.write(anInt + " ");
-                bw.write("\n");
-            }
-
-            bw.close();
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * @param path               path to were the file must be written
-     * @param numberOfElements   Number of tuples to be written
-     * @param numberOfDimensions Number of Dimensions for each tuple and the smallest value for each tuple.
-     *                           the length of the array indicates how many dimensions the tuples have, the value of each position in the array
-     *                           indicate the smallest value accepted to that dimension
-     * @param cardinality        The interval of values the dimensions may have. An cardinality of 5 means that each dimension may have
-     *                           one of 5 different values.
-     *
-     *                           <p>                    d1 d2 d3
-     *                           <p>                    d1 d2 d3
-     *                           <p>                    d1 d2 d3
-     *                           <p>                    d1 d2 d3
-     */
-    public static void createAndWriteRandomObjetosList(String path, int numberOfElements, int[] numberOfDimensions, int cardinality) {
-        int[][] listObjets = new int[numberOfElements][numberOfDimensions.length];
-        Random r = new Random();
-        System.out.println("Cardinality " + cardinality);
-        for (int i = 0; i < numberOfElements; i++) {                                //para cada um dos elementos
-            StringBuilder str = new StringBuilder();                                        //cria uma nova stringBuilder
-            for (int n = 0; n < numberOfDimensions.length; n++) {                           //para cada uma das dimensões
-                listObjets[i][n] = r.nextInt(cardinality) + numberOfDimensions[n];              //cria um valor para a dimensão com os numeros indicadosa
-                str.append(listObjets[i][n]);                                                   //adiciona valor criado a string
-                //listObjets[i][n] += numberOfDimensions[n];
-                str.append("\t||\t");                                                            //adiciona barras para efeito visual
-            }
-            System.out.println(str);                                                        //mostra a stringBuilder criada
-        }
-        writeOnDisk(path, listObjets);                                              //escreve no disco
-    }
-
-    /**
-     * @param input input from the user with all the values
-     */
-    private static void createAndWriteNew(String input) {
-        String[] valuesStr = input.split(" ");
-        if (valuesStr.length != 5) {
-            System.out.println("bad code");
-            return;
-        }
-
-        try {
-            int[] dimArray;
-
-            valuesStr[3] = valuesStr[3].replace("{", "").replace("}", "");
-            String[] dimStr = valuesStr[3].split(",");
-            dimArray = new int[dimStr.length];
-
-            for (int i = 0; i < dimArray.length; i++)
-                dimArray[i] = Integer.parseInt(dimStr[i]);
-            createAndWriteRandomObjetosList(valuesStr[1], Integer.parseInt(valuesStr[2]), dimArray, Integer.parseInt(valuesStr[4]));
-        } catch (Exception e) {
-            System.out.println("bad code");
-        }
-
-
-    }
-
 
 }

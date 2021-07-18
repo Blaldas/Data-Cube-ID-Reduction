@@ -7,16 +7,6 @@ public class ShellFragment {
     int lower;
     int upper;
 
-    ShellFragment(int[][] rawData, int column, int lower, int upper) {
-        this.lower = lower;
-        this.upper = upper;
-
-        matrix = new DIntArray[upper - lower + 1];      //aloca array de DoubleIntArray com o tamanho necessário
-        //size = new int[upper - lower + 1];              //aloca array de sizes com tamnho necessário
-
-        fillMatrix(rawData, column);
-        proneShellFragment();
-    }
 
     /**
      * @param upper biggest value to store
@@ -41,6 +31,9 @@ public class ShellFragment {
         matrix[tidValue - lower].addTid(tid);
     }
 
+    /**
+     *  prones all necessary arrays of this shellfragment
+     */
     public void proneShellFragment() {
         for (DIntArray d : matrix) {
             if (d == null)
@@ -48,20 +41,6 @@ public class ShellFragment {
             d.proneDIntArray();
         }
     }
-
-    private void fillMatrix(int[][] rawData, int column) {
-
-
-        for (int i = 0; i < rawData.length; i++) {          //para cada uma das tuples
-
-            if (matrix[rawData[i][column] - lower] == null)
-                matrix[rawData[i][column] - lower] = new DIntArray();
-
-            matrix[rawData[i][column] - lower].addTid(i);
-        }
-
-    }
-
 
     /**
      * @param value value of the dimension
@@ -84,7 +63,9 @@ public class ShellFragment {
         return returnable;
     }
 
-
+    /**
+     * @return the biggest tid stored int the shellfragment
+     */
     public int getBiggestTid() {
         int max = -1;                                                                           //coloca um valor inicial nunca returnavel em max
 
@@ -99,15 +80,10 @@ public class ShellFragment {
         return max;                                                             //devolve max
     }
 
-    public int[][] copyMatrix(int[][] matrix, int length) {
-        int[][] a = new int[length][];
-        for (int i = 0; i < length; a[i] = matrix[i++]) {
-        }
-
-        return a;
-
-    }
-
+    /**
+     * @return returns an array with all the tids
+     * <p>This function should actually be ignored, the method getBiggestTid() should be used instead
+     */
     public int[] getAllTids() {
         int b = getBiggestTid();
         int[] returnable = new int[b + 1];

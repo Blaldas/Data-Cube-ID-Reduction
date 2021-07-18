@@ -8,6 +8,11 @@ public class DataCube {
     ShellFragment[] shellFragmentList;
     int lower;
 
+    /**
+     * @param maxValue      Max value of each dimension
+     * @param lowerValue o menor valor do dataset (default = 1)
+     *                   Chamada uma vez para criar o objeto cubo
+     */
     public DataCube(int[] maxValue, int lowerValue) {
         shellFragmentList = new ShellFragment[maxValue.length]; //o primerio é o númeo de tuplas
         this.lower = lowerValue;
@@ -17,13 +22,20 @@ public class DataCube {
         }
     }
 
+    /**
+     * @param tid    this tuple id
+     * @param tupleValues Array of values to each dimension.
+     */
     public void addTuple(int tid, int[] tupleValues) {
         for (int i = 0; i < shellFragmentList.length; i++) {
             shellFragmentList[i].addTuple(tid, tupleValues[i]);
         }
     }
 
-    public void reduceMaximumMemory() {
+    /**
+     *  prones the arrays of all shellFragments, avoiding waste memory
+     */
+    public void proneDataCube() {
         for (ShellFragment s : shellFragmentList)
             s.proneShellFragment();
     }
@@ -40,17 +52,17 @@ public class DataCube {
 
     }
 
-
+    /**
+     *
+     * @param subCube the data cube to be used
+     * @param query the point query to be done
+     * @return  the number of tids resulting from that intersection, or -1 if any problems are found
+     */
     public int pointQueryCounterSubCube(ShellFragment[] subCube, int[] query) {
         DIntArray mat = pointQuerySeachSubCube(subCube, query);
         if (mat == null)
             return -1;
         return mat.countStoredTids();
-    }
-
-    public int[] pointQueryAdapter(int[] query) {
-        return getArrayFromMatrix(pointQuerySeach(query));
-
     }
 
     /**
@@ -67,7 +79,7 @@ public class DataCube {
         for (int i = 0; i < query.length; i++) {
             if (query[i] != -88 && query[i] != -99) {
                 DIntArray secundary = shellFragmentList[i].getTidsListFromValue(query[i]);
-                if (secundary.countStoredTids() == 0)       //se o valor colocado nao der resultados
+                if (secundary.intersetionCount() == 0)       //se o valor colocado nao der resultados
                     return secundary;
                 if (instanciated == 0)          //se ainda nada tiver sido instanciado
                     tidsList[0] = secundary;
@@ -110,6 +122,12 @@ public class DataCube {
         return result;
     }
 
+    /**
+     *
+     * @param subCube the Data Cube to be used
+     * @param query the query to be done
+     * @return array with the result. Its length is allways fully used
+     */
     public DIntArray pointQuerySeachSubCube(ShellFragment[] subCube, int[] query) {
         if (query.length != subCube.length)
             return null;
@@ -161,13 +179,6 @@ public class DataCube {
 
         return result;
     }
-
-    private int[] getArrayFromMatrix(DIntArray matrix) {
-        if (matrix == null)
-            return null;
-        return matrix.getAsArray();
-    }
-
 
     /**
      * @param DIntArrayA array of tids
@@ -539,7 +550,6 @@ public class DataCube {
         showQueryDataCube(values, mapeamentoDimInq, subCube);
     }
 
-
     /**
      * @param qValues the query
      * @param subCube the subCube created
@@ -607,7 +617,10 @@ public class DataCube {
         System.out.println(total + " lines written");
     }
 
-
+    /**
+     * @param queryValues the query
+     * @return a matrix with all the values to be looped, in each dimension.
+     */
     private int[][] getAllDifferentValues(int[] queryValues) {
         int[][] result = new int[queryValues.length][1];        //aloca com tamanho minimo inicial 1
         //System.out.println(result.length);
