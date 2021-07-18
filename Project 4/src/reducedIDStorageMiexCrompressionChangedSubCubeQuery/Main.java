@@ -13,6 +13,7 @@ public class Main {
 
     static DataCube mainCube;
     static int lowerValue = 1;
+    public static boolean verbose = false;
 
 
     public static void main(String[] args) {
@@ -45,12 +46,19 @@ public class Main {
             }
             else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
                 break;
+            else if (input.toLowerCase().equals("v"))
+                changeVerbose();
             else
                 System.out.println("Unknown Command");
 
             System.gc();        //used to be able to do multiple operations in a single run.
         } while (true);
 
+    }
+
+    private static void changeVerbose() {
+        verbose = !verbose;
+        System.out.println("verbose: " +  (verbose ? "showing results" : "not showing results"));
     }
 
 
@@ -60,15 +68,7 @@ public class Main {
 
         Date startDate = new Date(), endDate;
 
-       /* int[] sizes = getSizes(filename); // guarda valores dos tamanhos-> size[0] -> numero de tuples, size[1...lenght] cardinalidade de cada tuple
-        if (sizes == null) {
-            System.out.println("It was not possible to load the file <" + filename + ">");
-            return;
-        }
 
-        mainCube = new DataCube(sizes, lowerValue);
-
-        */
         generalReadFromDisk(filename);
         System.gc();
         endDate = new Date();

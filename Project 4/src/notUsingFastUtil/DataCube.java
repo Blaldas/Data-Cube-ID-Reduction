@@ -110,7 +110,7 @@ public class DataCube {
         int[][] tidsList = new int[subCube.length][];                 //stores values of instanciated
         for (int i = 0; i < query.length; i++) {                                        //obtem todas as listas de values
             if (query[i] != -88) {
-                int[] returned = subCube[i].getTidsListFromValueWithoutPronage(query[i]);
+                int[] returned = subCube[i].getTidsListFromValue(query[i]);
                 if (returned.length == 0)                                      //se a lista for vazia, devolve lista com tamanho 0
                     return new int[0];
                 else if (instanciated == 0)
@@ -265,6 +265,9 @@ public class DataCube {
             for (int d = 0; d < subCube.length; d++)
                 subCube[d].addTuple(i, subdataset[i][d]);
 
+        for(int i = 0; i < subCube.length; i++)
+            subCube[i].proneShellFragment();
+
         System.out.println("Subcubo acabado");
 
         //System.out.println(Arrays.deepToString(subdataset));
@@ -318,21 +321,22 @@ public class DataCube {
             ++rounds;
         } while (rounds < total);
 
-/*        StringBuilder str = new StringBuilder();
-        for (int[] q : arrayQueriesEResultados) {
-            str.setLength(0);
-            for (int i = 0; i < q.length - 1; i++) {
-                if (q[i] == -88)
-                    str.append('*').append(" ");
-                else if (q[i] == -99)
-                    str.append('?').append(" ");
-                else
-                    str.append(q[i]).append(" ");
+        if(Main.verbose) {
+            StringBuilder str = new StringBuilder();
+            for (int[] q : arrayQueriesEResultados) {
+                str.setLength(0);
+                for (int i = 0; i < q.length - 1; i++) {
+                    if (q[i] == -88)
+                        str.append('*').append(" ");
+                    else if (q[i] == -99)
+                        str.append('?').append(" ");
+                    else
+                        str.append(q[i]).append(" ");
+                }
+                str.append(" : ").append(q[q.length - 1]);
+                System.out.println(str);
             }
-            str.append(" : ").append(q[q.length - 1]);
-            System.out.println(str);
         }
- */
 
 
 

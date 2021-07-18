@@ -15,7 +15,7 @@ public class ShellFragment {
         //size = new int[upper - lower + 1];              //aloca array de sizes com tamnho necessário
 
         fillMatrix(rawData, column);
-        reduceMaximumMemory();
+        proneShellFragment();
     }
 
     /**
@@ -41,11 +41,11 @@ public class ShellFragment {
         matrix[tidValue - lower].addTid(tid);
     }
 
-    public void reduceMaximumMemory() {
+    public void proneShellFragment() {
         for (DIntArray d : matrix) {
             if (d == null)
                 continue;
-            d.reduceMaximumMemory();
+            d.proneDIntArray();
         }
     }
 
@@ -71,22 +71,6 @@ public class ShellFragment {
         if (value > upper || value < lower || matrix[value - lower] == null)
             return new DIntArray();
         return matrix[value - lower];
-    }
-
-    /**
-     * @param tid id of the tuple to be seached
-     * @return the value of such tuple, or lower-1 if not found.
-     */
-    public int getValueFromTid(int tid) {
-        for (int i = 0; i < matrix.length; i++) {                   //para cada uma das linhas
-            if (matrix[i] != null && matrix[i].hasTid(tid))
-                return i + lower;
-        }
-        return lower - 1;
-    }
-
-    public int getBigestValue() {
-        return upper;
     }
 
     /**

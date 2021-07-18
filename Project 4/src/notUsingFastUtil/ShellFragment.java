@@ -1,6 +1,5 @@
 package notUsingFastUtil;
 
-import it.unimi.dsi.fastutil.ints.IntArrays;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -64,19 +63,6 @@ public class ShellFragment {
             return new int[0];                                          //devolve array a zero
 
         return Arrays.copyOfRange(matrix[value - lower], 0, size[value-lower]);
-    }
-
-    /**
-     * @param tid id of the tuple to be seached
-     * @return the value of such tuple, or lower-1 if not found.
-     */
-    public int getValueFromTid(int tid) {
-        for (int i = 0; i < matrix.length; i++) {                                     //para cada um dos valores (arrays de tids)
-            int pos = IntArrays.binarySearch(matrix[i], 0, size[i], tid);                 //faz pesquisa binária
-            if (pos >= 0)                                                //se a pesquisa binária der resultado positivo (o resultado é a posição)
-                return lower + i;                                                  //devole valor da posição
-        }
-        return lower - 1;                               //devove valor menor que o minimo
     }
 
 

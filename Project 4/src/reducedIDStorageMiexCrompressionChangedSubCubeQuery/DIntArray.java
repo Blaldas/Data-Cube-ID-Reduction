@@ -1,6 +1,5 @@
 package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
 
-import it.unimi.dsi.fastutil.ints.IntArrays;
 
 import java.util.Arrays;
 
@@ -18,7 +17,7 @@ public class DIntArray {
         sizeNonReduced = 0;
     }
 
-    public void reduceMaximumMemory() {
+    public void proneDIntArray() {
         int[] b1 = new int[sizeReduced];
         int[] b2 = new int[sizeReduced];
 
@@ -232,33 +231,6 @@ public class DIntArray {
             return noReductionArray[sizeNonReduced - 1];
         return -1;
     }
-
-    /**
-     * @param tid the tuple to be found
-     * @return true if found, false if not found
-     */
-    public boolean hasTid(int tid) {
-        //matrix sem redução
-        if (IntArrays.binarySearch(noReductionArray, 0, sizeNonReduced, tid) >= 0)
-            return true;
-
-        //matrix com redução
-        //attempt to binary search
-        int start = 0;
-        int end = sizeReduced - 1;
-        int mid;
-        while (start <= end) {
-            mid = (end + start) / 2;
-            if (reducedPos1[mid] == tid || (reducedPos1[mid] < tid && reducedPos2[mid] != -1 && reducedPos2[mid] >= tid)) {
-                return true;
-            } else if (reducedPos1[mid] > tid)
-                end = mid - 1;
-            else
-                start = mid + 1;
-        }
-        return false;
-    }
-
 
     public int countStoredTids() {
         int count = 0;

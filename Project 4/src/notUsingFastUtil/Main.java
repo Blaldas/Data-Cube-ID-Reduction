@@ -11,6 +11,7 @@ public class Main {
 
     static DataCube mainCube;
     static int lowerValue = 1;
+    public static boolean verbose = false;
 
 
     public static void main(String[] args) {
@@ -38,14 +39,19 @@ public class Main {
             if (input.charAt(0) == 'q') {
                 query(input);
                 System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-            } else if (input.equals("show"))
-                mainCube.showAllDimensions();
+            } else if (input.toLowerCase().equals("v"))
+                changeVerbose();
             else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
                 break;
             else
                 System.out.println("Unknown Command");
             System.gc();        //used to be able to do multiple operations in a single run.
         } while (true);
+    }
+
+    private static void changeVerbose() {
+        verbose = !verbose;
+        System.out.println("verbose: " +  (verbose ? "showing results" : "not showing results"));
     }
 
     private static void load(String filename) {
