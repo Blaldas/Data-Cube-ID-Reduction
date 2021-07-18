@@ -33,24 +33,6 @@ public class DataCube {
             shellFragmentList[i].addTuple(tid, values[i]);
     }
 
-
-    /**
-     * prints all the values and the number of tuples they store, for every single diemension
-     */
-    public void showAllDimensions() {
-        for (int i = 0; i < shellFragmentList.length; i++) {
-            StringBuilder str = new StringBuilder();
-            System.out.println("Dimension " + (i + 1));
-            System.out.println("Value\tNumberTuples");
-            for (int n = shellFragmentList[i].lower; n <= shellFragmentList[i].upper; n++) {
-                str.append(n).append("\t").append(Arrays.toString(shellFragmentList[i].getTidsListFromValue(n)));
-                str.append("\n");
-            }
-            System.out.println(str);
-            System.out.println(shellFragmentList[i].matrix[0].length);
-        }
-    }
-
     /**
      * @param query the query being made
      * @return array with the tuple ids, null if query.length != shellFragmentList.length
@@ -110,13 +92,12 @@ public class DataCube {
         int[][] tidsList = new int[subCube.length][];                 //stores values of instanciated
         for (int i = 0; i < query.length; i++) {                                        //obtem todas as listas de values
             if (query[i] != -88) {
-                int[] returned = subCube[i].getTidsListFromValueWithoutPronage(query[i]);
+                int[] returned = subCube[i].getTidsListFromValue(query[i]);
                 if (returned.length == 0)                                      //se a lista for vazia, devolve lista com tamanho 0
                     return new int[0];
                 else if (instanciated == 0)
                     tidsList[0] = returned;      //obtem lista de tids
                 else {
-
                     for (int n = instanciated - 1; n >= 0; n--) {
                         if (tidsList[n].length > returned.length) {
                             tidsList[n + 1] = tidsList[n];
@@ -128,26 +109,22 @@ public class DataCube {
                         }
                     }
                 }
-                //tidsList[instanciated] = returned;
-                instanciated++;
+                ++instanciated;
             }
         }
 
-        int[] d = tidsList[0];
+        int[] d;
         if (instanciated > 0) {
+            d = tidsList[0];
             for (int i = 1; i < instanciated; i++) {
-
                 d = intersect(d, tidsList[i]);
-
                 if (d.length == 0)
                     return d;
             }
-
             return d;
         }
         return subCube[0].getAllTids();
     }
-
 
     /**
      * @param arrayA
@@ -253,8 +230,8 @@ public class DataCube {
             }
         }
 
-       // System.out.println(Arrays.deepToString(subdataset));
-       // System.exit(0);
+        // System.out.println(Arrays.deepToString(subdataset));
+        // System.exit(0);
         System.out.println("A refazer cubo");
         ShellFragment[] subCube = new ShellFragment[numInqiridas];
         for (int i = 0; i < subCube.length; i++) {
@@ -264,6 +241,9 @@ public class DataCube {
         for (int i = 0; i < subdataset.length; i++)
             for (int d = 0; d < subCube.length; d++)
                 subCube[d].addTuple(i, subdataset[i][d]);
+
+        for (int i = 0; i < subCube.length; i++)
+            subCube[i].proneShellFragment();
 
         System.out.println("Subcubo acabado");
 
@@ -276,17 +256,14 @@ public class DataCube {
 
         int[] query = new int[subCube.length];               //stores all the values as a query.
         int[] counter = new int[subCube.length];             //counter to the query values
-        for (int c : counter)
-            c = 0;
 
         int[][] values = getAllDifferentValues(qValues);      //guarda todos os valores diferentes para cada dimensão
-
-
+        //numero de prints que se vai fazer
         int total = 1;                              //guarda o numero de conbinações difrerentes
         for (int[] d : values) {
             total *= (d.length);
         }
-        
+
         System.gc();
         int[][] arrayQueriesEResultados = new int[total][qValues.length + 1];
 
@@ -295,22 +272,20 @@ public class DataCube {
             for (int i = 0; i < counter.length; i++)     //da os valores as queries
                 query[i] = values[mapeamentoDimInq[i]][counter[i]];
 
+            //copia query original
             for (int i = 0; i < qValues.length; i++)
                 arrayQueriesEResultados[rounds][i] = qValues[i];
-
+            //modifica dimensões inquiridas para a query
             for (int i = 0; i < mapeamentoDimInq.length; i++)
                 arrayQueriesEResultados[rounds][mapeamentoDimInq[i]] = query[i];
 
             //pesquisa e mostra com valores do query
             arrayQueriesEResultados[rounds][qValues.length] = pointQueryCounterSubCube(subCube, query);// faz pesquisa sobre esses valores
 
-            //System.out.println(Arrays.toString(query) + " : " + arrayQueriesEResultados[rounds][qValues.length]);
-
-
             //gere os counters
             for (int i = 0; i < mapeamentoDimInq.length; i++) {              //para cada um dos counter
                 if (counter[i] < values[mapeamentoDimInq[i]].length - 1) {
-                    counter[i]++;
+                    ++counter[i];
                     break;
                 } else        //if( counter[i] == '*')
                     counter[i] = 0;
@@ -318,23 +293,22 @@ public class DataCube {
             ++rounds;
         } while (rounds < total);
 
-/*        StringBuilder str = new StringBuilder();
-        for (int[] q : arrayQueriesEResultados) {
-            str.setLength(0);
-            for (int i = 0; i < q.length - 1; i++) {
-                if (q[i] == -88)
-                    str.append('*').append(" ");
-                else if (q[i] == -99)
-                    str.append('?').append(" ");
-                else
-                    str.append(q[i]).append(" ");
+        if (Main.verbose) {
+            StringBuilder str = new StringBuilder();
+            for (int[] q : arrayQueriesEResultados) {
+                str.setLength(0);
+                for (int i = 0; i < q.length - 1; i++) {
+                    if (q[i] == -88)
+                        str.append('*').append(" ");
+                    else if (q[i] == -99)
+                        str.append('?').append(" ");
+                    else
+                        str.append(q[i]).append(" ");
+                }
+                str.append(" : ").append(q[q.length - 1]);
+                System.out.println(str);
             }
-            str.append(" : ").append(q[q.length - 1]);
-            System.out.println(str);
         }
- */
-
-
 
         System.out.println(total + " lines written");
     }

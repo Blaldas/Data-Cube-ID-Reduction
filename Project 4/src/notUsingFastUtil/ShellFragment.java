@@ -1,10 +1,5 @@
 package notUsingFastUtil;
 
-import it.unimi.dsi.fastutil.ints.IntArrays;
-
-import java.util.Arrays;
-import java.util.Date;
-
 public class ShellFragment {
 
     int[][] matrix;
@@ -13,7 +8,7 @@ public class ShellFragment {
     int upper;
 
 
-    ShellFragment( int lower, int upper){
+    ShellFragment(int lower, int upper) {
         this.lower = lower;
         this.upper = upper;
         this.size = new int[upper - lower + 1];
@@ -21,32 +16,29 @@ public class ShellFragment {
 
     }
 
-    public void addTuple(int tid, int value){
+    public void addTuple(int tid, int value) {
         //verifica o tamanho
-        if(size[value-lower] == matrix[value-lower].length)
-        {
-            int[] a = new int[size[value-lower] == 0 ? 1 : 2* size[value-lower]];
-            for(int i = size[value-lower]; i>0; a[--i] = matrix[value-lower][i]){}
+        if (size[value - lower] == matrix[value - lower].length) {
+            int[] a = new int[size[value - lower] == 0 ? 1 : 2 * size[value - lower]];
+            for (int i = size[value - lower]; i > 0; a[--i] = matrix[value - lower][i]) {
+            }
 
-            matrix[value-lower] = a;
+            matrix[value - lower] = a;
         }
 
-        matrix[value-lower][size[value-lower]++] = tid;
+        matrix[value - lower][size[value - lower]++] = tid;
     }
 
-
-    public void proneShellFragment(){
+    public void proneShellFragment() {
         int[] b;
-        for(int v = 0; v < matrix.length; v++){
-            b = new int[size[v]];
-            for(int i = size[v]; i>0; b[--i] = matrix[v][i]){}
-            matrix[v] = b;
-
+        for (int v = 0; v < matrix.length; v++) {
+            if (matrix[v].length > 0) {
+                b = new int[size[v]];
+                for (int i = size[v]; i > 0; b[--i] = matrix[v][i])
+                    matrix[v] = b;
+            }
         }
     }
-
-
-
 
     /**
      * @param value value of the dimension
@@ -59,25 +51,6 @@ public class ShellFragment {
 
         return matrix[value - lower];
     }
-    public int[] getTidsListFromValueWithoutPronage(int value) {
-        if (value > upper || value < lower)                         //se os valores nao estiverem nos intervalos
-            return new int[0];                                          //devolve array a zero
-
-        return Arrays.copyOfRange(matrix[value - lower], 0, size[value-lower]);
-    }
-
-    /**
-     * @param tid id of the tuple to be seached
-     * @return the value of such tuple, or lower-1 if not found.
-     */
-    public int getValueFromTid(int tid) {
-        for (int i = 0; i < matrix.length; i++) {                                     //para cada um dos valores (arrays de tids)
-            int pos = IntArrays.binarySearch(matrix[i], 0, size[i], tid);                 //faz pesquisa binária
-            if (pos >= 0)                                                //se a pesquisa binária der resultado positivo (o resultado é a posição)
-                return lower + i;                                                  //devole valor da posição
-        }
-        return lower - 1;                               //devove valor menor que o minimo
-    }
 
 
     /**
@@ -89,7 +62,6 @@ public class ShellFragment {
             returnable[i] = lower + i;                                  //coloca o valor devido
         return returnable;                                          //devolve array com valores
     }
-
 
     /**
      * @return returns an array with all the tids

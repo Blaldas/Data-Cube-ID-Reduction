@@ -11,15 +11,17 @@ public class Main {
 
     static DataCube mainCube;
     static int lowerValue = 1;
+    public static boolean verbose = false;
 
 
     public static void main(String[] args) {
-        System.out.println("\nnot using ID REDUCTION \n");
 
         if (args.length != 1) {
             System.out.println("fragCubing_java.jar <dataset name>");
             System.exit(1);
         }
+
+        System.out.println("\nnot using ID REDUCTION \n");
 
         Scanner sc = new Scanner(System.in);
         String path = args[0];
@@ -30,6 +32,7 @@ public class Main {
 
         String input;
 
+        //every single memory check and garbage collector call must be made inside this loop on order to avoid to have errors
         do {
             System.out.println(">");
             input = sc.next();
@@ -38,14 +41,21 @@ public class Main {
             if (input.charAt(0) == 'q') {
                 query(input);
                 System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-            } else if (input.equals("show"))
-                mainCube.showAllDimensions();
-            else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
+            }
+            if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
                 break;
+            else if (input.toLowerCase().equals("v"))
+                verboseChange();
             else
                 System.out.println("Unknown Command");
+
             System.gc();        //used to be able to do multiple operations in a single run.
         } while (true);
+    }
+
+    private static void verboseChange() {
+        verbose = !verbose;
+        System.out.println("verbose: " + verbose);
     }
 
     private static void load(String filename) {
@@ -120,7 +130,7 @@ public class Main {
 
     /**
      * @param filePath path of the database file
-     * Reads a given dataset and creates the data cube
+     *                 Reads a given dataset and creates the data cube
      */
     public static void generalReadFromDisk(String filePath) {
 
@@ -141,16 +151,14 @@ public class Main {
 
             totalTuples = Integer.parseInt(values[0]);
 
-            int[] sizes = new int[values.length-1];
+            int[] sizes = new int[values.length - 1];
 
             for (int i = 1; i < values.length; i++) {
-                sizes[i-1] = Integer.parseInt(values[i]);
+                sizes[i - 1] = Integer.parseInt(values[i]);
             }
 
 
-
             mainCube = new DataCube(sizes, lowerValue);
-
 
 
             int numDimensions = sizes.length;        //guarda o numero de dimensãos
@@ -161,7 +169,7 @@ public class Main {
 
                 values = line.split(" ");           //splits the line read into X Strings
 
-                if(values.length !=numDimensions){
+                if (values.length != numDimensions) {
                     System.out.println("tuple id = " + i + " doesn't have the same number of dimensions");
                     System.exit(1);
                 }
