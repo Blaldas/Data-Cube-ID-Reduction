@@ -20,6 +20,11 @@ public class ShellFragment {
 
     }
 
+    /**
+     *
+     * @param tid the tuple id being stored
+     * @param value the tuple's value
+     */
     public void addTuple(int tid, int value){
         //verifica o tamanho
         if(size[value-lower] == matrix[value-lower].length)
@@ -33,19 +38,20 @@ public class ShellFragment {
         matrix[value-lower][size[value-lower]++] = tid;
     }
 
-
+    /**
+     *  prones all necessary arrays of this shellfragment
+     */
     public void proneShellFragment(){
         int[] b;
         for(int v = 0; v < matrix.length; v++){
-            b = new int[size[v]];
-            for(int i = size[v]; i>0; b[--i] = matrix[v][i]){}
-            matrix[v] = b;
-
+            if(matrix[v].length != size[v]) {
+                b = new int[size[v]];
+                for (int i = size[v]; i > 0; b[--i] = matrix[v][i]) {
+                }
+                matrix[v] = b;
+            }
         }
     }
-
-
-
 
     /**
      * @param value value of the dimension
@@ -58,13 +64,6 @@ public class ShellFragment {
 
         return matrix[value - lower];
     }
-    public int[] getTidsListFromValueWithoutPronage(int value) {
-        if (value > upper || value < lower)                         //se os valores nao estiverem nos intervalos
-            return new int[0];                                          //devolve array a zero
-
-        return Arrays.copyOfRange(matrix[value - lower], 0, size[value-lower]);
-    }
-
 
     /**
      * @return all the values being stored

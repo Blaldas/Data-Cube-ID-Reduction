@@ -49,11 +49,20 @@ public class Main {
         } while (true);
     }
 
+    /**
+     * Changes the verbose variable and signals its effects to the user as a printf
+     */
     private static void changeVerbose() {
         verbose = !verbose;
         System.out.println("verbose: " +  (verbose ? "showing results" : "not showing results"));
     }
 
+    /**
+     *
+     * @param filename the path/name of the file
+     *
+     * loads the dataset to the data cube tuple by tuple and then prones the datacube
+     */
     private static void load(String filename) {
 
         System.out.println("Loading <" + filename + ">...");
@@ -122,7 +131,6 @@ public class Main {
         System.out.println("Query executed in " + numSeconds + " ms.");
 
     }
-
 
     /**
      * @param filePath path of the database file

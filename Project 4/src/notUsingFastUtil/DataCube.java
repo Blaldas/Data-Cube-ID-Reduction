@@ -33,24 +33,6 @@ public class DataCube {
             shellFragmentList[i].addTuple(tid, values[i]);
     }
 
-
-    /**
-     * prints all the values and the number of tuples they store, for every single diemension
-     */
-    public void showAllDimensions() {
-        for (int i = 0; i < shellFragmentList.length; i++) {
-            StringBuilder str = new StringBuilder();
-            System.out.println("Dimension " + (i + 1));
-            System.out.println("Value\tNumberTuples");
-            for (int n = shellFragmentList[i].lower; n <= shellFragmentList[i].upper; n++) {
-                str.append(n).append("\t").append(Arrays.toString(shellFragmentList[i].getTidsListFromValue(n)));
-                str.append("\n");
-            }
-            System.out.println(str);
-            System.out.println(shellFragmentList[i].matrix[0].length);
-        }
-    }
-
     /**
      * @param query the query being made
      * @return array with the tuple ids, null if query.length != shellFragmentList.length
@@ -101,7 +83,12 @@ public class DataCube {
         return shellFragmentList[0].getAllTids();
     }
 
-
+    /**
+     *
+     * @param subCube the Data Cube to be used
+     * @param query the query to be done
+     * @return array with the result. Its length is allways fully used
+     */
     public int[] pointQuerySeachSubCube(ShellFragment[] subCube, int[] query) {
         if (query.length != subCube.length)
             return null;
@@ -147,7 +134,6 @@ public class DataCube {
         }
         return subCube[0].getAllTids();
     }
-
 
     /**
      * @param arrayA
@@ -275,6 +261,12 @@ public class DataCube {
 
     }
 
+    /**
+     *
+     * @param qValues the original query done by the user
+     * @param mapeamentoDimInq array used to map the sub-cube into to the datacube dimensions
+     * @param subCube   the data cube to be used
+     */
     private void showQueryDataCube(int[] qValues, int[] mapeamentoDimInq, ShellFragment[] subCube) {
 
         int[] query = new int[subCube.length];               //stores all the values as a query.
@@ -363,7 +355,12 @@ public class DataCube {
         return result;
     }
 
-
+    /**
+     *
+     * @param subCube the data cube to be used
+     * @param query the point query to be done
+     * @return  the number of tids resulting from that intersection, or -1 if any problems are found
+     */
     public int pointQueryCounterSubCube(ShellFragment[] subCube, int[] query) {
         int[] mat = pointQuerySeachSubCube(subCube, query);
         if (mat == null)
@@ -375,6 +372,9 @@ public class DataCube {
         return shellFragmentList[0].getBiggestTid();
     }
 
+    /**
+     *  prones the arrays of all shellFragments, avoiding waste memory
+     */
     public void proneShellfragments() {
         for (ShellFragment s : shellFragmentList)
             s.proneShellFragment();
