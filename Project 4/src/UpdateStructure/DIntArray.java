@@ -238,7 +238,7 @@ public class DIntArray {
      */
     public boolean hasTid(int tid) {
         //matrix sem redução
-        if (IntArrays.binarySearch(noReductionArray, 0, sizeNonReduced, tid) >= 0)
+        if (binarySearch(noReductionArray, 0, sizeNonReduced, tid) >= 0)
             return true;
 
         //matrix com redução
