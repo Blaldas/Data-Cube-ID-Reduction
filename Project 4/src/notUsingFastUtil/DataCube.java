@@ -10,27 +10,27 @@ public class DataCube {
 
 
     /**
-     * @param sizes      Max value of each dimension
+     * @param maxValue      Max value of each dimension
      * @param lowerValue o menor valor do dataset (default = 1)
      *                   Chamada uma vez para criar o objeto cubo
      */
-    public DataCube(int[] sizes, int lowerValue) {
-        shellFragmentList = new ShellFragment[sizes.length];
+    public DataCube(int[] maxValue, int lowerValue) {
+        shellFragmentList = new ShellFragment[maxValue.length];
         this.lower = lowerValue;
         for (int i = 0; i < shellFragmentList.length; i++) {
-            shellFragmentList[i] = new ShellFragment(lowerValue, sizes[i]);
+            shellFragmentList[i] = new ShellFragment(lowerValue, maxValue[i]);
         }
     }
 
     /**
      * @param tid    this tuple id
-     * @param values Array of values to each dimension.
+     * @param tupleValues Array of values to each dimension.
      */
-    public void addTuple(int tid, int[] values) {
+    public void addTuple(int tid, int[] tupleValues) {
 
 
         for (int i = 0; i < shellFragmentList.length; i++)
-            shellFragmentList[i].addTuple(tid, values[i]);
+            shellFragmentList[i].addTuple(tid, tupleValues[i]);
     }
 
     /**

@@ -3,7 +3,6 @@ package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
 public class ShellFragment {
 
     DIntArray[] matrix;
-    //int[] size;
     int lower;
     int upper;
 
@@ -49,6 +48,7 @@ public class ShellFragment {
     public DIntArray getTidsListFromValue(int value) {
         if (value > upper || value < lower || matrix[value - lower] == null)
             return new DIntArray();
+
         return matrix[value - lower];
     }
 

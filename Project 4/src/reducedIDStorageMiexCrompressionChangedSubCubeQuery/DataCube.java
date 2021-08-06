@@ -604,7 +604,7 @@ public class DataCube {
                 for (int i = 0; i < q.length - 1; i++) {
                     if (q[i] == -88)
                         str.append('*').append(" ");
-                    else if (q[i] == -99)
+                    else if (q[i] == -99)       //never used lmao
                         str.append('?').append(" ");
                     else
                         str.append(q[i]).append(" ");

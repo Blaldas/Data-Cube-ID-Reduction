@@ -71,7 +71,6 @@ public class ShellFragment {
         return returnable;                                          //devolve array com valores
     }
 
-
     /**
      * @return returns an array with all the tids
      * <p>This function should actually be ignored, the method getBiggestTid() should be used instead
