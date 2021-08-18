@@ -3,9 +3,7 @@ package rangeQueries;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -18,13 +16,13 @@ public class Main {
 
         if (args.length != 1) {
             System.out.println("fragCubing_reduced_java.jar <dataset name>");
-            System.exit(1);
+            //System.exit(1);
         }
 
         System.out.println("\nID REDUCTION MIXED ARRAY STYLE WITH CHANGED SUBCUBE!\n");
 
         Scanner sc = new Scanner(System.in);
-        String path = args[0];
+        String path = "miniCovidData";//args[0];
         load(path);
         System.gc();
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
@@ -44,11 +42,57 @@ public class Main {
                 break;
             else if (input.toLowerCase().equals("v"))
                 changeVerbose();
+            else if(input.toLowerCase().equals("mq"))
+                doMultipleQueries(sc);
             else
                 System.out.println("Unknown Command");
 
             System.gc();        //used to be able to do multiple operations in a single run.
         } while (true);
+
+    }
+
+    /**
+     * Allows to input multiple queries and
+     * @param sc
+     */
+    private static void doMultipleQueries(Scanner sc) {
+        List<String> queryList = new ArrayList<>();
+        String input;
+
+        System.out.println("Introduce the multiple queries:\n");
+
+        while(true){
+            System.out.println(">");
+            input = sc.next();
+            input += sc.nextLine();
+
+            if(input.equals("end")){
+                break;
+            }
+
+            queryList.add(input);
+            input = "";
+        }
+
+        System.out.println();
+
+        Date startDate = new Date(), endDate;
+        for(String s : queryList)
+        {
+            System.out.println("\n\n");
+            query(s);
+            System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+
+        }
+        endDate = new Date();
+        long numSeconds = ((endDate.getTime() - startDate.getTime()));
+        System.out.println("-------------------------------------------");
+        System.out.println("-------------------------------------------");
+        System.out.println("All Queries Done in: " + numSeconds + " ms.");
+        System.out.println("-------------------------------------------");
+        System.out.println("-------------------------------------------");
+
 
     }
 
@@ -129,7 +173,7 @@ public class Main {
 
         Date startDate = new Date(), endDate;           //incia as datas para fazer contagem do tempo
         if (subCubeFlag) {                  //caso seja um subcube
-            //mainCube.getSubCube(values);
+            mainCube.getSubCube(values);
         } else {
             int searchResult = mainCube.pointQueryCounter(values); //returns array of ids
             if (searchResult == -1)

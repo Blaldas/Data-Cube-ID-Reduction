@@ -352,7 +352,7 @@ public class ShellFragment {
                     //Se B reduzido < B não reduzido
                 } else if (B.reducedPos1[rB] < B.noReductionArray[nB]) {
                     //Se B reduzido < A reduzido
-                    if (B.reducedPos1[nB] < A.reducedPos1[rA]) {
+                    if (B.reducedPos1[rB] < A.reducedPos1[rA]) {
                         //Adiciona B reduzido
                         c.addTidInterval(B.reducedPos1[rB], B.reducedPos2[rB]);
                         ++rB;

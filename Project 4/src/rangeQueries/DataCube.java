@@ -4,6 +4,7 @@ package rangeQueries;
 
 
 import java.util.Arrays;
+import java.util.function.DoubleToIntFunction;
 
 public class DataCube {
 
@@ -85,7 +86,6 @@ public class DataCube {
                 else
                     secundary = shellFragmentList[i].getTidsListFromListValue(query[i]);
 
-                System.out.println(secundary.toString());
                 if (secundary.intersetionCount() == 0)       //se o valor colocado nao der resultados
                     return secundary;
                 if (instanciated == 0)          //se ainda nada tiver sido instanciado
@@ -463,13 +463,13 @@ public class DataCube {
         //para cada tid resultante
         int numInqiridas = 0;
         for (int[] i : values)
-            if (i[0] == -99)
+            if (i[0] == -99 || i.length > 1)
                 numInqiridas++;
 
         int[] mapeamentoDimInq = new int[numInqiridas];
         numInqiridas = 0;
         for (int i = 0; i < values.length; i++)
-            if (values[i][0] == -99)
+            if (values[i][0] == -99 || values[i].length > 1)
                 mapeamentoDimInq[numInqiridas++] = i;
 
 
@@ -567,7 +567,7 @@ public class DataCube {
         int[] query = new int[subCube.length];               //stores all the values as a query.
         int[] counter = new int[subCube.length];             //counter to the query values
 
-
+        System.out.println(subCube.length);
         int[][] values = getAllDifferentValues(qValues);      //guarda todos os valores diferentes para cada dimensão para se poder loopar neles
         //numero de prints que se vai fazer
         int total = 1;                              //guarda o numero de conbinações difrerentes
@@ -634,10 +634,10 @@ public class DataCube {
         //System.out.println(result.length);
         for (int i = 0; i < queryValues.length; i++) {               //para cada uma das dimensões
             if (queryValues[i][0] == -99) {
-                result[i] = new int[shellFragmentList[i].matrix.length + 1];
-                result[i][0] = -88;
-                for (int j = result[i].length; j > 1; result[i][--j] = j) ;
+                result[i] = shellFragmentList[i].getAllValues();
 
+            }else if(queryValues[i].length > 1){
+                result[i][0] = -88;
             } else
                 result[i] = queryValues[i];
         }
