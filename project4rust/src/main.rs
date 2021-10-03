@@ -2,179 +2,147 @@ use std::convert::TryFrom;
 use std::env::args;
 use std::error::Error;
 use std::fs::File;
-use std::io::{BufRead, BufReader, ErrorKind, Stdin, Stdout};
+use std::io::{BufRead, BufReader, ErrorKind};
 use std::io::prelude::*;
-use std::num::ParseIntError;
 use std::process::{Command, exit, id};
 use std::time::Instant;
 
 use crate::data_cube::DataCube;
 
-mod shell_fragment_list;
+mod shell_fragment;
 mod data_cube;
 
 struct CiiCube {
-    mainCube: DataCube,
-    lowerValue: i32,
-    verbose: bool,
+    main_cube: DataCube,
+    lower_value: i32,
+    // verbose: bool,
 }
 
 impl CiiCube {
     fn new() -> CiiCube {
-        CiiCube { mainCube: DataCube::create(&vec![], 0), lowerValue: 1, verbose: false }
+        CiiCube { main_cube: DataCube::create(&vec![], 0), lower_value: 1, /*verbose: false*/ }
     }
 
-    fn load(self: Self, filename: String) -> Result<DataCube, Box<dyn Error>> {
+    fn load(&mut self, filename: String) -> Result<(), Box<dyn Error>> {
         println!("Loading <{}>...", filename);
-        let startDate = Instant::now();
-        let mainCube = generalReadFromDisk(&filename)?;
-        let endDate = Instant::now();
 
-        let numSeconds = (endDate - startDate).as_millis();
-        println!("Milliseconds used to load the data\t{}", numSeconds);
-        println!("Dimensions loaded\t{}", mainCube.getNumberShellFragments());
-        println!("Number of tuples loaded\t{}", mainCube.getNumberTuples());
+        let start_date = Instant::now();
+        self.general_read_from_disk(&filename)?;
+        let end_date = Instant::now();
+        let num_seconds = (end_date - start_date).as_millis();
+        println!("Milliseconds used to load the data\t{}", num_seconds);
+        println!("Dimensions loaded\t{}", self.main_cube.get_number_shell_fragments());
+        println!("Number of tuples loaded\t{}", self.main_cube.get_number_tuples());
         println!("Load ended");
-        Ok(mainCube)
+        Ok(())
     }
 
-    fn generalReadFromDisk(filePath: &String)
-                           -> Result<DataCube, Box<dyn std::error::Error>> {
-        let mut path = File::open(filePath)?;
+    fn general_read_from_disk(&mut self, file_path: &String)
+                              -> Result<(), Box<dyn std::error::Error>> {
+        let path = File::open(file_path)?;
 
         let mut line = String::new();
-        let totalTuples;
-
         let mut reader = BufReader::new(path);
-
         let nbytes = reader.read_line(&mut line)?;
         if nbytes == 0 { return Err(thisbitchempty()?); }
-        line = line.trim_start().trim_end().to_string();
-        let values: Vec<&str> = line.split(" ").collect();
+        line = line.trim_end().to_string();
 
-        let totalTuple: i32 = values[0].parse().expect("Cant parse");
-        let mut sizes = values.len() - 1;//obtem o numero de tuplas
-        for i in 1..values.len() {
-            sizes[i - 1] = values[i].parse().expect("cant parse");
+        let total_tuples;
+        let num_dimensions;
+        let mut tuple;
+        {
+            let values: Vec<&str> = line.split(" ").collect();
+            total_tuples = values[0].parse().expect("Cant parse");
+            let mut sizes = vec![0; values.len() - 1];//obtem o numero de tuplas
+            for i in 1..values.len() {
+                sizes[i - 1] = values[i].parse().expect("cant parse");
+            }
+
+            num_dimensions = values.len() - 1;
+            tuple = vec![0; values.len() - 1];
+
+            self.main_cube = DataCube::create(&sizes, self.lower_value);
         }
 
+        for i in 0..total_tuples {
+            line.clear();
 
-        // let mut values: Vec<&str> = line.split(" ").collect();
-        // remove_enters(&mut values);
-        // values.pop();
-        // totalTuple = values[0].parse().unwrap();
-        //
-        // sizes = vec!(0; values.len() - 1);
-        // for i in 0..sizes.len() {
-        //     sizes[i] = values[i + 1].parse::<i32>().unwrap();
-        // }
-    }
+            reader.read_line(&mut line)?;
+            line = line.trim_end().to_string();
+            let values: Vec<&str> = line.split(" ").collect();
+            if values.len() != num_dimensions {
+                panic!("tuple id = {} doesn't have the same number of dimensions, \nwith line content:\n\t{}\nand numdimensions: ", i, &line);
+            }
+            for n in 0..values.len() {
+                tuple[n] = values[n].parse().expect("cant parse");
+            }
 
-    let mut data_cube = DataCube::create( & sizes, lowerValues);
-    let numDimensions = sizes.len();
-    let mut newTuple = vec!(0; numDimensions);
-    for i in 0..totalTuple {
-    let nbytes = reader.read_line( & mut line) ?;
-    line = line.trim_end().to_string();
-    if nbytes == 0 {
-    return Err(thisbitchempty() ? );
+            self.main_cube.add_tuple(i, &tuple);
+        }
+        self.main_cube.prone_data_cube();
+        Ok(())
     }
 
-    let mut values: Vec < & str > = line.split( | c: char | c.is_whitespace()).collect();
-    remove_enters( & mut values);
-    if values.len() != numDimensions {
-    println ! ("tuple id = {} doesn't have the same number of dimensions", i);
-    exit(1);
-    }
-    for n in 0..numDimensions {
-    newTuple[n] = values[n].parse::< i32 > ().unwrap();
-    }
-    data_cube.addTuple(i, & newTuple);
-    }
 
-    Ok(data_cube)
+    // let mut values: Vec<&str> = line.split(" ").collect();
+    // remove_enters(&mut values);
+    // values.pop();
+    // totalTuple = values[0].parse().unwrap();
+    //
+    // sizes = vec!(0; values.len() - 1);
+    // for i in 0..sizes.len() {
+    //     sizes[i] = values[i + 1].parse::<i32>().unwrap();
+    // }
+//     }
+//
+//     let mut data_cube = DataCube::create( & sizes, lowerValues);
+//     let numDimensions = sizes.len();
+//     let mut newTuple = vec!(0; numDimensions);
+//     for i in 0..totalTuple {
+//     let nbytes = reader.read_line( & mut line) ?;
+//     line = line.trim_end().to_string();
+//     if nbytes == 0 {
+//     return Err(thisbitchempty() ? );
+//     }
+//
+//     let mut values: Vec < & str > = line.split( | c: char | c.is_whitespace()).collect();
+//     remove_enters( & mut values);
+//     if values.len() != numDimensions {
+//     println ! ("tuple id = {} doesn't have the same number of dimensions", i);
+//     exit(1);
+//     }
+//     for n in 0..numDimensions {
+//     newTuple[n] = values[n].parse::< i32 > ().unwrap();
+//     }
+//     data_cube.add_tuple(i, & newTuple);
+//     }
+//
+//     Ok(data_cube)
+// }
 }
-}
 
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut args = args();
-
     if args.len() <= 1 {
         println!("program <dataset>");
         exit(1);
     }
     println!("\nID REDUCTION MIXED ARRAY STYLE WITH CHANGED SUBCUBE!\n");
-
-    let path = args.nth(2).expect("Did not had element");
+    let path = args.nth(1).expect("Did not had argument");
     println!("{}", path);
-
-    let ciicube = CiiCube::new();
-    ciicube.load();
-
-
-    // let path = args.nth(1).expect("fragCubing_java.jar <dataset name>");
-    // println!("argumento: {}", path);
-    // let mainCube = load(path)?;
-    // println!("{}", id());
-    // let memoryusage = Command::new("bash")
-    //     .args(&["-c", format!("pmap -p {} | tail -n 1 | cut -d ' ' -f 11-", id()).as_str()])
-    //     .output()?.stdout;
-    //
-    // println!("Total memory used:\t");
-    // std::io::stdout().write_all(&*memoryusage);
-    // print!("bytes");
+    let mut ciicube = CiiCube::new();
+    ciicube.load(path)?;
+    println!("pid: {}", id());
+    let memoryusage = Command::new("bash")
+        .args(&["-c", format!("pmap -p {} | tail -n 1 | cut -d ' ' -f 11-", id()).as_str()])
+        .output()?.stdout;
+    println!("Total memory used:\t");
+    std::io::stdout().write_all(&*memoryusage)?;
+    print!("bytes");
+    Ok(())
 }
 
-//
-//
-//
-// fn old() -> Result<(), Box<dyn Error>> {
-//     println!("\nnot using ID REDUCTION \n");
-//     let mut args = args();
-//
-//     let path = args.nth(1).expect("fragCubing_java.jar <dataset name>");
-//     println!("argumento: {}", path);
-//     let mainCube = load(path)?;
-//     println!("{}", id());
-//     let memoryusage = Command::new("bash")
-//         .args(&["-c", format!("pmap -p {} | tail -n 1 | cut -d ' ' -f 11-", id()).as_str()])
-//         .output()?.stdout;
-//
-//     println!("Total memory used:\t");
-//     std::io::stdout().write_all(&*memoryusage);
-//     print!("bytes");
-//
-//     Ok(())
-// }
-//
-
-//
-// fn thisbitchempty() -> Result<Box<dyn Error>, Box<dyn Error>> {
-//     Ok(Box::<std::io::Error>::try_from(std::io::Error::new(ErrorKind::InvalidInput, "This Bitch Empty YEET!!!!"))?)
-// }
-//
-// fn remove_enters(values: &mut Vec<&str>) {
-//     if values.last().is_some() {
-//         while let Some(index) = values.last().unwrap().find(|c: char| c.is_whitespace()) {
-//             values.pop();
-//             println!("found it");
-//         }
-//     }
-// }
-//
-// fn read_until_0xA() -> String {
-//     let c = &mut [1];
-//     let mut buffer = vec!(0u8, 0);
-//     while let Ok(size) = file.read(c) > 0 {
-//         if c != 0xA {
-//             buffer.push(c[0]);
-//             line.push(char::from());
-//         } else {
-//             break;
-//         }
-//     }
-//     String::from_utf8(buffer).unwrap_or_else(String::new())
-// }
-//
-//
+fn thisbitchempty() -> Result<Box<dyn Error>, Box<dyn Error>> {
+    Ok(Box::<std::io::Error>::try_from(std::io::Error::new(ErrorKind::InvalidInput, "This Bitch Empty YEET!!!!"))?)
+}
