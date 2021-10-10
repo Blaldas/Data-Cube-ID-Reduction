@@ -1,3 +1,5 @@
+
+#[derive(Clone, Debug)]
 pub struct ShellFragment {
     pub lower: i32,
     pub upper: i32,

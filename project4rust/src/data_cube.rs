@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use crate::shell_fragment::ShellFragment;
 
 pub(crate) struct DataCube {
@@ -186,99 +188,99 @@ impl DataCube {
         return self.shell_fragment_list[0].get_biggest_tid() + 1;
     }
 
-    /**
-     * @param values the query
-     */
-    pub fn get_sub_cube(&self, values: &Vec<i32>)
-    {
-        if values.len() != self.shell_fragment_list.len() {
-            println!("wrong number of dimensions");
-            return;
-        }
-
-        let tid_array = match self.point_query_seach(values) {
-            None => { return; }
-            Some(x) => { x }
-        };            //obtem TIDs resultante
-        if tid_array.len() == 0 {
-            println!("no values found");
-            return;
-        }
-
-        //mostra resposta a query inicial:
-        let mut str = String::new();
-        for value in values {
-            if *value == -99 || *value == -88 {
-                str.push('*');
-                str.push(' ');
-            } else {
-                str.push_str(&*value.to_string());
-                str.push(' ');
-            }
-        }
-        str.push_str(": ");
-        str.push_str(&*tid_array.len().to_string());
-        println!("{}", str);
-        println!("A recriar sub dataset");
-//para cada tid resultante
-        let mut num_inqiridas = 0;
-        for i in values {
-            if *i == -99 {
-                num_inqiridas += 1;
-            }
-        }
-        let mut mapeamento_dim_inq = vec!(0; num_inqiridas);
-        num_inqiridas = 0;
-        for (i, value) in values.iter().enumerate() {
-            if *value == -99 {
-                mapeamento_dim_inq[num_inqiridas] = i as i32;
-                num_inqiridas += 1;
-            }
-        }
-        let mut subdataset = vec!(vec!(0i32; num_inqiridas as usize); tid_array.len());//cada linha é uma tupla,
-
-        // cada coluna é uma dimensão;
-
-//para cada dimensão, obtem os tids, interceta com os tids do subCubo e adiciona os valores:
-        for (d, map) in mapeamento_dim_inq.iter().enumerate() {    //para cada uma das dimensões inquiridas
-            for (i, _) in self.shell_fragment_list[*map as usize].matrix.iter().enumerate() {      //para cada valor da dimensão
-                let val = &self.shell_fragment_list[*map as usize].matrix[i];                     //obtem lista de tids com esse valor
-//note-se: val tem tamanho exato.
-//faz interceção: val com tid_array
-                let mut ti = 0;
-                let mut vi = 0;
-                while ti < tid_array.len() && vi < val.len() {   //interceção e adiciona
-                    if tid_array[ti] == val[vi] {          //se igual
-                        subdataset[ti][d] = (&i + self.lower as usize) as i32;    //lower igual a 1 para todas as diemnsões!
-                        ti += 1;
-                        vi += 1;
-                    } else if tid_array[ti] < val[vi] {
-                        ti += 1;
-                    } else {
-                        vi += 1;
-                    }
-                }
-            }
-        }
-
-        // System.out.println(Arrays.deepToString(subdataset));
-// System.exit(0);
-        println!("A refazer cubo");
-        let mut sub_cube = Vec::<ShellFragment>::with_capacity(num_inqiridas);
-        while sub_cube.len() < num_inqiridas {
-            sub_cube.push(ShellFragment::create(self.shell_fragment_list[mapeamento_dim_inq[sub_cube.len()] as usize].lower, self.shell_fragment_list[mapeamento_dim_inq[sub_cube.len()] as usize].upper));
-        }
-
-        for (i, _) in subdataset.iter().enumerate() {
-            for d in 0..sub_cube.len() {
-                sub_cube[d].add_tuple(i as i32, subdataset[i][d]);
-            }
-        }
-
-        println!("Subcubo acabado");
-//System.out.println(Arrays.deepToString(subdataset));
-        self.show_query_data_cube(&values, &mapeamento_dim_inq, &sub_cube);
-    }
+//     /**
+//      * @param values the query
+//      */
+//     pub fn get_sub_cube(&self, values: &Vec<i32>)
+//     {
+//         if values.len() != self.shell_fragment_list.len() {
+//             println!("wrong number of dimensions");
+//             return;
+//         }
+//
+//         let tid_array = match self.point_query_seach(values) {
+//             None => { return; }
+//             Some(x) => { x }
+//         };            //obtem TIDs resultante
+//         if tid_array.len() == 0 {
+//             println!("no values found");
+//             return;
+//         }
+//
+//         //mostra resposta a query inicial:
+//         let mut str = String::new();
+//         for value in values {
+//             if *value == -99 || *value == -88 {
+//                 str.push('*');
+//                 str.push(' ');
+//             } else {
+//                 str.push_str(&*value.to_string());
+//                 str.push(' ');
+//             }
+//         }
+//         str.push_str(": ");
+//         str.push_str(&*tid_array.len().to_string());
+//         println!("{}", str);
+//         println!("A recriar sub dataset");
+// //para cada tid resultante
+//         let mut num_inqiridas = 0;
+//         for i in values {
+//             if *i == -99 {
+//                 num_inqiridas += 1;
+//             }
+//         }
+//         let mut mapeamento_dim_inq = vec!(0; num_inqiridas);
+//         num_inqiridas = 0;
+//         for (i, value) in values.iter().enumerate() {
+//             if *value == -99 {
+//                 mapeamento_dim_inq[num_inqiridas] = i as i32;
+//                 num_inqiridas += 1;
+//             }
+//         }
+//         let mut subdataset = vec!(vec!(0i32; num_inqiridas as usize); tid_array.len());//cada linha é uma tupla,
+//
+//         // cada coluna é uma dimensão;
+//
+// //para cada dimensão, obtem os tids, interceta com os tids do subCubo e adiciona os valores:
+//         for (d, map) in mapeamento_dim_inq.iter().enumerate() {    //para cada uma das dimensões inquiridas
+//             for (i, _) in self.shell_fragment_list[*map as usize].matrix.iter().enumerate() {      //para cada valor da dimensão
+//                 let val = &self.shell_fragment_list[*map as usize].matrix[i];                     //obtem lista de tids com esse valor
+// //note-se: val tem tamanho exato.
+// //faz interceção: val com tid_array
+//                 let mut ti = 0;
+//                 let mut vi = 0;
+//                 while ti < tid_array.len() && vi < val.len() {   //interceção e adiciona
+//                     if tid_array[ti] == val[vi] {          //se igual
+//                         subdataset[ti][d] = (&i + self.lower as usize) as i32;    //lower igual a 1 para todas as diemnsões!
+//                         ti += 1;
+//                         vi += 1;
+//                     } else if tid_array[ti] < val[vi] {
+//                         ti += 1;
+//                     } else {
+//                         vi += 1;
+//                     }
+//                 }
+//             }
+//         }
+//
+//         // System.out.println(Arrays.deepToString(subdataset));
+// // System.exit(0);
+//         println!("A refazer cubo");
+//         let mut sub_cube = Vec::<ShellFragment>::with_capacity(num_inqiridas);
+//         while sub_cube.len() < num_inqiridas {
+//             sub_cube.push(ShellFragment::create(self.shell_fragment_list[mapeamento_dim_inq[sub_cube.len()] as usize].lower, self.shell_fragment_list[mapeamento_dim_inq[sub_cube.len()] as usize].upper));
+//         }
+//
+//         for (i, _) in subdataset.iter().enumerate() {
+//             for d in 0..sub_cube.len() {
+//                 sub_cube[d].add_tuple(i as i32, subdataset[i][d]);
+//             }
+//         }
+//
+//         println!("Subcubo acabado");
+// //System.out.println(Arrays.deepToString(subdataset));
+//         self.show_query_data_cube(&values, &mapeamento_dim_inq, &sub_cube);
+//     }
 
 
     fn show_query_data_cube(&self, q_values: &Vec<i32>, mapeamento_dim_inq: &Vec<i32>, sub_cube: &Vec<ShellFragment>)
@@ -375,6 +377,98 @@ impl DataCube {
         match mat {
             None => { -1 }
             Some(mat) => { mat.len() as i32 }
+        }
+    }
+
+    pub fn get_sub_cube(&self, values: &Vec<i32>) -> Result<(), ()> {
+        if values.len() != self.shell_fragment_list.len() {
+            println!("Wrong number of dimensions");
+            return Err(());
+        }
+
+        if let Some(tidArray) = self.point_query_seach(&values) {
+            let mut string = String::new();
+            for i in 0..values.len() {
+                if values[i] == -99 || values[i] == -88 {
+                    string += "* ";
+                } else {
+                    string += &values[i].to_string();
+                    string += " ";
+                }
+            }
+            string += ": ";
+            string += &tidArray.len().to_string();
+            println!("{}", string);
+
+            println!("A recriar sub dataset");
+            //para cada tid resultant
+            let mut num_inqiridas = 0;
+            for i in values {
+                if *i == -99 as i32 {
+                    num_inqiridas += 1;
+                }
+            }
+            let mut mapeamento_dim_inq = vec![0 as i32; num_inqiridas];
+            num_inqiridas = 0;
+            for i in 0..values.len() {
+                if values[i] == -99 {
+                    mapeamento_dim_inq[num_inqiridas] = i as i32;
+                    num_inqiridas += 1;
+                }
+            }
+
+            //cada linha é uma tupla, cada coluna é uma dimensão
+            let mut subdataset = vec![vec![0; num_inqiridas]; tidArray.len()];
+
+            //para cada dimensão, obtem os tids, interceta com os tids do subCubo e adiciona os valores:
+            for d in 0..mapeamento_dim_inq.len() {
+                for i in 0..self.shell_fragment_list[mapeamento_dim_inq[d] as usize].matrix.len() {
+                    let val = &self.shell_fragment_list[mapeamento_dim_inq[d] as usize].matrix[i];
+                    //nota-se: val tem tamanho exato.
+                    //faz interceção val com tidArray
+                    let mut ti = 0;
+                    let mut vi = 0;
+                    while ti < tidArray.len() && vi < val.len() {
+                        if tidArray[ti] == val[vi] {
+                            subdataset[ti][d] = i + self.lower as usize;
+                            ti += 1;
+                            vi += 1;
+                        } else if tidArray[ti] < val[vi] {
+                            ti += 1;
+                        } else {
+                            vi += 1;
+                        }
+                    }
+                }
+            }
+
+            println!("A refazer cubo");
+            let mut subCube = vec![ShellFragment {
+                lower: 0,
+                upper: 0,
+                matrix: vec![],
+            }; num_inqiridas];
+            for i in 0..subCube.len() {
+                subCube[i] = ShellFragment::create(self.shell_fragment_list[mapeamento_dim_inq[i] as usize].lower,
+                                                   self.shell_fragment_list[mapeamento_dim_inq[i] as usize].upper);
+            }
+            for i in 0..subdataset.len() {
+                for d in 0..subCube.len() {
+                    subCube[d].add_tuple(i as i32, subdataset[i][d] as i32);
+                }
+            }
+
+            for i in 0..subCube.len() {
+                subCube[i].prone_shell_fragment();
+            }
+
+            println!("Subcubo acabado");
+
+            self.show_query_data_cube(&values, &mapeamento_dim_inq, &subCube);
+            Ok(())
+        } else {
+            println!("No values found.");
+            Err(())
         }
     }
 
