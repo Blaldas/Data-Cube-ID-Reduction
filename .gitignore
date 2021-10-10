@@ -1,2 +1,6 @@
 /Project 4/src/fastUtil/fastutil.jar
 target/
+project4rust/target/
+project4rust/Cargo.lock
+**/out/
+**/.idea/
