@@ -91,7 +91,9 @@ impl DataCube {
         for each in query.iter().enumerate() {                                   //obtem todas as listas de values
             if *each.1 != -88 && *each.1 != -99 {
                 let returned: Vec<i32> = match self.shell_fragment_list[each.0].get_tids_list_from_value(*each.1) {
-                    None => { return None; }
+                    None => {
+                        return None;
+                    }
                     Some(result) => { result }
                 };
 
@@ -124,7 +126,6 @@ impl DataCube {
                 if returnable.len() == 0 {
                     return Some(returnable);
                 }
-                return None;
             }
             return Some(returnable);
         }
