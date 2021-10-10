@@ -1,4 +1,4 @@
-package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
+package MCiiCube;
 
 
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
+package MCiiCube;
 
 import java.io.*;
 import java.nio.file.Files;

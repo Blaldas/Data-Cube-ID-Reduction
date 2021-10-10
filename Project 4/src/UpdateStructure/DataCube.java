@@ -1,18 +1,19 @@
 
 
-package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
+package UpdateStructure;
 
+
+import java.util.Arrays;
 
 public class DataCube {
 
     ShellFragment[] shellFragmentList;
     int lower;
 
-    /**
-     * @param maxValue      Max value of each dimension
-     * @param lowerValue o menor valor do dataset (default = 1)
-     *                   Chamada uma vez para criar o objeto cubo
-     */
+    //int[][] modifiedTuples;
+    //int sizeModifiedArray;
+
+
     public DataCube(int[] maxValue, int lowerValue) {
         shellFragmentList = new ShellFragment[maxValue.length]; //o primerio é o númeo de tuplas
         this.lower = lowerValue;
@@ -22,22 +23,15 @@ public class DataCube {
         }
     }
 
-    /**
-     * @param tid    this tuple id
-     * @param tupleValues Array of values to each dimension.
-     */
     public void addTuple(int tid, int[] tupleValues) {
         for (int i = 0; i < shellFragmentList.length; i++) {
             shellFragmentList[i].addTuple(tid, tupleValues[i]);
         }
     }
 
-    /**
-     *  prones the arrays of all shellFragments, avoiding waste memory
-     */
-    public void proneDataCube() {
+    public void reduceMaximumMemory() {
         for (ShellFragment s : shellFragmentList)
-            s.proneShellFragment();
+            s.reduceMaximumMemory();
     }
 
     /**
@@ -48,22 +42,21 @@ public class DataCube {
         DIntArray mat = pointQuerySeach(query);
         if (mat == null)
             return -1;
+
+        System.out.println(mat.toString());
+
         return mat.countStoredTids();
 
     }
 
-    /**
-     *
-     * @param subCube the data cube to be used
-     * @param query the point query to be done
-     * @return  the number of tids resulting from that intersection, or -1 if any problems are found
-     */
+
     public int pointQueryCounterSubCube(ShellFragment[] subCube, int[] query) {
         DIntArray mat = pointQuerySeachSubCube(subCube, query);
         if (mat == null)
             return -1;
         return mat.countStoredTids();
     }
+
 
     /**
      * @param query the query being made
@@ -79,7 +72,7 @@ public class DataCube {
         for (int i = 0; i < query.length; i++) {
             if (query[i] != -88 && query[i] != -99) {
                 DIntArray secundary = shellFragmentList[i].getTidsListFromValue(query[i]);
-                if (secundary.intersetionCount() == 0)       //se o valor colocado nao der resultados
+                if (secundary.countStoredTids() == 0)       //se o valor colocado nao der resultados
                     return secundary;
                 if (instanciated == 0)          //se ainda nada tiver sido instanciado
                     tidsList[0] = secundary;
@@ -109,7 +102,7 @@ public class DataCube {
                 if (result.intersetionCount() == 0)
                     return result;
             }
-            return result;
+
         } else {
             result = new DIntArray();
             //result.addValues(0, shellFragmentList[0].getBiggestTid());
@@ -122,12 +115,6 @@ public class DataCube {
         return result;
     }
 
-    /**
-     *
-     * @param subCube the Data Cube to be used
-     * @param query the query to be done
-     * @return array with the result. Its length is allways fully used
-     */
     public DIntArray pointQuerySeachSubCube(ShellFragment[] subCube, int[] query) {
         if (query.length != subCube.length)
             return null;
@@ -519,6 +506,29 @@ public class DataCube {
                 }
             }
         }
+
+        //para cada dimensão, altera os valores de forma a ter os valores atualizados
+        //para cada uma das dimensões inquiridas
+        int mi;
+        int si;
+        for (int i = 0; i < numInqiridas; i++) {
+            mi = 0;
+            si = 0;
+               while(mi < shellFragmentList[mapeamentoDimInq[i]].sizeModified && si < tidArray.length){
+                   //caso o tid esteja modificado, atuaiza o seu valor
+                   if(shellFragmentList[mapeamentoDimInq[i]].tidModified[mi] == tidArray[si]){
+                       subdataset[tidArray[si]][i] = shellFragmentList[mapeamentoDimInq[i]].valueModified[mi];
+                       ++mi;
+                       ++si;
+                   }
+                   else if (shellFragmentList[mapeamentoDimInq[i]].tidModified[mi] < tidArray[si])
+                       ++mi;
+                   else
+                       ++si;
+               }
+        }
+
+
         //System.out.println(Arrays.deepToString(subdataset));
 
         //System.exit(0);
@@ -529,15 +539,12 @@ public class DataCube {
         //cria os shellFragments
         ShellFragment[] subCube = new ShellFragment[numInqiridas];
         for (int i = 0; i < subCube.length; i++) {
-            subCube[i] = new ShellFragment(shellFragmentList[mapeamentoDimInq[i]].lower, shellFragmentList[mapeamentoDimInq[i]].upper);
+            subCube[i] = new ShellFragment(shellFragmentList[mapeamentoDimInq[i]].lower, shellFragmentList[mapeamentoDimInq[i]].getBiggestValue());
         }
 
         for (int i = 0; i < subdataset.length; i++)
             for (int d = 0; d < subCube.length; d++)
                 subCube[d].addTuple(i, subdataset[i][d]);
-
-        for (int i = 0; i < subCube.length; i++)
-            subCube[i].proneShellFragment();
 
         System.out.println("Subcubo acabado");
 
@@ -550,10 +557,6 @@ public class DataCube {
         showQueryDataCube(values, mapeamentoDimInq, subCube);
     }
 
-    /**
-     * @param qValues the query
-     * @param subCube the subCube created
-     */
     private void showQueryDataCube(int[] qValues, int[] mapeamentoDimInq, ShellFragment[] subCube) {
 
         int[] query = new int[subCube.length];               //stores all the values as a query.
@@ -597,36 +600,38 @@ public class DataCube {
             rounds++;
         } while (rounds < total);
 
-        if (Main.verbose) {
-            StringBuilder str = new StringBuilder();
-            for (int[] q : arrayQueriesEResultados) {
-                str.setLength(0);
-                for (int i = 0; i < q.length - 1; i++) {
-                    if (q[i] == -88)
-                        str.append('*').append(" ");
-                    else if (q[i] == -99)       //never used lmao
-                        str.append('?').append(" ");
-                    else
-                        str.append(q[i]).append(" ");
-                }
-                str.append(" : ").append(q[q.length - 1]);
-                System.out.println(str);
+        // System.out.println(Arrays.deepToString(arrayQueriesEResultados));
+
+        System.out.println("[");
+        StringBuilder str = new StringBuilder();
+        for (int[] q : arrayQueriesEResultados) {
+            str.setLength(0);
+            str.append("[");
+            for (int i = 0; i < q.length - 1; i++) {
+                if (q[i] == -88)
+                    str.append('*').append(" ");
+                else if (q[i] == -99)
+                    str.append('?').append(" ");
+                else
+                    str.append(q[i]).append(" ");
+                str.append(" ; ");
             }
+            str.append(q[q.length - 1]);
+            str.append("]");
+            System.out.println(str);
         }
+        System.out.println("]");
+
 
         System.out.println(total + " lines written");
     }
 
-    /**
-     * @param queryValues the query
-     * @return a matrix with all the values to be looped, in each dimension.
-     */
     private int[][] getAllDifferentValues(int[] queryValues) {
         int[][] result = new int[queryValues.length][1];        //aloca com tamanho minimo inicial 1
         //System.out.println(result.length);
         for (int i = 0; i < queryValues.length; i++) {               //para cada uma das dimensões
             if (queryValues[i] == -99) {
-                result[i] = new int[shellFragmentList[i].matrix.length + 1];
+                result[i] = new int[shellFragmentList[i].getCardinality() + 1];
                 result[i][0] = -88;
                 for (int j = result[i].length; j > 1; result[i][--j] = j) {
                 }
@@ -637,5 +642,62 @@ public class DataCube {
         return result;
     }
 
+    /**
+     * @param values tuple values
+     */
+    public void addNewTuple(int[] values) {
+        if (values.length != shellFragmentList.length) {
+            System.out.println("Number of dimensions invalid. Introduced " + values.length + " to data cube with " + shellFragmentList.length + " dimensions!");
+            return;
+        }
 
+        for (int i = 0; i < shellFragmentList.length; i++)
+            if (values[i] < 1) {
+                System.out.println("value <1, therefore tuple not added");
+                return;
+            }
+
+
+        int newTupleTid = shellFragmentList[0].getBiggestTid();
+        newTupleTid++;
+
+        for (int i = 0; i < shellFragmentList.length; i++) {
+            shellFragmentList[i].addNewTuple(newTupleTid, values[i]);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+
+        for (int i = 0; i < shellFragmentList.length; i++) {
+            str.append("\n\nDimension").append(i + 1).append("\n");
+            str.append(shellFragmentList[i].toString());
+        }
+
+        return str.toString();
+    }
+
+    public void modifyTuple(int tid, int[] values) {
+
+        if (tid < 0 || tid > shellFragmentList[0].getBiggestTid()) {
+            System.out.println("Tuple ID is not stored in the datacube");
+            return;
+        }
+
+        if (values.length != shellFragmentList.length) {
+            System.out.println("Number of dimensions invalid. Introduced " + values.length + " to data cube with " + shellFragmentList.length + " dimensions!");
+            return;
+        }
+
+        for (int val : values)
+            if (val < lower) {
+                System.out.println("The attribute " + val + " is not supported due to the program's design");
+                return;
+            }
+
+        for (int i = 0; i < shellFragmentList.length; i++)
+            shellFragmentList[i].modifyTuple(tid, values[i]);
+    }
 }

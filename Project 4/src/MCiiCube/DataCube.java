@@ -1,7 +1,9 @@
 
 
-package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
+package MCiiCube;
 
+
+import java.util.Arrays;
 
 public class DataCube {
 
@@ -58,11 +60,11 @@ public class DataCube {
      * @param query the point query to be done
      * @return  the number of tids resulting from that intersection, or -1 if any problems are found
      */
-    public int pointQueryCounterSubCube(ShellFragment[] subCube, int[] query) {
-        DIntArray mat = pointQuerySeachSubCube(subCube, query);
+    public int pointQueryCounterSubCube(ShellFragment_uncompressed[] subCube, int[] query) {
+        int[] mat = pointQuerySeachSubCube(subCube, query);
         if (mat == null)
             return -1;
-        return mat.countStoredTids();
+        return mat.length;
     }
 
     /**
@@ -128,56 +130,76 @@ public class DataCube {
      * @param query the query to be done
      * @return array with the result. Its length is allways fully used
      */
-    public DIntArray pointQuerySeachSubCube(ShellFragment[] subCube, int[] query) {
+    public int[] pointQuerySeachSubCube(ShellFragment_uncompressed[] subCube, int[] query) {
         if (query.length != subCube.length)
             return null;
 
         int instanciated = 0;
-        DIntArray[] tidsList = new DIntArray[subCube.length];
-        for (int i = 0; i < query.length; i++) {
+        int[][] tidsList = new int[subCube.length][];                 //stores values of instanciated
+        for (int i = 0; i < query.length; i++) {                                        //obtem todas as listas de values
             if (query[i] != -88) {
-                DIntArray secundary = subCube[i].getTidsListFromValue(query[i]);
-                if (secundary.intersetionCount() == 0)       //se o valor colocado nao der resultados
-                    return secundary;
-                if (instanciated == 0)          //se ainda nada tiver sido instanciado
-                    tidsList[0] = secundary;
+                int[] returned = subCube[i].getTidsListFromValue(query[i]);
+                if (returned.length == 0)                                      //se a lista for vazia, devolve lista com tamanho 0
+                    return new int[0];
+                else if (instanciated == 0)
+                    tidsList[0] = returned;      //obtem lista de tids
                 else {
+
                     for (int n = instanciated - 1; n >= 0; n--) {
-                        if (tidsList[n].intersetionCount() > secundary.intersetionCount()) {
+                        if (tidsList[n].length > returned.length) {
                             tidsList[n + 1] = tidsList[n];
                             if (n == 0)
-                                tidsList[0] = secundary;
+                                tidsList[0] = returned;
                         } else {
-                            tidsList[n + 1] = secundary;
+                            tidsList[n + 1] = returned;
                             break;
                         }
                     }
-
                 }
+                //tidsList[instanciated] = returned;
                 instanciated++;
             }
         }
-        DIntArray result;
+
+        int[] d = tidsList[0];
         if (instanciated > 0) {
-            result = tidsList[0];
             for (int i = 1; i < instanciated; i++) {
 
-                result = intersect(result, tidsList[i]);
+                d = intersect_uncompressed(d, tidsList[i]);
 
-                if (result.intersetionCount() == 0)
-                    return result;
+                if (d.length == 0)
+                    return d;
             }
-            return result;
-        } else {
-            result = new DIntArray();
-            //result.addValues(0, shellFragmentList[0].getBiggestTid());
-            result.reducedPos1 = new int[1];
-            result.reducedPos2 = new int[1];
-            result.reducedPos2[0] = subCube[0].getBiggestTid();
-            ++result.sizeReduced;
+
+            return d;
+        }
+        return subCube[0].getAllTids();
+    }
+
+    private int[] intersect_uncompressed(int[] arrayA, int[] arrayB) {
+        int[] c = new int[Math.min(arrayA.length, arrayB.length)];
+        int ai = 0, bi = 0, ci = 0;
+
+        while (ai < arrayA.length && bi < arrayB.length) {
+            if (arrayA[ai] == arrayB[bi]) {
+                if (ci == 0 || arrayA[ai] != c[ci - 1]) {
+                    //if (arrayA[ai] != 0) {  Esta verificação foi removida porque os arrays enviados para aqui têm o tamanho estritamente necessário
+                    //porém, esta linha estava a ignorar o tid 0 e a gastar tempo precioso
+                    //Caso possa receber arrays com tamanho maior que o necessário, a linha pode ser usada como:
+                    //if (arrayA[ai] != 0 && ai != 0)
+                    c[ci++] = arrayA[ai];
+                    //}
+                }
+                ai++;
+                bi++;
+            } else if (arrayA[ai] > arrayB[bi]) {
+                bi++;
+            } else if (arrayA[ai] < arrayB[bi]) {
+                ai++;
+            }
         }
 
-        return result;
+        return Arrays.copyOfRange(c, 0, ci);
     }
 
     /**
@@ -527,9 +549,9 @@ public class DataCube {
         //FAZ O SUBCUBE------------------------
         System.out.println("A refazer cubo");
         //cria os shellFragments
-        ShellFragment[] subCube = new ShellFragment[numInqiridas];
+        ShellFragment_uncompressed[] subCube = new ShellFragment_uncompressed[numInqiridas];
         for (int i = 0; i < subCube.length; i++) {
-            subCube[i] = new ShellFragment(shellFragmentList[mapeamentoDimInq[i]].lower, shellFragmentList[mapeamentoDimInq[i]].upper);
+            subCube[i] = new ShellFragment_uncompressed(shellFragmentList[mapeamentoDimInq[i]].lower, shellFragmentList[mapeamentoDimInq[i]].upper);
         }
 
         for (int i = 0; i < subdataset.length; i++)
@@ -554,7 +576,7 @@ public class DataCube {
      * @param qValues the query
      * @param subCube the subCube created
      */
-    private void showQueryDataCube(int[] qValues, int[] mapeamentoDimInq, ShellFragment[] subCube) {
+    private void showQueryDataCube(int[] qValues, int[] mapeamentoDimInq, ShellFragment_uncompressed[] subCube) {
 
         int[] query = new int[subCube.length];               //stores all the values as a query.
         int[] counter = new int[subCube.length];             //counter to the query values

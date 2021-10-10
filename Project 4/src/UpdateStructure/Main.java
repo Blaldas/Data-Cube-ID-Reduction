@@ -1,16 +1,22 @@
-package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
+package UpdateStructure;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
 
+    
+
+
+
+
     static DataCube mainCube;
     static int lowerValue = 1;
-    public static boolean verbose = false;
 
 
     public static void main(String[] args) {
@@ -29,22 +35,24 @@ public class Main {
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
 
         String input;
-
+        System.out.println(mainCube.toString());
         //every single memory check and garbage collector call must be made inside this loop on order to avoid to have errors
         do {
             System.out.println(">");
             input = sc.next();
             input += sc.nextLine();
 
-            if (input.charAt(0) == 'q')
-            {
+            if (input.charAt(0) == 'q') {
                 query(input);
                 System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-            }
-            else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
+            } else if (input.charAt(0) == 'n') {
+                addNewTuple(input);
+                System.out.println(mainCube.toString());
+            } else if (input.charAt(0) == 'm') {
+                modifyTuple(input);
+                System.out.println(mainCube.toString());
+            } else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
                 break;
-            else if (input.toLowerCase().equals("v"))
-                changeVerbose();
             else
                 System.out.println("Unknown Command");
 
@@ -53,26 +61,40 @@ public class Main {
 
     }
 
-    /**
-     * Changes the verbose variable and signals its effects to the user as a printf
-     */
-    private static void changeVerbose() {
-        verbose = !verbose;
-        System.out.println("verbose: " +  (verbose ? "showing results" : "not showing results"));
+    private static void modifyTuple(String input) {
+        String[] args = input.split(" ");
+        int tid = Integer.parseInt(args[1]);
+        int[] values = new int[args.length - 2];
+
+        for (int i = 0; i < values.length; i++)
+            values[i] = Integer.parseInt(args[i + 2]);
+
+        mainCube.modifyTuple(tid, values);
+
     }
 
+
     /**
-     *
-     * @param filename the path/name of the file
-     *
-     * loads the dataset to the data cube tuple by tuple and then prones the datacube
+     * @param input input obtained, starts with 'a' and follows with the dimensions
      */
+    private static void addNewTuple(String input) {
+        String[] args = input.split(" ");
+        int[] values = new int[args.length - 1];
+
+        for (int i = 0; i < values.length; i++)
+            values[i] = Integer.parseInt(args[i + 1]);
+
+        mainCube.addNewTuple(values);
+
+
+    }
+
+
     private static void load(String filename) {
 
         System.out.println("Loading <" + filename + ">...");
 
         Date startDate = new Date(), endDate;
-
 
         generalReadFromDisk(filename);
         System.gc();
@@ -88,6 +110,7 @@ public class Main {
         System.out.println("load end");
 
     }
+
 
     /**
      * @param input user input. Something like "q 1 2 3"
@@ -139,9 +162,9 @@ public class Main {
 
     /**
      * @param filePath path of the database file
-     * Reads a given dataset and creates the data cube
+     *                 Reads a given dataset and creates the data cube
      */
-    public static void generalReadFromDisk(String filePath){
+    public static void generalReadFromDisk(String filePath) {
         Path path = Path.of(filePath);
         try {
             String line = null;                                         //the information will be read here
@@ -158,25 +181,23 @@ public class Main {
 
             totalTuples = Integer.parseInt(values[0]);
 
-            int[] sizes = new int[values.length-1];    //obtem o número de tuplas
+            int[] sizes = new int[values.length - 1];    //obtem o número de tuplas
 
-            for(int i = 1; i < values.length; i++)
-                sizes[i-1] = Integer.parseInt(values[i]);
-
-
+            for (int i = 1; i < values.length; i++)
+                sizes[i - 1] = Integer.parseInt(values[i]);
 
 
-            int numDimensions = values.length-1;        //guarda o numero de dimensãos
-            int[] tuple = new int[values.length-1];     //this is a tuple
+            int numDimensions = values.length - 1;        //guarda o numero de dimensãos
+            int[] tuple = new int[values.length - 1];     //this is a tuple
 
             mainCube = new DataCube(sizes, lowerValue);
 
 
             for (int i = 0; i < totalTuples; i++) {            //reads all the lines
-            line = reader.readLine();                    //reads a line
+                line = reader.readLine();                    //reads a line
 
                 values = line.split(" ");           //splits the line read into X Strings
-                if(values.length !=numDimensions){
+                if (values.length != numDimensions) {
                     System.out.println("tuple id = " + i + " doesn't have the same number of dimensions");
                     System.exit(1);
                 }
@@ -193,7 +214,8 @@ public class Main {
             System.exit(1);
         }
 
-        mainCube.proneDataCube();
+        mainCube.reduceMaximumMemory();
     }
+
 
 }
