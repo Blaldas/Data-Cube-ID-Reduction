@@ -1,10 +1,9 @@
-package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
+package rangeQueries;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -17,13 +16,13 @@ public class Main {
 
         if (args.length != 1) {
             System.out.println("fragCubing_reduced_java.jar <dataset name>");
-            System.exit(1);
+            //System.exit(1);
         }
 
         System.out.println("\nID REDUCTION MIXED ARRAY STYLE WITH CHANGED SUBCUBE!\n");
 
         Scanner sc = new Scanner(System.in);
-        String path = args[0];
+        String path = "miniCovidData";//args[0];
         load(path);
         System.gc();
         System.out.println("Total memory used:\t" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + " bytes");
@@ -36,15 +35,15 @@ public class Main {
             input = sc.next();
             input += sc.nextLine();
 
-            if (input.charAt(0) == 'q')
-            {
+            if (input.charAt(0) == 'q') {
                 query(input);
                 System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-            }
-            else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
+            } else if (input.toLowerCase().equals("sair") || input.toLowerCase().equals("exit") || input.toLowerCase().equals("x") || input.toLowerCase().equals("quit"))
                 break;
             else if (input.toLowerCase().equals("v"))
                 changeVerbose();
+            else if(input.toLowerCase().equals("mq"))
+                doMultipleQueries(sc);
             else
                 System.out.println("Unknown Command");
 
@@ -54,18 +53,61 @@ public class Main {
     }
 
     /**
+     * Allows to input multiple queries and
+     * @param sc
+     */
+    private static void doMultipleQueries(Scanner sc) {
+        List<String> queryList = new ArrayList<>();
+        String input;
+
+        System.out.println("Introduce the multiple queries:\n");
+
+        while(true){
+            System.out.println(">");
+            input = sc.next();
+            input += sc.nextLine();
+
+            if(input.equals("end")){
+                break;
+            }
+
+            queryList.add(input);
+            input = "";
+        }
+
+        System.out.println();
+
+        Date startDate = new Date(), endDate;
+        for(String s : queryList)
+        {
+            System.out.println("\n\n");
+            query(s);
+            System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+
+        }
+        endDate = new Date();
+        long numSeconds = ((endDate.getTime() - startDate.getTime()));
+        System.out.println("-------------------------------------------");
+        System.out.println("-------------------------------------------");
+        System.out.println("All Queries Done in: " + numSeconds + " ms.");
+        System.out.println("-------------------------------------------");
+        System.out.println("-------------------------------------------");
+
+
+    }
+
+    /**
      * Changes the verbose variable and signals its effects to the user as a printf
      */
     private static void changeVerbose() {
         verbose = !verbose;
-        System.out.println("verbose: " +  (verbose ? "showing results" : "not showing results"));
+        System.out.println("verbose: " + (verbose ? "showing results" : "not showing results"));
     }
 
     /**
-     *
      * @param filename the path/name of the file
-     *
-     * loads the dataset to the data cube tuple by tuple and then prones the datacube
+     *                 <p>
+     *                 loads the dataset to the data cube tuple by tuple and then prones the datacube
      */
     private static void load(String filename) {
 
@@ -95,27 +137,36 @@ public class Main {
     private static void query(String input) {
 
         String[] stringValues = input.split(" ");   // faz split de cada uma das diemnsões
-        int[] values = new int[stringValues.length - 1];
+        int[][] values = new int[stringValues.length - 1][1];
 
         boolean subCubeFlag = false;
 
         //coloca cada um dos valores no aray values
         for (int i = 1; i < stringValues.length; i++) {
             try {
-                values[i - 1] = Integer.parseInt(stringValues[i]);
+                values[i - 1][0] = Integer.parseInt(stringValues[i]);
             } catch (Exception e) {
                 //same as String.equals() since java 7
-                switch (stringValues[i]) {
-                    case "?":
-                        values[i - 1] = -99;    //-99 -> inquire (?)
-                        subCubeFlag = true;
-                        break;
-                    case "*":
-                        values[i - 1] = -88;     //-88 -> !instantiation (*)
-                        break;
-                    default:
-                        System.out.println("Invalid value in query");
-                        return;
+                if (stringValues[i].equals("?")) {
+                    values[i - 1][0] = -99;    //-99 -> inquire (?)
+                    subCubeFlag = true;
+                } else if (stringValues[i].equals("*")) {
+                    values[i - 1][0] = -88;     //-88 -> !instantiation (*)
+                } else if (stringValues[i].contains("**")) {
+                    String[] rangeString = stringValues[i].split("\\*\\*");
+                    values[i - 1] = new int[rangeString.length];
+
+                    for (int j = 0; j < rangeString.length; j++) {
+                        try {
+                            values[i - 1][j] = Integer.parseInt(rangeString[j]);
+                        } catch (NumberFormatException e1){
+                            System.out.println("Invalid value in query: " + rangeString[j]);
+                            return;
+                        }
+                    }
+                } else {
+                    System.out.println("Invalid value in query");
+                    return;
                 }
             }
         }
@@ -139,9 +190,9 @@ public class Main {
 
     /**
      * @param filePath path of the database file
-     * Reads a given dataset and creates the data cube
+     *                 Reads a given dataset and creates the data cube
      */
-    public static void generalReadFromDisk(String filePath){
+    public static void generalReadFromDisk(String filePath) {
         Path path = Path.of(filePath);
         try {
             String line = null;                                         //the information will be read here
@@ -158,25 +209,23 @@ public class Main {
 
             totalTuples = Integer.parseInt(values[0]);
 
-            int[] sizes = new int[values.length-1];    //obtem o número de tuplas
+            int[] sizes = new int[values.length - 1];    //obtem o número de tuplas
 
-            for(int i = 1; i < values.length; i++)
-                sizes[i-1] = Integer.parseInt(values[i]);
-
-
+            for (int i = 1; i < values.length; i++)
+                sizes[i - 1] = Integer.parseInt(values[i]);
 
 
-            int numDimensions = values.length-1;        //guarda o numero de dimensãos
-            int[] tuple = new int[values.length-1];     //this is a tuple
+            int numDimensions = values.length - 1;        //guarda o numero de dimensãos
+            int[] tuple = new int[values.length - 1];     //this is a tuple
 
             mainCube = new DataCube(sizes, lowerValue);
 
 
             for (int i = 0; i < totalTuples; i++) {            //reads all the lines
-            line = reader.readLine();                    //reads a line
+                line = reader.readLine();                    //reads a line
 
                 values = line.split(" ");           //splits the line read into X Strings
-                if(values.length !=numDimensions){
+                if (values.length != numDimensions) {
                     System.out.println("tuple id = " + i + " doesn't have the same number of dimensions");
                     System.exit(1);
                 }

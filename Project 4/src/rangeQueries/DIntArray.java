@@ -1,7 +1,5 @@
-package reducedIDStorageMiexCrompressionChangedSubCubeQuery;
+package rangeQueries;
 
-
-import java.util.Arrays;
 
 public class DIntArray {
 
@@ -42,9 +40,8 @@ public class DIntArray {
     }
 
     /**
-     *
      * @param newTid the Tid value to be stored
-     * note that the tids must be added orderdly.
+     *               note that the tids must be added orderdly.
      */
     public void addTid(int newTid) {
         //Acrescenta-se à compressão
@@ -76,17 +73,32 @@ public class DIntArray {
     }
 
     /**
-     *
      * @param v1 inferior value of the interval
      * @param v2 superiro value of the interval
-     *
+     *           <p>
      *           stored directly an interval of tids [v1; v2]
      */
     public void addTidInterval(int v1, int v2) {
         if (sizeReduced == reducedPos1.length)
             increaseReducedArrays();
-        reducedPos1[sizeReduced] = v1;
-        reducedPos2[sizeReduced++] = v2;
+
+        if (sizeNonReduced > 1 && noReductionArray[sizeNonReduced - 2] + 2 == v1) {
+            reducedPos1[sizeReduced] = v1 - 2;
+            reducedPos2[sizeReduced++] = v2;
+            sizeNonReduced -= 2;
+        }else if(sizeNonReduced > 0 && noReductionArray[sizeNonReduced - 1] + 1 == v1 ){
+            reducedPos1[sizeReduced] = v1 - 1;
+            reducedPos2[sizeReduced++] = v2;
+            --sizeNonReduced;
+        }else if(sizeReduced > 0 && reducedPos2[sizeReduced - 1] + 1 == v1){
+            reducedPos2[sizeReduced - 1] = v2;
+        }
+        else{
+            reducedPos1[sizeReduced] = v1;
+            reducedPos2[sizeReduced++] = v2;
+        }
+
+
 
     }
 
@@ -176,8 +188,7 @@ public class DIntArray {
                     }
                 }
                 ++ci;   //adiciona ci após adicionar o intervalo
-            }
-            else{   //não intervalor é o menor
+            } else {   //não intervalor é o menor
                 secundary[pos++] = noReductionArray[di++];
             }
         }
@@ -205,7 +216,6 @@ public class DIntArray {
     }
 
     /**
-     *
      * @return the number of tids stored in this object
      */
     public int countStoredTids() {
@@ -234,4 +244,21 @@ public class DIntArray {
         return sizeReduced + sizeNonReduced;
     }
 
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+
+        str.append("no red: [ ");
+        for (int i = 0; i < sizeNonReduced; i++) {
+            str.append(noReductionArray[i]).append(" ");
+        }
+        str.append("]\n");
+        str.append("reduct: [ ");
+        for (int i = 0; i < sizeReduced; i++) {
+            str.append("[").append(reducedPos1[i]).append(", ").append(reducedPos2[i]).append("] ");
+        }
+        str.append("]");
+        return str.toString();
+    }
 }
