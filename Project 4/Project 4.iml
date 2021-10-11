@@ -5,17 +5,16 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/src/usingFastutil" />
+      <excludeFolder url="file://$MODULE_DIR$/src/ReducedIdStorageWithClassAsDoubleArrayV2" />
+      <excludeFolder url="file://$MODULE_DIR$/src/UpdateStructure" />
+      <excludeFolder url="file://$MODULE_DIR$/src/ReducedIdStorageMixedCompression" />
+      <excludeFolder url="file://$MODULE_DIR$/src/ReducedIdStorageWithClassAsDoubleArray" />
+      <excludeFolder url="file://$MODULE_DIR$/src/reducedIDStorageMiexCrompressionChangedSubCubeQuery" />
+      <excludeFolder url="file://$MODULE_DIR$/src/reducedIDStorage" />
+      <excludeFolder url="file://$MODULE_DIR$/src/rangeQueries" />
+      <excludeFolder url="file://$MODULE_DIR$/src/MCiiCube" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/src/fastUtil/fastutil.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>
