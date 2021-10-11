@@ -1,0 +1,3 @@
+[submodule "CiiCube"]
+	path = project4_to_rust
+	url = https://github.com/OnikenX/CiiCube
